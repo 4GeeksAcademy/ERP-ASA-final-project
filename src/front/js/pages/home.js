@@ -54,7 +54,7 @@ export const Home = () => {
 					</div>
 				</div>
 			</div>
-    </section>
+		</section>
 	</div>
 	);
 };
