@@ -4,8 +4,7 @@ import rigoImageUrl from "../../img/rigo-baby.jpg";
 import "../../styles/home.css";
 
 export const Home = () => {
-	const { store, actions } = useContext(Context);
-
+	
 	return (
 	<div className="container my-5">
 		<section className="text-center text-white d-flex flex-column justify-content-center align-items-center"
