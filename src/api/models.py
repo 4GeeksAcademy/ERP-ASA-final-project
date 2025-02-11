@@ -1,39 +1,44 @@
 from flask_sqlalchemy import SQLAlchemy
-# from sqlalchemy.orm import relationship, mapped_column
-# from sqlalchemy import ForeignKey
-
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import mapped_column, relationship
+from typing import List
 
 db = SQLAlchemy()
 
-class User(db.Model):
-    __tablename__ = "user_table"
+# class User(db.Model):
+#     __tablename__ = "user_table"
 
-    id = db.Column(db.Integer, primary_key=True)
+#     id = db.Column(db.Integer, primary_key=True)
 
-    def __repr__(self):
-        return f'<User {self.id}>'
+#     def __repr__(self):
+#         return f'<User {self.id}>'
 
-    def serialize(self):
-        return {
-            "id": self.id,
+#     def serialize(self):
+#         return {
+#             "id": self.id,
 
-            # do not serialize the password, its a security breach
-        }
+#             # do not serialize the password, its a security breach
+#         }
 
 class Worker(db.Model):
     __tablename__ = "worker_table"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=False, nullable=False)
-    lastname = db.Column(db.String(80), unique=False, nullable=False)
+    last_name = db.Column(db.String(80), unique=False, nullable=False)
     dni = db.Column(db.String(20), unique=True, nullable=False)
     address = db.Column(db.String(80), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(20), unique=False, nullable=False)
     sub_date = db.Column(db.String(20), unique=False, nullable=False)
-    salary = db.Column(db.Integer, unique=False, nullable=False)
-    # department_id = mapped_column(ForeignKey("department_table.id"))
-    # role_id = mapped_column(ForeignKey("role_table.id"))
+
+    department_id = mapped_column(ForeignKey("department_table.id"))
+    salary_id = mapped_column(ForeignKey("salary_table.id"))
+    role_id = mapped_column(ForeignKey("role_table.id"))
+
+    department = relationship("Department", back_populates="worker", foreign_keys=[department_id])
+    salary = db.relationship("Salary", back_populates="worker")
+    role = db.relationship("Role", back_populates="worker")
 
     def __repr__(self):
         return f'<Worker {self.id}>'
@@ -42,7 +47,7 @@ class Worker(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "lastname": self.lastname,
+            "lastname": self.last_name,
             "dni": self.dni,
             "address": self.address,
             "email": self.email,
@@ -56,12 +61,17 @@ class Worker(db.Model):
 
 class Department(db.Model):
     __tablename__ = "department_table"
-    
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=False, nullable=True)
     description = db.Column(db.String(800), unique=False, nullable=False)
-    # worker = relationship("Worker")
-    # bossID = db.Column(db.String(800), unique=False, nullable=False)
+
+    boss_id = mapped_column(ForeignKey("worker_table.id"))
+
+    boss = relationship("Worker", foreign_keys=[boss_id])
+    worker = relationship('Worker', back_populates='department', foreign_keys="[Worker.department_id]")
+    role = db.relationship("Role", back_populates='department')
+    offer = db.relationship("Offer")
 
     def __repr__(self):
         return f'<Department {self.id}>'
@@ -71,7 +81,6 @@ class Department(db.Model):
             "id": self.id,
             "name": self.name,
             "description": self.description,
-            # do not serialize the password, its a security breach
         }
 
 class Role(db.Model):
@@ -79,9 +88,13 @@ class Role(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=False, nullable=True)
-    level = db.Column(db.String(800), unique=False, nullable=False)
-    # worker = relationship("Worker")
-    # department = db.Column(db.String(800), unique=False, nullable=False)
+    level = db.Column(db.String(80), unique=False, nullable=False)
+
+    department_id = mapped_column(ForeignKey("department_table.id"))
+    
+    worker = relationship('Worker', back_populates='role')
+    department = db.relationship("Department", back_populates="role")
+    offer = db.relationship("Offer")
 
     def __repr__(self):
         return f'<Role {self.id}>'
@@ -91,7 +104,6 @@ class Role(db.Model):
             "id": self.id,
             "name": self.name,
             "level": self.level,
-            # do not serialize the password, its a security breach
         }
 
 class Salary(db.Model):
@@ -99,7 +111,8 @@ class Salary(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     gross_salary = db.Column(db.Integer, unique=False, nullable=True)
-    # empleadoID
+    worker = db.relationship("Worker", back_populates="salary")
+    offer = db.relationship("Offer")
 
     def __repr__(self):
         return f'<User {self.id}>'
@@ -108,7 +121,6 @@ class Salary(db.Model):
         return {
             "id": self.id,
             "gross_salary": self.gross_salary,
-            # do not serialize the password, its a security breach
         }
 
 
@@ -120,6 +132,10 @@ class Offer(db.Model):
     description = db.Column(db.String(800), unique=False, nullable=False)
     requirements = db.Column(db.String(800), unique=False, nullable=False)
 
+    department_id = mapped_column(ForeignKey("department_table.id"))
+    role_id = mapped_column(ForeignKey("role_table.id"))
+    salary_id = mapped_column(ForeignKey("salary_table.id"))
+
     def __repr__(self):
         return f'<User {self.id}>'
 
@@ -129,5 +145,4 @@ class Offer(db.Model):
             "title": self.title,
             "description": self.description,
             "requirements": self.requirements,
-            # do not serialize the password, its a security breach
         }
