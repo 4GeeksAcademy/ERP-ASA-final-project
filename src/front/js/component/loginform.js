@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export const LoginForm = () => {
     return(
@@ -28,7 +29,9 @@ export const LoginForm = () => {
   </button>
   <p class="signup-link">
 	New to our website?
+	<Link to="/signup">
 	<a href="">Sign up</a>
+	</Link>
   </p>
 </form>
 </div>

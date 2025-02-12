@@ -14,11 +14,11 @@
   
   .form-title {
     font-size: 3.0rem;
-    line-height: 1.75rem;
+    line-height: 3.0rem;
     font-weight: 600;
     text-align: center;
     color: #2D336B;
-    margin-bottom: 40px;
+    margin-top: 70px;
   }
   
   .input-container {
@@ -97,4 +97,7 @@
 }
 .form{
     background:#A9B5DF;
+}
+.detail{
+  margin-top: 10px;
 }

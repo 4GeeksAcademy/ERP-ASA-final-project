@@ -4,7 +4,7 @@ import rigoImageUrl from "../../img/rigo-baby.jpg";
 import "../../styles/home.css";
 import { LoginForm } from "../component/loginform";
 
-export const Home = () => {
+export const Login = () => {
 	const { store, actions } = useContext(Context);
 
 	return (

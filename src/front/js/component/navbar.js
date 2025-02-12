@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+
+
 export const Navbar = () => {
 	return (
 	  <nav className="navbar navbar-expand-lg" style={{ backgroundColor: "#2D336B" }}>
@@ -31,8 +33,12 @@ export const Navbar = () => {
 		  {/* Contenido del Navbar */}
 		  <div className="collapse navbar-collapse justify-content-end" id="navbarContent">
 			<div className="d-flex mt-2 mt-lg-0">
+			<Link to="/login">
 			  <button className="btn btn-outline-light me-2">Login</button>
+			  </Link>
+			  <Link to="/signup">
 			  <button className="btn btn-light text-dark">Sign Up</button>
+			  </Link>
 			</div>
 		  </div>
 		</div>
