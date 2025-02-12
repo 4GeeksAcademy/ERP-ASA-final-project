@@ -1,14 +1,15 @@
 import React, { useContext } from "react";
 import { Context } from "../store/appContext";
-import "../../styles/home.css";
-import { LoginForm } from "../component/loginform";
+import "../../styles/employees.css";
+import { EmployeesList } from "../component/employeesList";
 
-export const Login = () => {
+export const Employees = () => {
 	const { store, actions } = useContext(Context);
 
 	return (
 		<div className="form-style">
-			<LoginForm/>
+			<EmployeesList/>
 		</div>
 	);
 };
+

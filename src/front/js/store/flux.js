@@ -2,25 +2,38 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			employeesList: [],
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
-
+			getEmployeesList: async () => {
+				setStore({ employeesList: [
+					{
+					id: 0,
+					name: "Alvaro",
+					lastName: "Ruiz",
+					dni: "99999999T",
+					email: "alvaro@gmail.com",
+					department: "RRHH",
+					role: "manager",
+					salary: "99999999",
+					},
+				]})
+				return true
+				try{
+					// fetching data from the backend
+					const resp = await fetch(process.env.BACKEND_URL + "/api/employees")
+					const data = await resp.json()
+					setStore({ employeesList: data.message})
+					return true;
+				}catch(error){
+					console.log("Error loading message from backend", error)
+					return false;
+				}
+			},
 			getMessage: async () => {
 				try{
 					// fetching data from the backend

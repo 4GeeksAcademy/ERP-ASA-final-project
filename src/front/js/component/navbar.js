@@ -6,13 +6,13 @@ export const Navbar = () => {
 	  <nav className="navbar navbar-expand-lg" style={{ backgroundColor: "#2D336B" }}>
 		<div className="container-fluid">
 		  {/* Logo (Imagen) */}
-		  <a className="navbar-brand" href="#">
+		  <Link to="/" className="navbar-brand" href="#">
 			<img
 			  src="https://placehold.co/60x60"  // Cambia esto por la ruta de tu logo
 			  alt="Logo"
 			  style={{ height: "40px" }}
 			/>
-		  </a>
+		  </Link>
   
 		  {/* Botón de menú para móviles */}
 		  <button 
@@ -31,8 +31,12 @@ export const Navbar = () => {
 		  {/* Contenido del Navbar */}
 		  <div className="collapse navbar-collapse justify-content-end" id="navbarContent">
 			<div className="d-flex mt-2 mt-lg-0">
-			  <button className="btn btn-outline-light me-2">Login</button>
-			  <button className="btn btn-light text-dark">Sign Up</button>
+				<Link to="/login">
+			  		<button className="btn btn-outline-light me-2">Login</button>
+				</Link>
+				<Link to="/signup">
+			  		<button className="btn btn-light text-dark">Sign Up</button>
+				</Link>
 			</div>
 		  </div>
 		</div>
