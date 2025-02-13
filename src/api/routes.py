@@ -18,19 +18,41 @@ CORS(api)
 def get_employees():
     try:
         data = db.session.scalars(select(Worker)).all()
-        print(data)
-        # results = list(map(lambda item: item.serialize(), data))
+        results = list(map(lambda item: item.serialize(), data))
         
-        # response_body = {
-        #     "results": results
-        # }
+        response_body = {
+            "results": results
+        }
 
-        return jsonify("response_body"), 200
+        return jsonify(response_body), 200
     
     except Exception  as err:
-        print("err")
         print(err)
         return "An error has occurred", 400
+
+@api.route('/employees/<int:id>', methods=['DELETE'])
+def delete_worker(id):
+    try:
+        worker = db.session.execute(select(Worker).filter_by(id=id)).scalar_one()
+
+        db.session.delete(worker)
+        db.session.commit()
+
+        data = db.session.scalars(select(Worker)).all()
+        results = list(map(lambda item: item.serialize(), data))
+        print(results)
+        
+        response_body = {
+            "msg": "Worker deleted",
+            "results": results
+        }
+
+        return jsonify(response_body), 200
+    
+    except Exception  as err:
+        print(err)
+        return "An error has occurred", 400
+
 
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():

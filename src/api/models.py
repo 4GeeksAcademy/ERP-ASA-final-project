@@ -15,7 +15,7 @@ class Worker(db.Model):
     address = db.Column(db.String(80), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(20), unique=False, nullable=False)
-    sub_date = db.Column(db.String(20), unique=False, nullable=False)
+    birthdate = db.Column(db.String(20), unique=False, nullable=False)
 
     department_id = mapped_column(ForeignKey("department_table.id"))
     salary_id = mapped_column(ForeignKey("salary_table.id"))
@@ -36,10 +36,10 @@ class Worker(db.Model):
             "dni": self.dni,
             "address": self.address,
             "email": self.email,
-            "sub_date": self.sub_date,
-            "salary": self.salary,
-            "department": self.department,
-            "role": self.role,
+            "birthdate": self.birthdate,
+            "salary": self.salary_id,
+            "department": self.department_id,
+            "role": self.role_id,
             # do not serialize the password, its a security breach
         }
 
@@ -51,9 +51,11 @@ class Department(db.Model):
     name = db.Column(db.String(80), unique=False, nullable=True)
     description = db.Column(db.String(800), unique=False, nullable=False)
 
+    # Si da fallo al resetear la bbdd, comentar dos siguientes lineas, luego
+    # "pipenv run reset_db" y tras descomentar hacer migrate, upgrade y start
     boss_id = mapped_column(ForeignKey("worker_table.id"))
-
     boss = relationship("Worker", foreign_keys=[boss_id])
+
     worker = relationship('Worker', back_populates='department', foreign_keys="[Worker.department_id]")
     role = db.relationship("Role", back_populates='department')
     offer = db.relationship("Offer")

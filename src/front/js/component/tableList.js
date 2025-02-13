@@ -9,23 +9,22 @@ export const TableList = () => {
 		actions.getEmployeesList();
 	}, [])
 
+
 	return (
 		<>
 			<div className="list row">
 				<table className="table mt-4 align-self-center">
 					<thead>
 						<tr>
-							<div className="check-row text-end bg-white border-0">
-								<input type="checkbox" />
-							</div>
+							<th className="check-row text-end bg-white border-0">
+								<input type="checkbox" name="id" value="-1"/>
+							</th>
 							<th scope="col">#</th>
 							<th scope="col">Name</th>
 							<th scope="col">Last Name</th>
-							<th scope="col">DNI</th>
 							<th scope="col">Email</th>
 							<th scope="col">Department</th>
 							<th scope="col">Role</th>
-							<th scope="col">Salary</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -33,17 +32,15 @@ export const TableList = () => {
 							store.employeesList.map((item, index) => {
 								return (
 									<tr key={item.id}>
-										<div className="check-row text-end bg-white border-0">
-											<input type="checkbox" />
-										</div>
+										<th className="check-row text-end bg-white border-0">
+											<input type="checkbox" name="id" value={item.id} onClick={() => actions.setSelected(item.id)}/>
+										</th>
 										<th scope="row">{index + 1}</th>
 										<td>{item.name}</td>
-										<td>{item.lastName}</td>
-										<td>{item.dni}</td>
+										<td>{item.lastname}</td>
 										<td>{item.email}</td>
-										<td>{item.department}</td>
-										<td>{item.role}</td>
-										<td>{item.salary}</td>
+										<td>{item.department_id}</td>
+										<td>{item.role_id}</td>
 									</tr>
 								)
 							})
