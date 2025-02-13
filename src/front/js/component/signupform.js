@@ -1,11 +1,14 @@
 import React from "react";
 
-export const LoginForm = () => {
+export const SignupForm = () => {
 	return (
 		<>
 			<div className="form-container">
 				<p className="form-title">Welcome</p>
 				<form class="form">
+					<div class="input-container">
+						<input placeholder="Name" type="text" />
+					</div>
 					<div class="input-container">
 						<input placeholder="Enter email" type="email" />
 						<span>

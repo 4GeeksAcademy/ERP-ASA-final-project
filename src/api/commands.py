@@ -21,12 +21,15 @@ def setup_commands(app):
         for x in range(1, int(count) + 1):
             user = Worker()
             user.name = "test_user"
-            user.last_name = "test_user"
+            user.last_name = "test_last"
             user.dni = "test_dni"
             user.address = "test_address"
             user.email = "test_user" + str(x) + "@test.com"
+            user.bithdate = "09/09/2024"
             user.password = "123456"
-            user.sub_date = "09/09/2024"
+            user.department = "test_deparment"
+            user.role = "manager"
+            user.salary = "100000"
             db.session.add(user)
             db.session.commit()
             print("User: ", user.email, " created.")
