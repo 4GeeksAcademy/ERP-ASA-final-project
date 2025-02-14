@@ -5,3 +5,108 @@
     one more css for each page that will contain the selected used 
     on that page only (the ones not reused in other pages).
 */
+.form-2{
+    width: fit-content;
+    margin-left: 15px;
+    background-color: #fff;
+    display: block;
+    justify-content: flex-start;
+    padding: 1rem;
+    max-width: 350px;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.form-title-2 {
+    font-size: 3.0rem;
+    line-height: 3.0rem;
+    font-weight: 600;
+    text-align: center;
+    color: #2D336B;
+    margin-top: 70px;
+  }
+  
+  .input-container-2 {
+    position: relative;
+  }
+  
+  .input-container-2 input, .form button {
+    outline: none;
+    border: 1px solid #e5e7eb;
+    margin: 8px 0;
+  }
+  
+  .input-container-2 input {
+    background-color: #fff;
+    padding: 1rem;
+    padding-right: 3rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    width: 300px;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+  
+  .input-container-2 span {
+    display: grid;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    place-content: center;
+  }
+  
+  .input-container-2 span svg {
+    color: #9CA3AF;
+    width: 1rem;
+    height: 1rem;
+  }
+  
+  .submit-2 {
+    display: block;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    background-color: #4F46E5;
+    color: #ffffff;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    width: 100%;
+    border-radius: 0.5rem;
+    text-transform: uppercase;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .signup-link-2 {
+    color: black;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    text-align: center;
+  }
+  
+  .signup-link-2 a {
+    text-decoration: underline;
+    margin-left: 8px;
+  }
+  .form-style{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.signup-link-2{
+    margin-right: 100px;
+    margin-top: 15px;
+}
+.form-2{
+    background:#A9B5DF;
+}
+.detail{
+  margin-top: 10px;
+}
+h5{
+  font-size: 1rem;
+  margin-top: 5px;
+}
