@@ -5,3 +5,29 @@
     one more css for each page that will contain the selected used 
     on that page only (the ones not reused in other pages).
 */
+
+
+.feat{
+    font-size: "40px";
+}
+
+.strong-background{
+    color: "#2D336B";
+}
+
+.medium-background{
+    background-color: "#7886C7";
+}
+
+.light-background{
+    background-color: "#A9B5DF";
+}
+
+.center-column{
+    height: "90vh";
+    padding: "50px";
+}
+
+.section{
+    max-width: 600px;
+}
