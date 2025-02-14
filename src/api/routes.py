@@ -36,7 +36,7 @@ def get_employees():
 @api.route('/worker', methods=['POST'])
 def add_worker():
     data = request.get_json()
-    if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate']):
+    if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id', 'role_id']):
         return jsonify({"message": "Missing required fields"}), 400
     try:
         new_worker = Worker(
@@ -47,6 +47,9 @@ def add_worker():
             email = data['email'],
             password = data['password'],
             birthdate = data['birthdate'],
+            department_id = data['department_id'],
+            salary_id = data['salary_id'],
+            role_id = data['role_id'],
         )
 
         db.session.add(new_worker)
