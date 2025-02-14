@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Context } from "../store/appContext";
-import "../../styles/home.css";
+import "../../styles/signup.css";
 import { SignupForm } from "../component/signupform";
 
 export const Signup = () => {
