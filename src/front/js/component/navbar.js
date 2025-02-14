@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
   export const Navbar = () => {
 	return (
-	  <nav className="navbar navbar-expand-lg" style={{ backgroundColor: "#2D336B" }}>
+	  <nav className="navbar navbar-expand-lg">
 		<div className="container-fluid">
 		  <a className="navbar-brand text-white fw-bold" href="#">
 			<img className="logo" src="https://placeholder.pics/images/icons/apple-icon-180x180.png" alt="Logo" />
