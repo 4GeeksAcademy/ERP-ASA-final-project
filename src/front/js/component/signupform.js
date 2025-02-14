@@ -6,7 +6,7 @@ export const SignupForm = () => {
 		<>
 			<div className="form-container">
 				<p className="form-title">Sign up on our ERP</p>
-				<form class="form" style={{width: "fit-content"}}>
+				<form class="form" style={{width: "fit-content",marginLeft: "15px" }}>
 					<div class="input-container">
 						<input placeholder="Name" type="text" />
 					</div>
@@ -18,6 +18,21 @@ export const SignupForm = () => {
 					</div>
 					<div class="input-container">
 						<input placeholder="Address" type="text" />
+					</div>
+					<div class="input-container">
+						<input placeholder="Salary" type="text" />
+						<span>
+						<i class="fa-light fa-dollar-sign"></i>
+						</span>
+					</div>
+					<div class="input-container">
+						<input placeholder="Role" type="text" />
+					</div>
+					<div class="input-container">
+						<input placeholder="Department" type="text" />
+						<span>
+						<i class="fa-regular fa-building"></i>
+						</span>
 					</div>
 					<h5>Birth date</h5>
 					<div class="input-container">
