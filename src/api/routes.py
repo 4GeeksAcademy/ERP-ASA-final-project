@@ -81,6 +81,28 @@ def delete_worker(id):
     except Exception  as err:
         print(err)
         return "An error has occurred", 400
+    
+@api.route('/offer', methods=['POST'])
+def add_offer():
+    data = request.get_json()
+    if not all(key in data for key in ['title', 'description', 'requirements']):
+        return jsonify({"message": "Missing required fields"}), 400
+    try:
+        new_offer = Offer(
+            title = data['title'],
+            description = data['description'],
+            requirements = data['requirements']
+        )
+
+        db.session.add(new_offer)
+        db.session.commit()
+
+        return jsonify({"msg": "Offer added successfully", "offer": new_offer.serialize()}), 201
+    
+    except Exception:
+        db.session.rollback()
+        return jsonify({"msg": "Error adding offer"}), 500
+    
 
 @api.route("/login", methods=["POST"])
 def login():
