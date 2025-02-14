@@ -12,7 +12,6 @@ export const LoginForm = () => {
     async function handleSubmit(e) {
         e.preventDefault()
         let logged =  actions.login(email,password);
-        console.log(logged);
         if (logged) {
                 navigate("/")
         }

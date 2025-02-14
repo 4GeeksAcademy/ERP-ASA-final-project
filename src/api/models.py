@@ -21,7 +21,7 @@ class Worker(db.Model):
     salary_id = mapped_column(ForeignKey("salary_table.id"))
     role_id = mapped_column(ForeignKey("role_table.id"))
 
-    department = relationship("Department", back_populates="worker", foreign_keys=[department_id])
+    department = relationship("Department", back_populates="worker")
     salary = db.relationship("Salary", back_populates="worker")
     role = db.relationship("Role", back_populates="worker")
 
@@ -51,12 +51,7 @@ class Department(db.Model):
     name = db.Column(db.String(80), unique=False, nullable=True)
     description = db.Column(db.String(800), unique=False, nullable=False)
 
-    # Si da fallo al resetear la bbdd, comentar dos siguientes lineas, luego
-    # "pipenv run reset_db" y tras descomentar hacer migrate, upgrade y start
-    boss_id = mapped_column(ForeignKey("worker_table.id"))
-    boss = relationship("Worker", foreign_keys=[boss_id])
-
-    worker = relationship('Worker', back_populates='department', foreign_keys="[Worker.department_id]")
+    worker = relationship('Worker', back_populates='department')
     role = db.relationship("Role", back_populates='department')
     offer = db.relationship("Offer")
 
