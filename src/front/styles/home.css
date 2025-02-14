@@ -8,24 +8,24 @@
 
 
 .feat{
-    font-size: "40px";
+    font-size: 40px;
 }
 
 .strong-background{
-    color: "#2D336B";
+    color:#2D336B;
 }
 
 .medium-background{
-    background-color: "#7886C7";
+    background-color:#7886C7;
 }
 
 .light-background{
-    background-color: "#A9B5DF";
+    background-color:#A9B5DF;
 }
 
 .center-column{
-    height: "90vh";
-    padding: "50px";
+    height:90vh;
+    padding: 50px;
 }
 
 .section{
