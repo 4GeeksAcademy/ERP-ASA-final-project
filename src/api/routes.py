@@ -33,6 +33,32 @@ def get_employees():
         print(err)
         return "An error has occurred", 400
 
+@api.route('/worker', methods=['POST'])
+def add_worker():
+    data = request.get_json()
+    if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate']):
+        return jsonify({"message": "Missing required fields"}), 400
+    try:
+        new_worker = Worker(
+            name = data['name'],
+            last_name = data['last_name'],
+            dni = data['dni'],
+            address = data['address'],
+            email = data['email'],
+            password = data['password'],
+            birthdate = data['birthdate'],
+        )
+
+        db.session.add(new_worker)
+        db.session.commit()
+
+        return jsonify({"msg": "Worker added successfully", "worker": new_worker.serialize()}), 201
+    
+    except Exception:
+        db.session.rollback()
+        return jsonify({"msg": "Error adding worker"}), 500
+    
+
 @api.route('/employees/<int:id>', methods=['DELETE'])
 def delete_worker(id):
     try:
