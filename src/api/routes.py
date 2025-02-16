@@ -128,10 +128,10 @@ def login():
 
 # Protect a route with jwt_required, which will kick out requests
 # without a valid JWT present.
-# @api.route("/profile", methods=["GET"])
-# @jwt_required()
-# def get_profile():
-#     # Access the identity of the current user with get_jwt_identity
-#     email = get_jwt_identity()
-#     profile = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one().serialize()
-#     return jsonify(profile), 200
+@api.route("/profile", methods=["GET"])
+@jwt_required()
+def get_profile():
+    # Access the identity of the current user with get_jwt_identity
+    email = get_jwt_identity()
+    profile = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one().serialize()
+    return jsonify(profile), 200

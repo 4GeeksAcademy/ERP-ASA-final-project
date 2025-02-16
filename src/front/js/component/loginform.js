@@ -7,15 +7,13 @@ export const LoginForm = () => {
 	const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const {store,actions} = useContext(Context)
+
     let navigate = useNavigate();
 
     async function handleSubmit(e) {
         e.preventDefault()
-        let logged =  actions.login(email,password);
-        if (logged) {
-                navigate("/")
-        }
-        
+        actions.login(email,password);
+		navigate("/profile")
     }
 
 
