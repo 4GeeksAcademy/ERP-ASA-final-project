@@ -19,7 +19,7 @@ export const EmployeesList = () => {
 						</div>
 					</div>
 					<div className="col-11 col-lg-6 d-flex justify-content-around my-3" aria-label="Edit buttons">
-						<button type="button" className="btn fs-4 col-3" onClick={() => actions.deleteWorker(store.selected)}>Delete</button>
+						<button type="button" className="btn fs-4 col-3" onClick={() => actions.deleteWorker(store.selected[0])}>Delete</button>
 						<button type="button" className="btn fs-4 col-3">Edit</button>
 						<button type="button" className="btn fs-4 col-3">Create</button>
 					</div>

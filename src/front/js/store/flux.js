@@ -4,7 +4,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			messageee: "hola",
 			employeesList: [],
 			selected: [],
-			auth: false
+			auth: false,
+			personalData: {}
 
 			// Ejemplo completo data:
 			// employeesList: [
@@ -42,10 +43,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 			deleteWorker: async (id) => {
 				try {
 					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "api/employees/" + id[0], {method: "DELETE"})
+					const resp = await fetch(process.env.BACKEND_URL + "api/employees/" + id, {method: "DELETE"})
 					const data = await resp.json()
 					
 					setStore({ employeesList: data.results })
+					let selectedUpdated = [...getStore().selected]
+					setStore({ selected: selectedUpdated.slice(1) })
 					return true;
 				} catch (error) {
 					console.log("Error loading message from backend", error)
@@ -90,7 +93,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (response.status === 200) {
 						setStore({auth: true})
 						localStorage.setItem("token", result.access_token)
-						console.log(result.access_token);
 						return true;
 					}
 				} catch (error) {
@@ -109,7 +111,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					if (response.status === 200) {
 						const result = await response.json();
-						setStore({data: result})
+						setStore({personalData: result})
 						return true;
 					}
 				} catch (error) {
@@ -117,32 +119,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false
 				};
 			},
-			// getMessage: async () => {
-			// 	try {
-			// 		// fetching data from the backend
-			// 		const resp = await fetch(process.env.BACKEND_URL + "api/hello")
-			// 		const data = await resp.json()
-			// 		setStore({ message: data.message })
-			// 		// don't forget to return something, that is how the async resolves
-			// 		return data;
-			// 	} catch (error) {
-			// 		console.log("Error loading message from backend", error)
-			// 	}
-			// },
-			// changeColor: (index, color) => {
-			// 	//get the store
-			// 	const store = getStore();
-
-			// 	//we have to loop the entire demo array to look for the respective index
-			// 	//and change its color
-			// 	const demo = store.demo.map((elm, i) => {
-			// 		if (i === index) elm.background = color;
-			// 		return elm;
-			// 	});
-
-			// 	//reset the global store
-			// 	setStore({ demo: demo });
-			// }
+			changeAuth: () => {
+				setStore({auth: !getStore().auth})
+			},
 		}
 	};
 };
