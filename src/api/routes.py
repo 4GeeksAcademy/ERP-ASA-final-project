@@ -36,6 +36,9 @@ def get_employees():
 @api.route('/worker', methods=['POST'])
 def add_worker():
     data = request.get_json()
+    print("data")
+    print(data)
+    # if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id', 'role_id']):
     if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate']):
         return jsonify({"message": "Missing required fields"}), 400
     try:
@@ -47,6 +50,9 @@ def add_worker():
             email = data['email'],
             password = data['password'],
             birthdate = data['birthdate'],
+            # department_id = data['department_id'],
+            # salary_id = data['salary_id'],
+            # role_id = data['role_id'],
         )
 
         db.session.add(new_worker)
@@ -54,7 +60,8 @@ def add_worker():
 
         return jsonify({"msg": "Worker added successfully", "worker": new_worker.serialize()}), 201
     
-    except Exception:
+    except Exception as err:
+        print(err)
         db.session.rollback()
         return jsonify({"msg": "Error adding worker"}), 500
     
@@ -78,9 +85,31 @@ def delete_worker(id):
 
         return jsonify(response_body), 200
     
-    except Exception  as err:
+    except Exception as err:
         print(err)
         return "An error has occurred", 400
+    
+@api.route('/offer', methods=['POST'])
+def add_offer():
+    data = request.get_json()
+    if not all(key in data for key in ['title', 'description', 'requirements']):
+        return jsonify({"message": "Missing required fields"}), 400
+    try:
+        new_offer = Offer(
+            title = data['title'],
+            description = data['description'],
+            requirements = data['requirements']
+        )
+
+        db.session.add(new_offer)
+        db.session.commit()
+
+        return jsonify({"msg": "Offer added successfully", "offer": new_offer.serialize()}), 201
+    
+    except Exception:
+        db.session.rollback()
+        return jsonify({"msg": "Error adding offer"}), 500
+    
 
 @api.route("/login", methods=["POST"])
 def login():
@@ -103,10 +132,10 @@ def login():
 
 # Protect a route with jwt_required, which will kick out requests
 # without a valid JWT present.
-# @api.route("/profile", methods=["GET"])
-# @jwt_required()
-# def get_profile():
-#     # Access the identity of the current user with get_jwt_identity
-#     email = get_jwt_identity()
-#     profile = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one().serialize()
-#     return jsonify(profile), 200
+@api.route("/profile", methods=["GET"])
+@jwt_required()
+def get_profile():
+    # Access the identity of the current user with get_jwt_identity
+    email = get_jwt_identity()
+    profile = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one().serialize()
+    return jsonify(profile), 200

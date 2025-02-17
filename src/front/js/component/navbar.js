@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import { Context } from "../store/appContext";
 import "../../styles/navbar.css";
+import { Context } from "../store/appContext";
+import "../../styles/navbar.css"
 
 export const Navbar = () => {
 	const { actions, store } = useContext(Context); 
@@ -9,9 +10,9 @@ export const Navbar = () => {
 	return (
 		<nav className="navbar navbar-expand-lg">
 			<div className="container-fluid">
-				<a className="navbar-brand text-white fw-bold" href="#">
+				<Link to="/" className="navbar-brand text-white fw-bold">
 					<img className="logo" src="https://placeholder.pics/images/icons/apple-icon-180x180.png" alt="Logo" />
-				</a>
+				</Link>
 				<button
 					className="navbar-toggler"
 					type="button"

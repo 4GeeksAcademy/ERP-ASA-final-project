@@ -7,16 +7,13 @@ export const LoginForm = () => {
 	const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const {store,actions} = useContext(Context)
+
     let navigate = useNavigate();
 
     async function handleSubmit(e) {
         e.preventDefault()
-        let logged =  actions.login(email,password);
-        console.log(logged);
-        if (logged) {
-                navigate("/")
-        }
-        
+        actions.login(email,password);
+		navigate("/profile")
     }
 
 
@@ -45,10 +42,6 @@ export const LoginForm = () => {
 					<button className="submit" type="submit">
 						Log in
 					</button>
-					<p className="signup-link">
-						New to our website?
-						<Link to="/signup">Sign up</Link>
-					</p>
 				</form>
 			</div>
 		</>
