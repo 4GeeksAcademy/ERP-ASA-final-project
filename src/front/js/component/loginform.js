@@ -42,10 +42,6 @@ export const LoginForm = () => {
 					<button className="submit" type="submit">
 						Log in
 					</button>
-					<p className="signup-link">
-						New to our website?
-						<Link to="/signup">Sign up</Link>
-					</p>
 				</form>
 			</div>
 		</>
