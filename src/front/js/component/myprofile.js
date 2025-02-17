@@ -12,6 +12,12 @@ export const MyProfile = () => {
 		actions.getProfile()
 	}, [store.auth])
 
+	const deleteMyProfile = () => {
+		actions.deleteWorker([store.personalData.id])
+		actions.logout()
+		navigate("/")
+	}
+
 	return (
 		<>
 			<div className="container mt-5">
@@ -40,11 +46,7 @@ export const MyProfile = () => {
 							<div className="card-footer text-center">
 								<button className="btn me-2">Editar</button>
 								<Link to="/">
-									<button className="btn" onClick={() => {
-										actions.deleteWorker([store.personalData.id])
-										actions.logout()
-										navigate("/")
-										}}>Eliminar</button>
+									<button className="btn" onClick={() => deleteMyProfile()}>Eliminar</button>
 								</Link>
 							</div>
 						</>
