@@ -12,20 +12,25 @@ export const SignupForm = () => {
 				dni: "",
 				birthDate: "",
 				password: "",
+				salary: ""
 			  }}
 			  validate={(values) => {
 				const errors = {};
 
-				if (!/^\d+$/.test(values.dni)) {
-				  errors.dni = "El DNI debe contener solo números.";
+				if (!/^\d{8,}$/.test(values.dni)) {
+				  errors.dni = "DNI must have at least 8 numbers.";
 				}
-	
+
+				if (!/^\d+(\.\d{1,2})?$/.test(values.salary)) {
+					errors.salary = "Salary must be a valid number.";
+				  }
+
 				if (!/^\d{2}\/\d{2}\/\d{4}$/.test(values.birthDate)) {
-				  errors.birthDate = "El formato de la fecha debe ser dd/mm/yyyy.";
+				  errors.birthDate = "Date format must be dd/mm/yyyy.";
 				}
 	
 				if (values.password.length < 6) {
-				  errors.password = "La contraseña debe tener al menos 6 caracteres.";
+				  errors.password = "Password must have at least 6 characters.";
 				}
 	
 				return errors;
@@ -52,6 +57,9 @@ export const SignupForm = () => {
 				</div>
 				<div className="input-container-2">
 				  <Field placeholder="Salary" name="salary" type="text" />
+				  <div className="error-container">
+                  <ErrorMessage name="salary" component="p" className="error" />
+                 </div>
 				  <span>
 					<i className="fa-light fa-dollar-sign"></i>
 				  </span>
