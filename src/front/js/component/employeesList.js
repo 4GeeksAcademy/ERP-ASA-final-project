@@ -1,33 +1,46 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { TableList } from "./tableList";
+import { Link, useNavigate } from "react-router-dom";
 
 export const EmployeesList = () => {
 
 	const { store, actions } = useContext(Context);
 
+	let navigate = useNavigate();
+
+	useEffect(()=>{
+		actions.resetSelected()
+		if (!store.auth) navigate("/")
+	}, [])
+
+
 	return (
 		<>
-			<div className="container mt-3" action="#" id="employeesForm" method="POST">
-				<div className="row d-flex justify-content-between align-items-center">
-					<div className="search col-11 col-lg-4">
-						<div className="">
+			{store.auth ?
+				<div className="container mt-3" action="#" id="employeesForm" method="POST">
+					<div className="row d-flex justify-content-between align-items-center">
+						<div className="search col-11 col-lg-4">
 							<div id="searchForm" role="search" className="rounded-pill p-2">
 								<i className="fa-solid fa-magnifying-glass col-1"></i>
 								<input className="search-input border-0 col-11" type="search" placeholder="Search" />
 							</div>
 						</div>
+						<div className="col-11 col-lg-6 d-flex justify-content-around my-3" aria-label="Edit buttons">
+							<button type="button" className="btn fs-4 col-3" onClick={() => actions.deleteWorker(store.selected)}>Delete</button>
+							<button type="button" className="btn fs-4 col-3">Edit</button>
+							<Link className="col-3" to="/signup">
+								<button type="button" className="btn fs-4 w-100">Create</button>
+							</Link>
+						</div>
 					</div>
-					<div className="col-11 col-lg-6 d-flex justify-content-around my-3" aria-label="Edit buttons">
-						<button type="button" className="btn fs-4 col-3" onClick={() => actions.deleteWorker(store.selected)}>Delete</button>
-						<button type="button" className="btn fs-4 col-3">Edit</button>
-						<button type="button" className="btn fs-4 col-3">Create</button>
+					<div className="container col-11">
+						<TableList />
 					</div>
 				</div>
-				<div className="container col-11">
-					<TableList/>
-				</div>
-			</div>
+				:
+				<></>
+			}
 		</>
 	)
 }

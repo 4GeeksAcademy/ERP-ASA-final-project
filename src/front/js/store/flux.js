@@ -1,31 +1,15 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			messageee: "hola",
+			message: "hola",
 			employeesList: [],
 			selected: [],
-			auth: false
+			auth: false,
+			personalData: {}
 
-			// Ejemplo completo data:
-			// employeesList: [
-			// 	{id: 0,
-			// 	name: "Alvaro",
-			// 	lastName: "Ruiz",
-			// 	dni: "99999999T",
-			// 	address: "aqui",
-			// 	email: "alvaro@gmail.com",
-			// 	birthdate: "10/10/2010",
-			// 	department: "RRHH",
-			// 	role: "manager",
-			// 	salary: "99999999"
-			// 	},
-			// ]
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
 			getEmployeesList: async () => {
 				try {
 					// fetching data from the backend
@@ -39,13 +23,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
-			deleteWorker: async (id) => {
+			deleteWorker: async (ids) => {
 				try {
 					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "api/employees/" + id[0], {method: "DELETE"})
-					const data = await resp.json()
+					const resp = await Promise.all(ids.map(async (id)=>{
+						const resp = fetch(process.env.BACKEND_URL + "api/employees/" + id, {method: "DELETE"})
+						return resp
+					}))
+
+					const datos = resp.map(async (response)=>{
+						const dato = await response.json()
+						console.log(dato.results);
+						setStore({ employeesList: dato.results })
+						return dato.results
+					})
 					
-					setStore({ employeesList: data.results })
+					setStore({ selected: [] })
+					
 					return true;
 				} catch (error) {
 					console.log("Error loading message from backend", error)
@@ -90,7 +84,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (response.status === 200) {
 						setStore({auth: true})
 						localStorage.setItem("token", result.access_token)
-						console.log(result.access_token);
 						return true;
 					}
 				} catch (error) {
@@ -109,7 +102,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					if (response.status === 200) {
 						const result = await response.json();
-						setStore({data: result})
+						setStore({personalData: result})
 						return true;
 					}
 				} catch (error) {
@@ -117,32 +110,48 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false
 				};
 			},
-			// getMessage: async () => {
-			// 	try {
-			// 		// fetching data from the backend
-			// 		const resp = await fetch(process.env.BACKEND_URL + "api/hello")
-			// 		const data = await resp.json()
-			// 		setStore({ message: data.message })
-			// 		// don't forget to return something, that is how the async resolves
-			// 		return data;
-			// 	} catch (error) {
-			// 		console.log("Error loading message from backend", error)
-			// 	}
-			// },
-			// changeColor: (index, color) => {
-			// 	//get the store
-			// 	const store = getStore();
-
-			// 	//we have to loop the entire demo array to look for the respective index
-			// 	//and change its color
-			// 	const demo = store.demo.map((elm, i) => {
-			// 		if (i === index) elm.background = color;
-			// 		return elm;
-			// 	});
-
-			// 	//reset the global store
-			// 	setStore({ demo: demo });
-			// }
+			addWorker: async (name, last_name, dni, address, email, password, birthdate, department_id, salary_id, role_id) => {
+				let token = localStorage.getItem("token")
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/worker", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+							"name": name,
+							"last_name": last_name,
+							"dni": dni,
+							"address": address,
+							"email": email,
+							"password": password,
+							"birthdate": birthdate,
+							"department_id": department_id,
+							"salary_id": salary_id,
+							"role_id": role_id
+						})
+					});
+					if (response.status === 200) {
+						const result = await response.json();
+						return true;
+					}
+				} catch (error) {
+					console.error("error");
+					console.error(error);
+					return false
+				};
+			},
+			changeAuth: () => {
+				setStore({auth: !getStore().auth})
+			},
+			resetSelected: () => {
+				setStore({selected: []})
+			},
+			logout:()=>{
+				//borrar el token del localStorage
+				setStore({auth: false})
+				localStorage.removeItem("token")
+			},
 		}
 	};
 };

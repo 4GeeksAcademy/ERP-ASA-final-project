@@ -1,8 +1,39 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
+import {useState, useContext, useEffect} from "react";
+import { Context } from "../store/appContext";
+import { useNavigate } from "react-router-dom";
+
 
 export const SignupForm = () => {
+
+	const [name, setName] = useState("")
+    const [lastname, setLastname] = useState("")
+    const [dni, setDni] = useState("")
+    const [address, setAddress] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [birthdate, setBirthdate] = useState("")
+    const [departmentId, setDepartmentId] = useState("")
+    const [salaryId, setSalaryId] = useState("")
+    const [roleId, setRoleId] = useState("")
+    const {store,actions} = useContext(Context)
+
+    let navigate = useNavigate();
+
+	useEffect(()=>{
+		if (!store.auth) navigate("/")
+	}, [])
+
+    async function handleSubmit(e) {
+        e.preventDefault()
+        // actions.addWorker(name, lastname, dni, address, email, password, birthdate, departmentId, salaryId, roleId);
+        actions.addWorker(name, lastname, dni, address, email, password, birthdate);
+		navigate("/")
+	}
+        
+    
 	return (
 		<>
 		  <div className="form-container-2">
@@ -36,27 +67,27 @@ export const SignupForm = () => {
 				return errors;
 			  }}
 			  onSubmit={(values) => {
-				console.log("Formulario enviado", values);
+				console.log("Form Sent", values);
 			  }}
 			>
-			  <Form className="form-2">
+			  <Form className="form-2" onSubmit={handleSubmit}>
 				<div className="input-container-2">
-				  <Field placeholder="Name" name="name" type="text" />
+				  <Field placeholder="Name" name="name" type="text" onChange={(e)=>setName(e.target.value)}/>
 				</div>
 				<div className="input-container-2">
-				  <Field placeholder="Last name" name="lastName" type="text" />
+				  <Field placeholder="Last name" name="lastName" type="text" onChange={(e)=>setLastname(e.target.value)} />
 				</div>
 				<div className="input-container-2">
-				  <Field placeholder="Dni" name="dni" type="text" />
+				  <Field placeholder="Dni" name="dni" type="text" onChange={(e)=>setDni(e.target.value)} />
 				  <div className="error-container">
 					<ErrorMessage name="dni" component="p" className="error" />
 				  </div>
 				</div>
 				<div className="input-container-2">
-				  <Field placeholder="Address" name="address" type="text" />
+				  <Field placeholder="Address" name="address" type="text"  onChange={(e)=>setAddress(e.target.value)} />
 				</div>
 				<div className="input-container-2">
-				  <Field placeholder="Salary" name="salary" type="text" />
+				  <Field placeholder="Salary" name="salary" type="text" onChange={(e)=>setSalaryId(e.target.value)}/>
 				  <div className="error-container">
                   <ErrorMessage name="salary" component="p" className="error" />
                  </div>
@@ -65,17 +96,17 @@ export const SignupForm = () => {
 				  </span>
 				</div>
 				<div className="input-container-2">
-				  <Field placeholder="Role" name="role" type="text" />
+				  <Field placeholder="Role" name="role" type="text"  onChange={(e)=>setRoleId(e.target.value)} />
 				</div>
 				<div className="input-container-2">
-				  <Field placeholder="Department" name="department" type="text" />
+				  <Field placeholder="Department" name="department" type="text" onChange={(e)=>setDepartmentId(e.target.value)} />
 				  <span>
 					<i className="fa-regular fa-building"></i>
 				  </span>
 				</div>
 				<h5>Birth date</h5>
 				<div className="input-container-2">
-				  <Field placeholder="00/00/0000" name="birthDate" type="text" />
+				  <Field placeholder="00/00/0000" name="birthDate" type="text" onChange={(e)=>setBirthdate(e.target.value)}/>
 				  <div className="error-container">
 					<ErrorMessage name="birthDate" component="p" className="error" />
 				  </div>
@@ -84,7 +115,7 @@ export const SignupForm = () => {
 				  </span>
 				</div>
 				<div className="input-container-2">
-				  <Field placeholder="Email" name="email" type="email" />
+				  <Field placeholder="Email" name="email" type="email"  onChange={(e)=>setEmail(e.target.value)}/>
 				  <span>
 					<svg stroke="currentColor" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 					  <path d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"></path>
@@ -92,7 +123,7 @@ export const SignupForm = () => {
 				  </span>
 				</div>
 				<div className="input-container-2">
-				  <Field placeholder="Password" name="password" type="password" />
+				  <Field placeholder="Password" name="password" type="password" onChange={(e)=>setPassword(e.target.value)}/>
 				  <div className="error-container">
 					<ErrorMessage name="password" component="p" className="error" />
 				  </div>
