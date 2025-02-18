@@ -1,3 +1,28 @@
+.dropdown-toggle{
+    display: block;
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+      background-color: #4F46E5;
+      color: #ffffff !important;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      font-weight: 500;
+      width: 100%;
+      border-radius: 0.5rem;
+      text-transform: uppercase;
+      outline: none;
+      border: 1px solid #e5e7eb !important;
+      margin: 8px 0;
+  }
+  .dropdown-toggle:focus,
+  .dropdown-toggle:active,
+  .dropdown-toggle:hover {
+      background-color: #4F46E5 !important;
+      color: #ffffff !important;
+      border: 1px solid #e5e7eb !important;
+  }
 .my-profile{
     height: 60px;
 }
