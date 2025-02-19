@@ -5,7 +5,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			employeesList: [],
 			selected: [],
 			auth: false,
-			personalData: {}
+			personalData: {},
+			departments: [],
+            salaries: [],
+            roles: []
 
 		},
 		actions: {
@@ -155,6 +158,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({auth: false})
 				localStorage.removeItem("token")
 			},
+			fetchData: async () => {
+                try {
+                    const deptResponse = await fetch(process.env.BACKEND_URL + "/api/departments");
+                    const salaryResponse = await fetch(process.env.BACKEND_URL + "/api/salaries");
+                    const roleResponse = await fetch(process.env.BACKEND_URL + "/api/roles");
+
+                    const deptData = await deptResponse.json();
+                    const salaryData = await salaryResponse.json();
+                    const roleData = await roleResponse.json();
+
+                    setStore({
+                        departments: deptData,
+                        salaries: salaryData,
+                        roles: roleData
+                    });
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            }
 		}
 	};
 };

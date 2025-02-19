@@ -24,14 +24,18 @@ export const SignupForm = () => {
 
 	useEffect(()=>{
 		if (!store.auth) navigate("/")
+		actions.fetchData();
 	}, [])
 
-    async function handleSubmit(e) {
-        e.preventDefault()
-        // actions.addWorker(name, lastname, dni, address, email, password, birthdate, departmentId, salaryId, roleId);
-        actions.addWorker(name, lastname, dni, address, email, password, birthdate);
-		navigate("/")
-	}
+    const handleSubmit = async (e) => {
+		e.preventDefault();
+		const success = await actions.addWorker(name, last_name, dni, address, email, password, birthdate, parseInt(department_id), parseInt(salary_id), parseInt(role_id));
+		if (success) {
+			navigate("/profile");
+		} else {
+			alert("Error adding worker");
+		}
+	};
         
     
 	return (
@@ -66,6 +70,7 @@ export const SignupForm = () => {
 	
 				return errors;
 			  }}
+			  
 			  onSubmit={(values) => {
 				console.log("Form Sent", values);
 			  }}
@@ -87,22 +92,32 @@ export const SignupForm = () => {
 				  <Field placeholder="Address" name="address" type="text"  onChange={(e)=>setAddress(e.target.value)} />
 				</div>
 				<div className="input-container-2">
-				  <Field placeholder="Salary" name="salary" type="text" onChange={(e)=>setSalaryId(e.target.value)}/>
-				  <div className="error-container">
-                  <ErrorMessage name="salary" component="p" className="error" />
-                 </div>
-				  <span>
-					<i className="fa-light fa-dollar-sign"></i>
-				  </span>
+					<select onChange={(e) => setSalaryId(e.target.value)}>
+						<option value="">Select Salary</option>
+						{store.salaries.map((salary) => (
+							<option key={salary.id} value={salary.id}>{salary.gross_salary}</option>
+						))}
+					</select>
+					<span><i className="fa-light fa-dollar-sign"></i></span>
 				</div>
+
 				<div className="input-container-2">
-				  <Field placeholder="Role" name="role" type="text"  onChange={(e)=>setRoleId(e.target.value)} />
+					<select onChange={(e) => setRoleId(e.target.value)}>
+						<option value="">Select Role</option>
+						{store.roles.map((role) => (
+							<option key={role.id} value={role.id}>{role.name}</option>
+						))}
+					</select>
 				</div>
+
 				<div className="input-container-2">
-				  <Field placeholder="Department" name="department" type="text" onChange={(e)=>setDepartmentId(e.target.value)} />
-				  <span>
-					<i className="fa-regular fa-building"></i>
-				  </span>
+					<select onChange={(e) => setDepartmentId(e.target.value)}>
+						<option value="">Select Department</option>
+						{store.departments.map((department) => (
+							<option key={department.id} value={department.id}>{department.name}</option>
+						))}
+					</select>
+					<span><i className="fa-regular fa-building"></i></span>
 				</div>
 				<h5>Birth date</h5>
 				<div className="input-container-2">
