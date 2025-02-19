@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from 'yup';
 import { useContext, useEffect} from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +15,30 @@ export const SignupForm = () => {
 		if (!store.auth) navigate("/")
 		actions.fetchData();
 	}, [])
+
+	const validationSchema = Yup.object({
+		name: Yup.string().required("Name is required"),
+		lastname: Yup.string().required("Last name is required"),
+		dni: Yup.string()
+		  .matches(/^\d{8}$/, "DNI must be 8 digits")
+		  .required("DNI is required"),
+		address: Yup.string().required("Address is required"),
+		email: Yup.string()
+		  .email("Invalid email format")
+		  .required("Email is required"),
+		departmentId: Yup.string().required("Department is required"),
+		salaryId: Yup.string().required("Salary is required"),
+		roleId: Yup.string().required("Role is required"),
+		birthDate: Yup.string()
+		  .matches(
+			/^\d{2}\/\d{2}\/\d{4}$/,
+			"Birth date must be in the format DD/MM/YYYY"
+		  )
+		  .required("Birth date is required"),
+		password: Yup.string()
+		  .min(8, "Password must be at least 8 characters")
+		  .required("Password is required"),
+	  });
  
 	return (
 		<>
@@ -33,49 +57,28 @@ export const SignupForm = () => {
 				birthDate: "",
 				password: ""
 			  }}
-			  validate={(values) => {
-				const errors = {};
-
-				if (!/^\d{8,}$/.test(values.dni)) {
-				  errors.dni = "DNI must have at least 8 numbers.";
-				}
-
-				if (!/^\d+(\.\d{1,2})?$/.test(values.salaryId)) {
-					errors.salary = "Salary must be a valid number.";
-				  }
-
-				if (!/^\d{2}\/\d{2}\/\d{4}$/.test(values.birthDate)) {
-				  errors.birthDate = "Date format must be dd/mm/yyyy.";
-				}
-	
-				if (values.password.length < 6) {
-				  errors.password = "Password must have at least 6 characters.";
-				}
-	
-				return errors;
-			  }}
-			  
+			  validationSchema={validationSchema}
 			  onSubmit={async (values) => {
-				console.log("hola");
+				console.log(values);
 				
-				// const success = await actions.addWorker(
-				// 	values.name,
-				// 	values.lastname,
-				// 	values.dni,
-				// 	values.address,
-				// 	values.email,
-				// 	values.departmentId,
-				// 	values.salaryId,
-				// 	values.roleId,
-				// 	values.birthDate,
-				// 	values.password
-				// )
-				// if (success) {
-				// 	navigate("/profile")
-				// }
-				// else{
-                //  alert("Error adding worker")
-				// }
+				const success = await actions.addWorker(
+					values.name,
+					values.lastname,
+					values.dni,
+					values.address,
+					values.email,
+					values.departmentId,
+					values.salaryId,
+					values.roleId,
+					values.birthDate,
+					values.password
+				)
+				if (success) {
+					navigate("/profile")
+				}
+				else{
+                 alert("Error adding worker")
+				}
 			  }} 
 
 			  >
@@ -83,9 +86,15 @@ export const SignupForm = () => {
 			  <Form className="form-2">
 				<div className="input-container-2">
 				  <Field placeholder="Name" name="name" type="text" />
+				  <div className="error-container">
+                <ErrorMessage name="name" component="p" className="error" />
+              </div>
 				</div>
 				<div className="input-container-2">
 				  <Field placeholder="Last name" name="lastname" type="text"  />
+				  <div className="error-container">
+                <ErrorMessage name="lastname" component="p" className="error" />
+              </div>
 				</div>
 				<div className="input-container-2">
 				  <Field placeholder="Dni" name="dni" type="text"  />
@@ -95,6 +104,9 @@ export const SignupForm = () => {
 				</div>
 				<div className="input-container-2">
 				  <Field placeholder="Address" name="address" type="text"  />
+				  <div className="error-container">
+                <ErrorMessage name="address" component="p" className="error" />
+              </div>
 				</div>
 				<div className="input-container-2">
 				<Field as="select" name="salaryId">
@@ -103,7 +115,12 @@ export const SignupForm = () => {
 							<option key={salary.id} value={salary.id}>{salary.gross_salary}</option>
 						))}
 						</Field>
-					<span><i className="fa-light fa-dollar-sign"></i></span>
+						<div className="error-container">
+                        <ErrorMessage name="salaryId" component="p" className="error" />
+                        </div>
+					<span>
+					<i className="fa-light fa-dollar-sign"></i>
+					</span>
 				</div>
 				<div className="input-container-2">
 				<Field as="select" name="roleId">
@@ -112,6 +129,9 @@ export const SignupForm = () => {
 							<option key={role.id} value={role.id}>{role.name}</option>
 						))}
 						</Field>
+						<div className="error-container">
+                        <ErrorMessage name="roleId" component="p" className="error" />
+                        </div>
 				</div>
 				<div className="input-container-2">
 				<Field as="select" name="departmentId">
@@ -120,7 +140,12 @@ export const SignupForm = () => {
 							<option key={department.id} value={department.id}>{department.name}</option>
 						))}
 						</Field>
-					<span><i className="fa-regular fa-building"></i></span>
+						<div className="error-container">
+                        <ErrorMessage name="departmentId" component="p" className="error" />
+                        </div>
+					    <span>
+						<i className="fa-regular fa-building"></i>
+						</span>
 				</div>
 				<h5>Birth date</h5>
 				<div className="input-container-2">
@@ -134,6 +159,9 @@ export const SignupForm = () => {
 				</div>
 				<div className="input-container-2">
 				  <Field placeholder="Email" name="email" type="email"  />
+				  <div className="error-container">
+                <ErrorMessage name="email" component="p" className="error" />
+              </div>
 				  <span>
 					<svg stroke="currentColor" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 					  <path d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"></path>
@@ -155,12 +183,6 @@ export const SignupForm = () => {
 				<button className="submit-2" type="submit">
 				  Send
 				</button>
-				<p className="signup-link-2">
-				  Got an account?
-				  <Link to="/login">
-					Log in
-				  </Link>
-				</p>
 			  </Form>
 			</Formik>
 		  </div>

@@ -37,9 +37,9 @@ export const MyProfile = () => {
 									<li className="list-group-item"><strong>DNI:</strong> {store.personalData.dni}</li>
 									<li className="list-group-item"><strong>Email:</strong> {store.personalData.email}</li>
 									<li className="list-group-item"><strong>Address:</strong> {store.personalData.address}</li>
-									<li className="list-group-item"><strong>Salary:</strong> {store.personalData.salary}</li>
-									<li className="list-group-item"><strong>Department:</strong> {store.personalData.department}</li>
-									<li className="list-group-item"><strong>Role:</strong> {store.personalData.role}</li>
+									<li className="list-group-item"><strong>Salary:</strong> {store.personalData.salary?.gross_salary}</li>
+									<li className="list-group-item"><strong>Department:</strong> {store.personalData.department?.name}</li>
+									<li className="list-group-item"><strong>Role:</strong> {store.personalData.role?.name}</li>
 									<li className="list-group-item"><strong>Level:</strong> {store.personalData.level}</li>
 								</ul>
 							</div>
