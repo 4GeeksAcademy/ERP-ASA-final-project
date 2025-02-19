@@ -129,9 +129,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"email": email,
 							"password": password,
 							"birthdate": birthdate,
-							"department_id": department_id,
-							"salary_id": salary_id,
-							"role_id": role_id
+							"department_id": parseInt(department_id),
+							"salary_id":parseInt(salary_id),
+							"role_id": parseInt(role_id)
 						})
 					});
 					if (response.ok) {
