@@ -38,8 +38,8 @@ def add_worker():
     data = request.get_json()
     print("data")
     print(data)
-    # if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id', 'role_id']):
-    if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate']):
+    if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id', 'role_id']):
+    #if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate']):
         return jsonify({"message": "Missing required fields"}), 400
     try:
         new_worker = Worker(
@@ -50,12 +50,13 @@ def add_worker():
             email = data['email'],
             password = data['password'],
             birthdate = data['birthdate'],
-            # department_id = data['department_id'],
-            # salary_id = data['salary_id'],
-            # role_id = data['role_id'],
+            department_id = data['department_id'],
+            salary_id = data['salary_id'],
+            role_id = data['role_id'],
         )
 
         db.session.add(new_worker)
+        print("New Worker:", new_worker)
         db.session.commit()
 
         return jsonify({"msg": "Worker added successfully", "worker": new_worker.serialize()}), 201
@@ -139,3 +140,18 @@ def get_profile():
     email = get_jwt_identity()
     profile = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one().serialize()
     return jsonify(profile), 200
+
+@api.route('/departments', methods=['GET'])
+def get_departments():
+    departments = Department.query.all()
+    return jsonify([dept.serialize() for dept in departments]), 200
+
+@api.route('/salaries', methods=['GET'])
+def get_salaries():
+    salaries = Salary.query.all()
+    return jsonify([salary.serialize() for salary in salaries]), 200
+
+@api.route('/roles', methods=['GET'])
+def get_roles():
+    roles = Role.query.all()
+    return jsonify([role.serialize() for role in roles]), 200

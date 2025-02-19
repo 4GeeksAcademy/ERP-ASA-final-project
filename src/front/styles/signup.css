@@ -29,13 +29,13 @@
     position: relative;
   }
   
-  .input-container-2 input, .form button {
+  .input-container-2 input, .form button, select {
     outline: none;
     border: 1px solid #e5e7eb;
     margin: 8px 0;
   }
   
-  .input-container-2 input {
+  .input-container-2 input, select {
     background-color: #fff;
     padding: 1rem;
     padding-right: 3rem;
@@ -110,3 +110,4 @@ h5{
   font-size: 1rem;
   margin-top: 5px;
 }
+

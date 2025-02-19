@@ -37,9 +37,9 @@ class Worker(db.Model):
             "address": self.address,
             "email": self.email,
             "birthdate": self.birthdate,
-            "salary": self.salary_id,
-            "department": self.department_id,
-            "role": self.role_id,
+            "salary": self.salary.serialize() if self.salary else None,
+            "department": self.department.serialize() if self.department else None,
+            "role": self.role.serialize() if self.role else None
             # do not serialize the password, its a security breach
         }
 

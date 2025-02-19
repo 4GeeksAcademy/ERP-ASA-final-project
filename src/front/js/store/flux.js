@@ -9,10 +9,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
+
 			getEmployeesList: async () => {
 				try {
-					// fetching data from the backend
 					const resp = await fetch(process.env.BACKEND_URL + "/api/employees")
 					const data = await resp.json()
 
@@ -25,7 +24,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			deleteWorker: async (ids) => {
 				try {
-					// fetching data from the backend
+
 					const resp = await Promise.all(ids.map(async (id)=>{
 						const resp = fetch(process.env.BACKEND_URL + "api/employees/" + id, {method: "DELETE"})
 						return resp
@@ -116,7 +115,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const response = await fetch(process.env.BACKEND_URL + "/api/worker", {
 						method: "POST",
 						headers: {
-							"Content-Type": "application/json"
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${token}`
 						},
 						body: JSON.stringify({
 							"name": name,
@@ -131,9 +131,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"role_id": role_id
 						})
 					});
-					if (response.status === 200) {
+					if (response.ok) {
 						const result = await response.json();
 						return true;
+					} else {
+						console.error("API error:", response.status);
+						return false;
 					}
 				} catch (error) {
 					console.error("error");
