@@ -67,11 +67,11 @@ export const SignupForm = () => {
 					values.dni,
 					values.address,
 					values.email,
-					values.departmentId,
-					values.salaryId,
-					values.roleId,
+					values.password,
 					values.birthDate,
-					values.password
+					parseInt(values.departmentId),
+					parseInt(values.salaryId),
+					parseInt(values.roleId)
 				)
 				if (success) {
 					navigate("/profile")
