@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import "../../styles/navbar.css";
 import { Context } from "../store/appContext";
 import "../../styles/navbar.css"
 
 export const Navbar = () => {
-
-	const { store, actions } = useContext(Context);
+	const { actions, store } = useContext(Context); 
 
 	return (
 		<nav className="navbar navbar-expand-lg">
@@ -25,33 +25,39 @@ export const Navbar = () => {
 					<span className="navbar-toggler-icon"></span>
 				</button>
 
-				<div className="collapse navbar-collapse justify-content-end align-items-center" id="navbarContent">
-					{store.auth ?
-						<>
-							<Link to="/employees">
-								<button className="btn btn-light text-dark">Employees List</button>
-							</Link>
-							<Link to="/signup" className="ms-2">
-								<button className="btn btn-light text-dark">New Worker</button>
-							</Link>
-							<Link to="/" className="ms-2">
-								<button className="btn btn-danger text-dark" onClick={actions.logout}>Log out</button>
-							</Link>
-							<Link to="/profile" className="ms-2">
-								<img className="my-profile rounded-circle" alt="Foto del trabajador" src="https://cdn-icons-png.flaticon.com/512/3736/3736502.png" />
-							</Link>
-						</>
-						:
-						<>
-							<Link to="/login">
-								<button className="btn btn-light text-dark me-2">Login</button>
-							</Link>
-						</>
-					}
+				<div className="collapse navbar-collapse justify-content-end" id="navbarContent">
+					<div className="d-flex">
+						<div className="dropdown">
+							<button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+								Options
+							</button>
+							<ul className="dropdown-menu">
+								{store.auth ? (
+									<>
+										<li className="dropdown-item">
+											<Link to="/employees">Employees List</Link>
+										</li>
+										<li className="dropdown-item">
+											<Link to="/signup">New Worker</Link>
+										</li>
+										<li className="dropdown-item">
+											<Link to="/" onClick={actions.logout}>Log Out</Link>
+										</li>
+										<li className="dropdown-item">
+											<Link to="/profile">Profile</Link>
+										</li>
+									</>
+								) : (
+									<li className="dropdown-item">
+										<Link to="/login">Login</Link>
+									</li>
+								)}
+							</ul>
+						</div>
+					</div>
 				</div>
 			</div>
 		</nav>
 	);
 };
-
 
