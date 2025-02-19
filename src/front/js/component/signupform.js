@@ -20,7 +20,7 @@ export const SignupForm = () => {
     const [roleId, setRoleId] = useState("")
     const {store,actions} = useContext(Context)
 
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
 	useEffect(()=>{
 		if (!store.auth) navigate("/")

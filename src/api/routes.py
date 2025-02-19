@@ -39,7 +39,6 @@ def add_worker():
     print("data")
     print(data)
     if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id', 'role_id']):
-    #if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate']):
         return jsonify({"message": "Missing required fields"}), 400
     try:
         new_worker = Worker(
@@ -55,6 +54,7 @@ def add_worker():
             role_id = data['role_id'],
         )
 
+        new_worker.set_password(data['password'])
         db.session.add(new_worker)
         print("New Worker:", new_worker)
         db.session.commit()
@@ -119,7 +119,7 @@ def login():
         password = request.json.get("password", None)
         user = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one()
 
-        if password == user.password:
+        if user and user.check_password(password):
             access_token = create_access_token(identity=email, expires_delta=timedelta(hours = 1))
             return jsonify(access_token=access_token)
         

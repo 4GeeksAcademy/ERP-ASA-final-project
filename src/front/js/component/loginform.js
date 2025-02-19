@@ -8,13 +8,17 @@ export const LoginForm = () => {
     const [password, setPassword] = useState("")
     const {store,actions} = useContext(Context)
 
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
-    async function handleSubmit(e) {
-        e.preventDefault()
-        actions.login(email,password);
-		navigate("/profile")
-    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const success = await actions.login(email, password);
+        if (success) {
+            navigate("/profile");
+        } else {
+            alert("Email o contraseña incorrectos");
+        }
+    };
 
 
 	return (
@@ -31,7 +35,7 @@ export const LoginForm = () => {
 						</span>
 					</div>
 					<div className="input-container">
-						<input placeholder="Enter password" type="password" onChange={(e)=>setPassword(e.target.value)}/>
+						<input placeholder="Enter password" type="password" value={password} onChange={(e)=>setPassword(e.target.value)}/>
 						<span>
 							<svg stroke="currentColor" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"></path>
