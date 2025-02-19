@@ -25,6 +25,7 @@ export const TableList = () => {
 							<th scope="col">Email</th>
 							<th scope="col">Department</th>
 							<th scope="col">Role</th>
+							<th scope="col">Salary</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -39,8 +40,9 @@ export const TableList = () => {
 										<td>{item.name}</td>
 										<td>{item.lastname}</td>
 										<td>{item.email}</td>
-										<td>{item.department_id}</td>
-										<td>{item.role_id}</td>
+										<td>{item.department ? item.department.name : "No Department"}</td>
+										<td>{item.role ? item.role.name : "No Role"}</td>
+										<td>{item.salary ? item.salary.gross_salary : "No Data"}</td>
 									</tr>
 								)
 							})
