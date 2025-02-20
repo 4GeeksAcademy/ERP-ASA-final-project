@@ -9,7 +9,8 @@ import { useNavigate } from "react-router-dom";
 export const SignupForm = () => {
 
     const {store,actions} = useContext(Context)
-    let navigate = useNavigate();
+    const navigate = useNavigate();
+
 
 	useEffect(()=>{
 		if (!store.auth) navigate("/")

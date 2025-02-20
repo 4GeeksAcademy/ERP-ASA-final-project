@@ -1,7 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy.orm import mapped_column, relationship, validates
 from typing import List
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
@@ -14,7 +15,7 @@ class Worker(db.Model):
     dni = db.Column(db.String(20), unique=True, nullable=False)
     address = db.Column(db.String(80), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(20), unique=False, nullable=False)
+    password_hash = db.Column(db.String(255), unique=False, nullable=False)
     birthdate = db.Column(db.String(20), unique=False, nullable=False)
 
     department_id = mapped_column(ForeignKey("department_table.id"))
@@ -24,6 +25,28 @@ class Worker(db.Model):
     department = relationship("Department", back_populates="worker")
     salary = db.relationship("Salary", back_populates="worker")
     role = db.relationship("Role", back_populates="worker")
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    @validates('password_hash')
+    def encrypt_password(self, key, password):
+        """Se ejecuta automáticamente al crear o actualizar un usuario en Flask-Admin"""
+        if password and not password.startswith('pbkdf2:sha256'):  # Evita doble encriptación
+            return generate_password_hash(password)
+        return password
+
+    @property
+    def password(self):
+        raise AttributeError("La contraseña no se puede leer directamente")
+
+    @password.setter
+    def password(self, password):
+        """Setter que encripta la contraseña cuando se asigna"""
+        self.password_hash = generate_password_hash(password)
 
     def __repr__(self):
         return f'<Worker {self.id}>'
