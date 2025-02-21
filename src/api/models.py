@@ -78,7 +78,7 @@ class Department(db.Model):
     role = db.relationship("Role", back_populates='department')
 
     def __repr__(self):
-        return f'<Department {self.id}>'
+        return self.name
 
     def serialize(self):
         return {
@@ -100,7 +100,7 @@ class Role(db.Model):
     department = db.relationship("Department", back_populates="role")
 
     def __repr__(self):
-        return f'<Role {self.id}>'
+        return self.name
 
     def serialize(self):
         return {
@@ -117,7 +117,7 @@ class Salary(db.Model):
     worker = db.relationship("Worker", back_populates="salary")
 
     def __repr__(self):
-        return f'<User {self.id}>'
+        return self.gross_salary
 
     def serialize(self):
         return {
