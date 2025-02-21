@@ -1,17 +1,13 @@
-/* 
-    General Styles used on every website (Don't Repeat Yourself)
-*/
+/*
+    home.css: This website contains selectors only used in home.css
 
-.navbar-toggler-icon {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255,255,255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
-}
-.logo{
-  height:60px;
-}
-.navbar{
-  background-color:#2D336B;
-}
-.form {
+    All pages share the styles on index.css but you should create 
+    one more css for each page that will contain the selected used 
+    on that page only (the ones not reused in other pages).
+*/
+.form-2{
+    width: fit-content;
+    margin-left: 15px;
     background-color: #fff;
     display: block;
     justify-content: flex-start;
@@ -19,9 +15,8 @@
     max-width: 350px;
     border-radius: 0.5rem;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  }
-  
-  .form-title {
+}
+.form-title-2 {
     font-size: 3.0rem;
     line-height: 3.0rem;
     font-weight: 600;
@@ -30,17 +25,18 @@
     margin-top: 70px;
   }
   
-  .input-container {
+  .input-container-2 {
     position: relative;
+    margin-bottom: 1rem;
   }
   
-  .input-container input, .form button {
+  .input-container-2 input, .form button, select {
     outline: none;
     border: 1px solid #e5e7eb;
     margin: 8px 0;
   }
   
-  .input-container input {
+  .input-container-2 input, select {
     background-color: #fff;
     padding: 1rem;
     padding-right: 3rem;
@@ -51,7 +47,7 @@
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   }
   
-  .input-container span {
+  .input-container-2 span {
     display: grid;
     position: absolute;
     top: 0;
@@ -62,13 +58,13 @@
     place-content: center;
   }
   
-  .input-container span svg {
+  .input-container-2 span svg {
     color: #9CA3AF;
     width: 1rem;
     height: 1rem;
   }
   
-  .submit {
+  .submit-2 {
     display: block;
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
@@ -82,16 +78,17 @@
     width: 100%;
     border-radius: 0.5rem;
     text-transform: uppercase;
+    border: 1px solid #e5e7eb;
   }
   
-  .signup-link {
+  .signup-link-2 {
     color: black;
     font-size: 0.875rem;
     line-height: 1.25rem;
     text-align: center;
   }
   
-  .signup-link a {
+  .signup-link-2 a {
     text-decoration: underline;
     margin-left: 8px;
   }
@@ -100,11 +97,11 @@
     align-items: center;
     justify-content: center;
 }
-.signup-link{
+.signup-link-2{
     margin-right: 100px;
     margin-top: 15px;
 }
-.form{
+.form-2{
     background:#A9B5DF;
 }
 .detail{
@@ -113,5 +110,17 @@
 h5{
   font-size: 1rem;
   margin-top: 5px;
-
+}
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+  position: absolute;
+}
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  margin-bottom: 30px;
 }

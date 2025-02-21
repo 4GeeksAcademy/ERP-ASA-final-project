@@ -1,0 +1,33 @@
+*{
+    font-size: 16px;
+}
+.search-input:focus { 
+    outline: none;
+}
+ .btn{
+    color: #2D336B;
+    border: 1px solid #2D336B;
+}
+ #searchForm{
+    border: 1px solid #2D336B;
+}
+.list{
+    overflow: auto;
+}
+tr th, tr td{
+    border: 1px solid #2D336B;
+    color: #2D336B;
+}
+thead{
+    background-color: #A8C6FA;
+    color: #2D336B;
+}
+th, td{
+    text-align: center;
+}
+
+@media (max-width: 425px) {
+    *{
+        font-size: 10px;
+    }
+  }

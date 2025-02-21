@@ -1,52 +1,182 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			message: "hola",
+			employeesList: [],
+			selected: [],
+			auth: false,
+			personalData: {},
+			departments: [],
+            salaries: [],
+            roles: []
+
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
 
-			getMessage: async () => {
-				try{
-					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
+			getEmployeesList: async () => {
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + "/api/employees")
 					const data = await resp.json()
-					setStore({ message: data.message })
-					// don't forget to return something, that is how the async resolves
-					return data;
-				}catch(error){
+
+					setStore({ employeesList: data.results })
+					return true;
+				} catch (error) {
 					console.log("Error loading message from backend", error)
+					return false;
 				}
 			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
+			deleteWorker: async (ids) => {
+				try {
 
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
+					const resp = await Promise.all(ids.map(async (id)=>{
+						const resp = fetch(process.env.BACKEND_URL + "api/employees/" + id, {method: "DELETE"})
+						return resp
+					}))
+
+					const datos = resp.map(async (response)=>{
+						const dato = await response.json()
+						console.log(dato.results);
+						setStore({ employeesList: dato.results })
+						return dato.results
+					})
+					
+					setStore({ selected: [] })
+					
+					return true;
+				} catch (error) {
+					console.log("Error loading message from backend", error)
+					return false;
+				}
+			},
+			setSelected: (id) => {
+				const selected = [...getStore().selected]
+				
+				if (selected.some((item_id) => item_id === id)){
+					let test;
+					test = selected.filter((item) => item !== id)
+					setStore({selected: test})
+				} else {
+					selected.push(id);
+					setStore({selected: selected})
+				}
+				
+				console.log(getStore().selected);
+
+			},
+			login: async (email, password) => {
+				const myHeaders = new Headers();
+				myHeaders.append("Content-Type", "application/json");
+
+				const raw = JSON.stringify({
+					"email": email,
+					"password": password
 				});
 
-				//reset the global store
-				setStore({ demo: demo });
-			}
+				const requestOptions = {
+					method: "POST",
+					headers: myHeaders,
+					body: raw,
+					redirect: "follow"
+				};
+
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/login", requestOptions);
+					const result = await response.json();
+					
+					if (response.status === 200) {
+						setStore({auth: true})
+						localStorage.setItem("token", result.access_token)
+						return true;
+					}
+				} catch (error) {
+					console.log(false);
+					return false;
+				};
+			},
+			getProfile: async () => {
+				let token = localStorage.getItem("token")
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/profile", {
+						method: "GET",
+						headers: {
+							"Authorization": `Bearer ${token}`
+						},
+					});
+					if (response.status === 200) {
+						const result = await response.json();
+						setStore({personalData: result})
+						return true;
+					}
+				} catch (error) {
+					console.error(error);
+					return false
+				};
+			},
+			addWorker: async (name, last_name, dni, address, email, password, birthdate, department_id, salary_id, role_id) => {
+				let token = localStorage.getItem("token")
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/worker", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${token}`
+						},
+						body: JSON.stringify({
+							"name": name,
+							"last_name": last_name,
+							"dni": dni,
+							"address": address,
+							"email": email,
+							"password": password,
+							"birthdate": birthdate,
+							"department_id": parseInt(department_id),
+							"salary_id":parseInt(salary_id),
+							"role_id": parseInt(role_id)
+						})
+					});
+					if (response.ok) {
+						const result = await response.json();
+						return true;
+					} else {
+						console.error("API error:", response.status);
+						return false;
+					}
+				} catch (error) {
+					console.error("error");
+					console.error(error);
+					return false
+				};
+			},
+			changeAuth: () => {
+				setStore({auth: !getStore().auth})
+			},
+			resetSelected: () => {
+				setStore({selected: []})
+			},
+			logout:()=>{
+				//borrar el token del localStorage
+				setStore({auth: false})
+				localStorage.removeItem("token")
+			},
+			fetchData: async () => {
+                try {
+                    const deptResponse = await fetch(process.env.BACKEND_URL + "/api/departments");
+                    const salaryResponse = await fetch(process.env.BACKEND_URL + "/api/salaries");
+                    const roleResponse = await fetch(process.env.BACKEND_URL + "/api/roles");
+
+                    const deptData = await deptResponse.json();
+                    const salaryData = await salaryResponse.json();
+                    const roleData = await roleResponse.json();
+
+                    setStore({
+                        departments: deptData,
+                        salaries: salaryData,
+                        roles: roleData
+                    });
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            }
 		}
 	};
 };

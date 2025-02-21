@@ -1,24 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy.orm import mapped_column, relationship, validates
 from typing import List
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
-
-# class User(db.Model):
-#     __tablename__ = "user_table"
-
-#     id = db.Column(db.Integer, primary_key=True)
-
-#     def __repr__(self):
-#         return f'<User {self.id}>'
-
-#     def serialize(self):
-#         return {
-#             "id": self.id,
-
-#             # do not serialize the password, its a security breach
-#         }
 
 class Worker(db.Model):
     __tablename__ = "worker_table"
@@ -29,16 +15,38 @@ class Worker(db.Model):
     dni = db.Column(db.String(20), unique=True, nullable=False)
     address = db.Column(db.String(80), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(20), unique=False, nullable=False)
-    sub_date = db.Column(db.String(20), unique=False, nullable=False)
+    password_hash = db.Column(db.String(255), unique=False, nullable=False)
+    birthdate = db.Column(db.String(20), unique=False, nullable=False)
 
     department_id = mapped_column(ForeignKey("department_table.id"))
     salary_id = mapped_column(ForeignKey("salary_table.id"))
     role_id = mapped_column(ForeignKey("role_table.id"))
 
-    department = relationship("Department", back_populates="worker", foreign_keys=[department_id])
+    department = relationship("Department", back_populates="worker")
     salary = db.relationship("Salary", back_populates="worker")
     role = db.relationship("Role", back_populates="worker")
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    @validates('password_hash')
+    def encrypt_password(self, key, password):
+        """Se ejecuta automáticamente al crear o actualizar un usuario en Flask-Admin"""
+        if password and not password.startswith('pbkdf2:sha256'):  # Evita doble encriptación
+            return generate_password_hash(password)
+        return password
+
+    @property
+    def password(self):
+        raise AttributeError("La contraseña no se puede leer directamente")
+
+    @password.setter
+    def password(self, password):
+        """Setter que encripta la contraseña cuando se asigna"""
+        self.password_hash = generate_password_hash(password)
 
     def __repr__(self):
         return f'<Worker {self.id}>'
@@ -51,10 +59,10 @@ class Worker(db.Model):
             "dni": self.dni,
             "address": self.address,
             "email": self.email,
-            "sub_date": self.sub_date,
-            "salary": self.salary,
-            "department": self.department,
-            "role": self.role,
+            "birthdate": self.birthdate,
+            "salary": self.salary.serialize() if self.salary else None,
+            "department": self.department.serialize() if self.department else None,
+            "role": self.role.serialize() if self.role else None
             # do not serialize the password, its a security breach
         }
 
@@ -66,15 +74,11 @@ class Department(db.Model):
     name = db.Column(db.String(80), unique=False, nullable=True)
     description = db.Column(db.String(800), unique=False, nullable=False)
 
-    boss_id = mapped_column(ForeignKey("worker_table.id"))
-
-    boss = relationship("Worker", foreign_keys=[boss_id])
-    worker = relationship('Worker', back_populates='department', foreign_keys="[Worker.department_id]")
+    worker = relationship('Worker', back_populates='department')
     role = db.relationship("Role", back_populates='department')
-    offer = db.relationship("Offer")
 
     def __repr__(self):
-        return f'<Department {self.id}>'
+        return self.name
 
     def serialize(self):
         return {
@@ -94,10 +98,9 @@ class Role(db.Model):
     
     worker = relationship('Worker', back_populates='role')
     department = db.relationship("Department", back_populates="role")
-    offer = db.relationship("Offer")
 
     def __repr__(self):
-        return f'<Role {self.id}>'
+        return self.name
 
     def serialize(self):
         return {
@@ -112,10 +115,9 @@ class Salary(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     gross_salary = db.Column(db.Integer, unique=False, nullable=True)
     worker = db.relationship("Worker", back_populates="salary")
-    offer = db.relationship("Offer")
 
     def __repr__(self):
-        return f'<User {self.id}>'
+        return self.gross_salary
 
     def serialize(self):
         return {
@@ -131,10 +133,6 @@ class Offer(db.Model):
     title = db.Column(db.String(80), unique=False, nullable=True)
     description = db.Column(db.String(800), unique=False, nullable=False)
     requirements = db.Column(db.String(800), unique=False, nullable=False)
-
-    department_id = mapped_column(ForeignKey("department_table.id"))
-    role_id = mapped_column(ForeignKey("role_table.id"))
-    salary_id = mapped_column(ForeignKey("salary_table.id"))
 
     def __repr__(self):
         return f'<User {self.id}>'
