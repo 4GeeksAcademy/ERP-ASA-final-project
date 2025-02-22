@@ -1,6 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import mapped_column, relationship, validates
+import re
+from datetime import datetime
 from typing import List
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -38,6 +40,35 @@ class Worker(db.Model):
         if password and not password.startswith('pbkdf2:sha256'):  # Evita doble encriptación
             return generate_password_hash(password)
         return password
+    
+    @validates('email')
+    def validate_email(self, key, email):
+        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if not re.match(email_regex, email):
+            raise ValueError('Email format is not valid')
+        return email
+
+
+    @validates('dni')
+    def validate_dni(self, key, dni):
+        if not dni.isdigit() or len(dni) != 8:
+            raise ValueError('Dni must have at least 8 digits')
+        return dni
+
+    @validates('birthdate')
+    def validate_birthdate(self, key, birthdate):
+        date_pattern = r'^\d{2}/\d{2}/\d{4}$'
+        if not re.match(date_pattern, birthdate):
+            raise ValueError('Birthdate format must be DD/MM/YYYY')
+        try:
+            datetime.strptime(birthdate, "%d/%m/%Y")
+        except ValueError:
+            raise ValueError('Birthdate is not valid')
+        return birthdate
+
+        
+
+       
 
     @property
     def password(self):
@@ -78,7 +109,7 @@ class Department(db.Model):
     role = db.relationship("Role", back_populates='department')
 
     def __repr__(self):
-        return f'<Department {self.id}>'
+        return self.name
 
     def serialize(self):
         return {
@@ -100,7 +131,7 @@ class Role(db.Model):
     department = db.relationship("Department", back_populates="role")
 
     def __repr__(self):
-        return f'<Role {self.id}>'
+        return self.name
 
     def serialize(self):
         return {
@@ -113,11 +144,17 @@ class Salary(db.Model):
     __tablename__ = "salary_table"
 
     id = db.Column(db.Integer, primary_key=True)
-    gross_salary = db.Column(db.Integer, unique=False, nullable=True)
+    gross_salary = db.Column(db.Integer, unique=False, nullable=False)
     worker = db.relationship("Worker", back_populates="salary")
 
+    @validates('gross_salary')
+    def validate_salary(self, key, gross_salary):
+        if gross_salary is None or gross_salary <= 0:
+            raise ValueError('Salary must be a positive number')
+        return gross_salary
+
     def __repr__(self):
-        return f'<User {self.id}>'
+        return self.gross_salary
 
     def serialize(self):
         return {
