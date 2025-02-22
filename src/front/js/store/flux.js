@@ -35,7 +35,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					resp.map(async (response)=>{
 						const dato = await response.json()
-						console.log(dato.results);
 						setStore({ employeesList: dato.results })
 						return true
 					})
@@ -59,9 +58,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					selected.push(id);
 					setStore({selected: selected})
 				}
-				
-				console.log(getStore().selected);
-
 			},
 			login: async (email, password) => {
 				const myHeaders = new Headers();

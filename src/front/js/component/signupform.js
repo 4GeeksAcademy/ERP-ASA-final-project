@@ -14,14 +14,13 @@ export const SignupForm = () => {
 	useEffect(() => {
 		if (!store.auth) navigate("/")
 		actions.fetchData();
-		console.log(store.workerData);
 	}, [store.workerData])
 
 	const validationSchema = Yup.object({
 		name: Yup.string().required("Name is required"),
 		lastname: Yup.string().required("Last name is required"),
 		dni: Yup.string()
-			.matches(/^[a-zA-Z0-9]{5,10}$/, "DNI must be real")
+		.matches(/^\d{8}$/, "DNI must be 8 digits")
 			.required("DNI is required"),
 		address: Yup.string().required("Address is required"),
 		email: Yup.string()
