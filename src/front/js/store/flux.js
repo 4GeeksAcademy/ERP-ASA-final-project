@@ -8,7 +8,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			personalData: {},
 			departments: [],
             salaries: [],
-            roles: []
+            roles: [],
+			offers: []
 
 		},
 		actions: {
@@ -136,6 +137,36 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					if (response.ok) {
 						const result = await response.json();
+						return true;
+					} else {
+						console.error("API error:", response.status);
+						return false;
+					}
+				} catch (error) {
+					console.error("error");
+					console.error(error);
+					return false
+				};
+			},addOffer: async (title, description, requirements) => {
+				let token = localStorage.getItem("token")
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/offer",{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${token}`
+						},
+						body: JSON.stringify({
+							"title": title,
+							"description": description,
+							"requirements": requirements
+						})
+					});
+					if (response.ok) {
+						const result = await response.json();
+						setStore({
+							offers: [...getStore().offers, result.offer]
+						});
 						return true;
 					} else {
 						console.error("API error:", response.status);

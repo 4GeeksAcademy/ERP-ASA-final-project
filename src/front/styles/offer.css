@@ -1,0 +1,14 @@
+.form-container{
+   width: fit-content;
+   display: block;
+   margin: auto;
+}
+.buttons{
+    display: flex;
+    justify-content: space-between; 
+    width: 100%; 
+    gap: 10px; 
+}
+.submit-2{
+    background-color: rgb(205, 2, 2);
+}

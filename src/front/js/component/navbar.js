@@ -41,6 +41,9 @@ export const Navbar = () => {
 											<Link to="/signup">New Worker</Link>
 										</li>
 										<li className="dropdown-item">
+											<Link to="/offers">Create offer</Link>
+										</li>
+										<li className="dropdown-item">
 											<Link to="/" onClick={actions.logout}>Log Out</Link>
 										</li>
 										<li className="dropdown-item">
