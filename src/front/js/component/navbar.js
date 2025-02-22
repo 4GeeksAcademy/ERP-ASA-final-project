@@ -24,7 +24,10 @@ export const Navbar = () => {
 											<Link to="/employees">Employees List</Link>
 										</li>
 										<li className="dropdown-item">
-											<Link to="/signup" onClick={() => actions.resetWorkerData()}>New Worker</Link>
+											<Link to="/signup">New Worker</Link>
+										</li>
+										<li className="dropdown-item">
+											<Link to="/offers">Create offer</Link>
 										</li>
 										<li className="dropdown-item">
 											<Link to="/profile">My profile</Link>
