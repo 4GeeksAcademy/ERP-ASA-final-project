@@ -55,7 +55,7 @@ class Worker(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "lastname": self.last_name,
+            "last_name": self.last_name,
             "dni": self.dni,
             "address": self.address,
             "email": self.email,
@@ -71,8 +71,8 @@ class Department(db.Model):
     __tablename__ = "department_table"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=False, nullable=True)
-    description = db.Column(db.String(800), unique=False, nullable=False)
+    name = db.Column(db.String(80), unique=False, nullable=False)
+    description = db.Column(db.String(800), unique=False, nullable=True)
 
     worker = relationship('Worker', back_populates='department')
     role = db.relationship("Role", back_populates='department')

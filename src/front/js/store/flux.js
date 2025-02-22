@@ -6,13 +6,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 			selected: [],
 			auth: false,
 			personalData: {},
+			workerData: {},
 			departments: [],
             salaries: [],
-            roles: []
+            roles: [],
 
 		},
 		actions: {
-
 			getEmployeesList: async () => {
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + "/api/employees")
@@ -27,17 +27,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			deleteWorker: async (ids) => {
 				try {
-
 					const resp = await Promise.all(ids.map(async (id)=>{
 						const resp = fetch(process.env.BACKEND_URL + "api/employees/" + id, {method: "DELETE"})
 						return resp
 					}))
 
-					const datos = resp.map(async (response)=>{
+					resp.map(async (response)=>{
 						const dato = await response.json()
 						console.log(dato.results);
 						setStore({ employeesList: dato.results })
-						return dato.results
+						return true
 					})
 					
 					setStore({ selected: [] })
@@ -112,6 +111,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false
 				};
 			},
+			getWorkerData: (id) => {
+				const result = getStore().employeesList.filter((worker)=>worker.id == id)[0]
+				setStore({workerData: result})
+				return true
+			},
+			resetWorkerData: () => {
+				setStore({workerData: {}})
+				return true
+			},
 			addWorker: async (name, last_name, dni, address, email, password, birthdate, department_id, salary_id, role_id) => {
 				let token = localStorage.getItem("token")
 				try {
@@ -122,6 +130,42 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"Authorization": `Bearer ${token}`
 						},
 						body: JSON.stringify({
+							"name": name,
+							"last_name": last_name,
+							"dni": dni,
+							"address": address,
+							"email": email,
+							"password": password,
+							"birthdate": birthdate,
+							"department_id": parseInt(department_id),
+							"salary_id":parseInt(salary_id),
+							"role_id": parseInt(role_id)
+						})
+					});
+					if (response.ok) {
+						const result = await response.json();
+						console.log(result);
+						return true;
+					} else {
+						console.error("API error:", response.status);
+						return false;
+					}
+				} catch (error) {
+					console.error(error);
+					return false
+				};
+			},
+			editWorker: async (id, name, last_name, dni, address, email, password, birthdate, department_id, salary_id, role_id) => {
+				let token = localStorage.getItem("token")
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/worker", {
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${token}`
+						},
+						body: JSON.stringify({
+							"id": id,
 							"name": name,
 							"last_name": last_name,
 							"dni": dni,
@@ -154,7 +198,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({selected: []})
 			},
 			logout:()=>{
-				//borrar el token del localStorage
 				setStore({auth: false})
 				localStorage.removeItem("token")
 			},

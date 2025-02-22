@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
+import { useNavigate, Link } from "react-router-dom";
 
 export const TableList = () => {
 
@@ -7,6 +8,7 @@ export const TableList = () => {
 
 	useEffect(() => {
 		actions.getEmployeesList();
+		
 	}, [])
 
 
@@ -36,10 +38,10 @@ export const TableList = () => {
 										<th className="check-row text-end bg-white border-0">
 											<input type="checkbox" name="id" value={item.id} onClick={() => actions.setSelected(item.id)}/>
 										</th>
-										<th scope="row">{index + 1}</th>
-										<td>{item.name}</td>
-										<td>{item.lastname}</td>
-										<td>{item.email}</td>
+										<th scope="row"><Link to={"/worker/" + item.id}>{index + 1}</Link></th>
+										<td><Link to={"/worker/" + item.id}>{item.name}</Link></td>
+										<td><Link to={"/worker/" + item.id}>{item.last_name}</Link></td>
+										<td><Link to={"/worker/" + item.id}>{item.email}</Link></td>
 										<td>{item.department ? item.department.name : "No Department"}</td>
 										<td>{item.role ? item.role.name : "No Role"}</td>
 										<td>{item.salary ? item.salary.gross_salary : "No Data"}</td>

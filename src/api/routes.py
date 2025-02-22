@@ -62,9 +62,39 @@ def add_worker():
         return jsonify({"msg": "Worker added successfully", "worker": new_worker.serialize()}), 201
     
     except Exception as err:
+        print("err")
         print(err)
         db.session.rollback()
         return jsonify({"msg": "Error adding worker"}), 500
+    
+@api.route('/worker', methods=['PUT'])
+def edit_worker():
+    data = request.get_json()
+    if not all(key in data for key in ['id', 'name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id', 'role_id']):
+        return jsonify({"message": "Missing required fields"}), 400
+    
+    try:
+        worker = db.session.execute(select(Worker).filter_by(id=data['id'])).scalar_one()
+        
+        worker.id = data["id"]
+        worker.name = data["name"]
+        worker.last_name = data["last_name"]
+        worker.dni = data["dni"]
+        worker.address = data["address"]
+        worker.email = data["email"]
+        worker.birthdate = data["birthdate"]
+        worker.department_id = data["department_id"]
+        worker.salary_id = data["salary_id"]
+        worker.role_id = data["role_id"]
+        worker.set_password(data['password'])
+        db.session.commit()
+
+        return jsonify({"msg": "Worker edit successfully", "worker": worker.serialize()}), 201
+    
+    except Exception as err:
+        print(err)
+        db.session.rollback()
+        return jsonify({"msg": "Error updating worker"}), 500
     
 
 @api.route('/employees/<int:id>', methods=['DELETE'])
@@ -89,6 +119,7 @@ def delete_worker(id):
     except Exception as err:
         print(err)
         return "An error has occurred", 400
+
     
 @api.route('/offer', methods=['POST'])
 def add_offer():
