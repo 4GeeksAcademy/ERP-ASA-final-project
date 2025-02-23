@@ -1,8 +1,14 @@
 """empty message
 
-Revision ID: c20bdcb0c7c6
+<<<<<<<< HEAD:migrations/versions/9de050aeb3cb_.py
+Revision ID: 9de050aeb3cb
 Revises: 
-Create Date: 2025-02-19 19:36:24.551379
+Create Date: 2025-02-21 09:38:41.518374
+========
+Revision ID: 9859f1478b38
+Revises: 
+Create Date: 2025-02-21 18:45:04.879525
+>>>>>>>> 12e86c91a971cbaa5bda29d608a67f545844009d:migrations/versions/9859f1478b38_.py
 
 """
 from alembic import op
@@ -10,7 +16,11 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c20bdcb0c7c6'
+<<<<<<<< HEAD:migrations/versions/9de050aeb3cb_.py
+revision = '9de050aeb3cb'
+========
+revision = '9859f1478b38'
+>>>>>>>> 12e86c91a971cbaa5bda29d608a67f545844009d:migrations/versions/9859f1478b38_.py
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -51,7 +61,7 @@ def upgrade():
     sa.Column('dni', sa.String(length=20), nullable=False),
     sa.Column('address', sa.String(length=80), nullable=False),
     sa.Column('email', sa.String(length=120), nullable=False),
-    sa.Column('password_hash', sa.String(length=20), nullable=False),
+    sa.Column('password_hash', sa.String(length=255), nullable=False),
     sa.Column('birthdate', sa.String(length=20), nullable=False),
     sa.Column('department_id', sa.Integer(), nullable=True),
     sa.Column('salary_id', sa.Integer(), nullable=True),
