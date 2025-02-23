@@ -7,7 +7,8 @@ export const Signup = () => {
 	const { store, actions } = useContext(Context);
 
 	return (
-		<div className="form-style">
+		<div className="form-style flex-column">
+			<p className="form-title-2 mt-2">{store.workerData.id ? "Update worker data" : "Add a new worker"}</p>
 			<SignupForm/>
 		</div>
 	);

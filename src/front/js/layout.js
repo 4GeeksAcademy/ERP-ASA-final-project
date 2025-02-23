@@ -9,6 +9,7 @@ import { Signup } from "./pages/signup";
 import { Offer } from "./component/offerForm";
 import { Employees } from "./pages/employees";
 import { Profile } from "./pages/profile";
+import { WorkerData } from "./pages/workerData";
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -36,6 +37,7 @@ const Layout = () => {
                         <Route element={<Employees />} path="/employees" />
                         <Route element={<Offer />} path="/offers" />
                         <Route element={<Profile />} path="/profile" />
+                        <Route element={<WorkerData />} path="/worker/:id" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />

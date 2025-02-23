@@ -1,9 +1,14 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/home.css";
-import { LoginForm } from "../component/loginform";
 
 export const Home = () => {
+
+	const { store, actions } = useContext(Context);
+	
+		useEffect(()=>{
+			actions.resetWorkerData()
+		}, [])
 	
 	return (
 	<div className="container my-5">
