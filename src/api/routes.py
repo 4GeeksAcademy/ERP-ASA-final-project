@@ -18,16 +18,32 @@ CORS(api)
 
 
 @api.route('/employees', methods=['GET'])
+@jwt_required()
 def get_employees():
+    department = get_jwt_claims().get('department', None)
     try:
-        data = db.session.scalars(select(Worker)).all()
-        results = list(map(lambda item: item.serialize(), data))
-        
-        response_body = {
-            "results": results
-        }
+        if department != "RRHH":
+            data = db.session.scalars(select(Worker)).all()
+            results = list(map(lambda item: {
+                "name": item.name,
+                "last_name": item.last_name,
+                "department": item.department.name,  # Suponiendo que la relación 'department' existe
+                "role": item.role.name  # Suponiendo que la relación 'role' existe
+            }, data))
+            response_body = {
+                "results": results
+            }
 
-        return jsonify(response_body), 200
+            return jsonify(response_body), 200
+        else:
+            data = db.session.scalars(select(Worker)).all()
+            results = list(map(lambda item: item.serialize(), data))
+            
+            response_body = {
+                "results": results
+            }
+
+            return jsonify(response_body), 200
     
     except Exception  as err:
         print(err)
@@ -120,8 +136,13 @@ def login():
         user = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one()
 
         if user and user.check_password(password):
-            access_token = create_access_token(identity=email, expires_delta=timedelta(hours = 1))
-            return jsonify(access_token=access_token)
+            # Creamos un token con email como identity y department en claims
+            access_token = create_access_token(
+                identity=email,  # identity sigue siendo el email
+                expires_delta=timedelta(hours=1),
+                additional_claims={"department": user.department.name}  # Agregamos el departamento
+            )
+            return jsonify(access_token=access_token), 200
         
 
         return jsonify({"msg": "Bad email or password"}), 401

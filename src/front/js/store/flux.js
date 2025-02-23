@@ -66,51 +66,81 @@ const getState = ({ getStore, getActions, setStore }) => {
 			login: async (email, password) => {
 				const myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
-
+			
 				const raw = JSON.stringify({
 					"email": email,
 					"password": password
 				});
-
+			
 				const requestOptions = {
 					method: "POST",
 					headers: myHeaders,
 					body: raw,
 					redirect: "follow"
 				};
-
+			
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/login", requestOptions);
 					const result = await response.json();
-					
+			
 					if (response.status === 200) {
-						setStore({auth: true})
-						localStorage.setItem("token", result.access_token)
+						const token = result.access_token;
+						localStorage.setItem("token", token);
+			
+						// Decodificar el token para extraer el departamento
+						const payload = JSON.parse(atob(token.split(".")[1])); // Decodifica el JWT
+						setStore({ auth: true, personalData: { department: payload.department } });
+			
 						return true;
 					}
 				} catch (error) {
-					console.log(false);
+					console.log("Login failed", error);
 					return false;
-				};
+				}
 			},
+			// getProfile: async () => {
+			// 	let token = localStorage.getItem("token")
+			// 	try {
+			// 		const response = await fetch(process.env.BACKEND_URL + "/api/profile", {
+			// 			method: "GET",
+			// 			headers: {
+			// 				"Authorization": `Bearer ${token}`
+			// 			},
+			// 		});
+			// 		if (response.status === 200) {
+			// 			const result = await response.json();
+			// 			setStore({personalData: result})
+			// 			return true;
+			// 		}
+			// 	} catch (error) {
+			// 		console.error(error);
+			// 		return false
+			// 	};
+			// },
 			getProfile: async () => {
-				let token = localStorage.getItem("token")
+				let token = localStorage.getItem("token");
+			
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/profile", {
 						method: "GET",
 						headers: {
-							"Authorization": `Bearer ${token}`
+							"Authorization": `Bearer ${token}`,
+							"Content-Type": "application/json"
 						},
 					});
+			
 					if (response.status === 200) {
 						const result = await response.json();
-						setStore({personalData: result})
+						setStore({ personalData: result });
 						return true;
+					} else {
+						console.error(`Error ${response.status}: ${await response.text()}`);
+						return false; // Asegurar que siempre haya un return
 					}
 				} catch (error) {
-					console.error(error);
-					return false
-				};
+					console.error("Error en getProfile:", error);
+					return false;
+				}
 			},
 			addWorker: async (name, last_name, dni, address, email, password, birthdate, department_id, salary_id, role_id) => {
 				let token = localStorage.getItem("token")
