@@ -94,25 +94,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
-			// getProfile: async () => {
-			// 	let token = localStorage.getItem("token")
-			// 	try {
-			// 		const response = await fetch(process.env.BACKEND_URL + "/api/profile", {
-			// 			method: "GET",
-			// 			headers: {
-			// 				"Authorization": `Bearer ${token}`
-			// 			},
-			// 		});
-			// 		if (response.status === 200) {
-			// 			const result = await response.json();
-			// 			setStore({personalData: result})
-			// 			return true;
-			// 		}
-			// 	} catch (error) {
-			// 		console.error(error);
-			// 		return false
-			// 	};
-			// },
 			getProfile: async () => {
 				let token = localStorage.getItem("token");
 			

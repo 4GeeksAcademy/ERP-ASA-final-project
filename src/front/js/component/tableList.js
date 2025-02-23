@@ -11,7 +11,7 @@ import { useNavigate, Link } from "react-router-dom";
 		
 	}, [])
 
-
+export const tableList= () => {
 	return (
 		<>
 			<div className="list row">
