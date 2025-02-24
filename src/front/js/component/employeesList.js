@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { TableList } from "./tableList";
 import { Link, useNavigate } from "react-router-dom";
@@ -33,7 +33,7 @@ export const EmployeesList = () => {
 						<div className="search col-11 col-lg-4">
 							<div id="searchForm" role="search" className="rounded-pill p-2">
 								<i className="fa-solid fa-magnifying-glass col-1"></i>
-								<input className="search-input border-0 col-11" type="search" placeholder="Search" />
+								<input className="search-input border-0 col-11" type="search" placeholder="Search" onChange={(e) => actions.filterList(e.target.value)}/>
 							</div>
 						</div>
 						<div className="col-11 col-lg-6 d-flex justify-content-end gap-3 my-3" aria-label="Edit buttons">
@@ -49,7 +49,7 @@ export const EmployeesList = () => {
 						</div>
 					</div>
 					<div className="container col-11">
-						<TableList />
+						<TableList/>
 					</div>
 				</div>
 				:

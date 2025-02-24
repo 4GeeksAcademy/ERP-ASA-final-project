@@ -33,7 +33,7 @@ export const MyProfile = () => {
 								</div>
 								<ul className="col-lg-8 col-12 list-group list-group-flush">
 									<li className="list-group-item"><strong>Name:</strong> {store.personalData.name}</li>
-									<li className="list-group-item"><strong>Last Name:</strong> {store.personalData.lastname}</li>
+									<li className="list-group-item"><strong>Last Name:</strong> {store.personalData.last_name}</li>
 									<li className="list-group-item"><strong>DNI:</strong> {store.personalData.dni}</li>
 									<li className="list-group-item"><strong>Address:</strong> {store.personalData.address}</li>
 									<li className="list-group-item"><strong>Email:</strong> {store.personalData.email}</li>
@@ -41,17 +41,8 @@ export const MyProfile = () => {
 									<li className="list-group-item"><strong>Salary:</strong> {store.personalData.salary?.gross_salary}</li>
 									<li className="list-group-item"><strong>Department:</strong> {store.personalData.department?.name}</li>
 									<li className="list-group-item"><strong>Role:</strong> {store.personalData.role?.name}</li>
-									<li className="list-group-item"><strong>Level:</strong> {store.personalData.level}</li>
 								</ul>
 							</div>
-							{/* <div className="card-footer text-center">
-								<Link to={"/worker/" + store.personalData.id}>
-									<button className="btn me-2">Editar</button>
-								</Link>
-								<Link to="/">
-									<button className="btn" onClick={() => deleteMyProfile()}>Eliminar</button>
-								</Link>
-							</div> */}
 						</>
 						: null}
 				</div>

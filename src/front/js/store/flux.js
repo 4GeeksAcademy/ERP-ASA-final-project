@@ -3,6 +3,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 			message: "hola",
 			employeesList: [],
+			employeesListFilter: [],
 			selected: [],
 			auth: false,
 			personalData: {},
@@ -20,6 +21,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json()
 
 					setStore({ employeesList: data.results })
+					setStore({ employeesListFilter: data.results })
+					console.log(data.results);
+					
 					return true;
 				} catch (error) {
 					console.log("Error loading message from backend", error)
@@ -51,13 +55,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const selected = [...getStore().selected]
 				
 				if (selected.some((item_id) => item_id === id)){
-					let test;
-					test = selected.filter((item) => item !== id)
-					setStore({selected: test})
+					let deleteId = selected.filter((item) => item !== id)
+					setStore({selected: deleteId})
 				} else {
 					selected.push(id);
 					setStore({selected: selected})
 				}
+				return true
 			},
 			login: async (email, password) => {
 				const myHeaders = new Headers();
@@ -312,6 +316,10 @@ const getState = ({ getStore, getActions, setStore }) => {
                 } catch (error) {
                     console.error("Error fetching data:", error);
                 }
+            },
+			filterList: (text) => {
+                const result = getStore().employeesListFilter.filter((worker) => worker.name.toLowerCase() == text.toLowerCase())
+				result.length > 0 ? setStore({employeesListFilter: result}) : setStore({employeesListFilter: getStore().employeesList})
             }
 		}
 	};
