@@ -36,9 +36,6 @@ class Worker(db.Model):
 
     @validates('password_hash')
     def encrypt_password(self, key, password):
-        """Se ejecuta automáticamente al crear o actualizar un usuario en Flask-Admin"""
-        if password and not password.startswith('pbkdf2:sha256'):  # Evita doble encriptación
-            return generate_password_hash(password)
         return password
     
     @validates('email')
@@ -66,14 +63,9 @@ class Worker(db.Model):
             raise ValueError('Birthdate is not valid')
         return birthdate
 
-        
-
-       
-
     @property
     def password(self):
         raise AttributeError("La contraseña no se puede leer directamente")
-
     @password.setter
     def password(self, password):
         """Setter que encripta la contraseña cuando se asigna"""
@@ -93,7 +85,7 @@ class Worker(db.Model):
             "birthdate": self.birthdate,
             "salary": self.salary.serialize() if self.salary else None,
             "department": self.department.serialize() if self.department else None,
-            "role": self.role.serialize() if self.role else None
+            "role": self.role.serialize() if self.role else None,
             # do not serialize the password, its a security breach
         }
 
