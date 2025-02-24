@@ -17,6 +17,7 @@ export const LoginForm = () => {
             navigate("/profile");
         } else {
             alert("Email o contraseña incorrectos");
+			navigate("/");
         }
     };
 
