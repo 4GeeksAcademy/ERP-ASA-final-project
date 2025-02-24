@@ -1,3 +1,4 @@
+import { decodeJWT } from "../utils/auth";
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -78,46 +79,51 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/login", requestOptions);
 					const result = await response.json();
-			
+					
 					if (response.status === 200) {
-						const token = result.access_token;
-						localStorage.setItem("token", token);
+						localStorage.setItem("token", result.access_token);
 			
-						// Decodificar el token para extraer el departamento
-						const payload = JSON.parse(atob(token.split(".")[1])); // Decodifica el JWT
-						setStore({ auth: true, personalData: { department: payload.department } });
+						// Decodificar el token para obtener información del usuario
+						const decoded = decodeJWT(result.access_token);
+			
+						if (decoded) {
+							setStore({
+								auth: true,
+								user: {
+									name: decoded.name,
+									email: decoded.email,
+									department: decoded.department || "No asignado"
+								}
+							});
+						} else {
+							console.error("No se pudo decodificar el token");
+						}
 			
 						return true;
 					}
 				} catch (error) {
-					console.log("Login failed", error);
+					console.error("Error en login:", error);
 					return false;
 				}
 			},
 			getProfile: async () => {
-				let token = localStorage.getItem("token");
-			
+				let token = localStorage.getItem("token")
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/profile", {
 						method: "GET",
 						headers: {
-							"Authorization": `Bearer ${token}`,
-							"Content-Type": "application/json"
+							"Authorization": `Bearer ${token}`
 						},
 					});
-			
 					if (response.status === 200) {
 						const result = await response.json();
-						setStore({ personalData: result });
+						setStore({personalData: result})
 						return true;
-					} else {
-						console.error(`Error ${response.status}: ${await response.text()}`);
-						return false; // Asegurar que siempre haya un return
 					}
 				} catch (error) {
-					console.error("Error en getProfile:", error);
-					return false;
-				}
+					console.error(error);
+					return false
+				};
 			},
 			getWorkerData: (id) => {
 				const result = getStore().employeesList.filter((worker)=>worker.id == id)[0]

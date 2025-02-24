@@ -4,8 +4,10 @@ import { TableList } from "./tableList";
 import { Link, useNavigate } from "react-router-dom";
 
 export const EmployeesList = () => {
-    const { store, actions } = useContext(Context);
-    let navigate = useNavigate();
+
+	const { store, actions } = useContext(Context);
+
+	let navigate = useNavigate();
 
 	useEffect(()=>{
 		actions.resetSelected()
