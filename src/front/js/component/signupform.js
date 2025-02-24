@@ -73,7 +73,7 @@ export const SignupForm = () => {
 					onSubmit={(values) => {
 						let success;
 						if (store.workerData.id) {
-							success = actions.editWorker(store.selected[0], values.name, values.lastname, values.dni, values.address, values.email, values.password, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), parseInt(values.roleId))
+							success = actions.editWorker(store.workerData.id, values.name, values.lastname, values.dni, values.address, values.email, values.password, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), parseInt(values.roleId))
 						} else {
 							success = actions.addWorker(values.name, values.lastname, values.dni, values.address, values.email, values.password, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), parseInt(values.roleId))
 						}
