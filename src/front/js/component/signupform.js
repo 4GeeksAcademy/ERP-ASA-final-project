@@ -84,6 +84,7 @@ export const SignupForm = () => {
 						}
 						else {
 							alert("Error adding worker")
+							navigate("/")
 						}
 						return true
 					}}
