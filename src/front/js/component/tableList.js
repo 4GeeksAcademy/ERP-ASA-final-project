@@ -3,10 +3,10 @@ import { Context } from "../store/appContext";
 import { useNavigate, Link } from "react-router-dom";
 
 export const TableList = () => {
-
-	const { store, actions } = useContext(Context);
-	// const [employeesList, setEmployeesList] = useState([])
-	const [allWorkers, setAllWorkers] = useState(false)
+    const { store, actions } = useContext(Context);
+    const [isHR, setIsHR] = useState(false);
+	//const [employeesList, setEmployeesList] = useState([])
+    const [allWorkers, setAllWorkers] = useState(false)
 
 
 	useEffect(() => {
@@ -14,7 +14,9 @@ export const TableList = () => {
 		actions.getEmployeesList()
 		// setEmployeesList(store.employeesList)
 		// console.log(employeesList);
-		
+		if (store.user.department === "RRHH") {
+            setIsHR(true);
+        }
 	}, [])
 
 	const handleAllWorkers = () => {
@@ -47,10 +49,10 @@ export const TableList = () => {
 							<th scope="col">#</th>
 							<th scope="col">Name</th>
 							<th scope="col">Last Name</th>
-							<th scope="col">Email</th>
+							isHR && {<th scope="col">Email</th>}
 							<th scope="col">Department</th>
 							<th scope="col">Role</th>
-							<th scope="col">Salary</th>
+							isHR && {<th scope="col">Salary</th>}
 						</tr>
 					</thead>
 					<tbody>
@@ -64,10 +66,10 @@ export const TableList = () => {
 										<th scope="row"><Link to={"/worker/" + item.id}>{index + 1}</Link></th>
 										<td><Link to={"/worker/" + item.id}>{item.name}</Link></td>
 										<td><Link to={"/worker/" + item.id}>{item.last_name}</Link></td>
-										<td><Link to={"/worker/" + item.id}>{item.email}</Link></td>
+										isHR && {<td><Link to={"/worker/" + item.id}>{item.email}</Link></td>}
 										<td>{item.department ? item.department.name : "No Department"}</td>
 										<td>{item.role ? item.role.name : "No Role"}</td>
-										<td>{item.salary ? item.salary.gross_salary : "No Data"}</td>
+                    {isHR && <td>{item.salary ? item.salary.gross_salary : "No Data"}</td>}
 									</tr>
 								)
 							})
@@ -78,3 +80,4 @@ export const TableList = () => {
 		</>
 	)
 }
+    

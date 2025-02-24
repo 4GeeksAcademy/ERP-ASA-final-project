@@ -1,3 +1,4 @@
+import { decodeJWT } from "../utils/auth";
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -66,32 +67,48 @@ const getState = ({ getStore, getActions, setStore }) => {
 			login: async (email, password) => {
 				const myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
-
+			
 				const raw = JSON.stringify({
 					"email": email,
 					"password": password
 				});
-
+			
 				const requestOptions = {
 					method: "POST",
 					headers: myHeaders,
 					body: raw,
 					redirect: "follow"
 				};
-
+			
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/login", requestOptions);
 					const result = await response.json();
 					
 					if (response.status === 200) {
-						setStore({auth: true})
-						localStorage.setItem("token", result.access_token)
+						localStorage.setItem("token", result.access_token);
+			
+						// Decodificar el token para obtener información del usuario
+						const decoded = decodeJWT(result.access_token);
+			
+						if (decoded) {
+							setStore({
+								auth: true,
+								user: {
+									name: decoded.name,
+									email: decoded.email,
+									department: decoded.department || "No asignado"
+								}
+							});
+						} else {
+							console.error("No se pudo decodificar el token");
+						}
+			
 						return true;
 					}
 				} catch (error) {
-					console.log(false);
+					console.error("Error en login:", error);
 					return false;
-				};
+				}
 			},
 			getProfile: async () => {
 				let token = localStorage.getItem("token")

@@ -1,15 +1,20 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect,useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const MyProfile = () => {
 
 	const { store, actions } = useContext(Context);
+	const [isHR, setIsHR] = useState(false);
 
 	let navigate = useNavigate();
-
+	//console.log("Departamento del usuario:", store.user.department);
 	useEffect(() => {
 		actions.getProfile()
+        // Obtener el departamento del usuario logueado desde localStorage
+        if (store.personalData.id==store.user.id || store.user.department === "RRHH") {
+            setIsHR(true);
+        }
 	}, [store.auth])
 
 	const deleteMyProfile = () => {
