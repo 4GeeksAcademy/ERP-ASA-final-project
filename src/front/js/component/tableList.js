@@ -49,10 +49,10 @@ export const TableList = () => {
 							<th scope="col">#</th>
 							<th scope="col">Name</th>
 							<th scope="col">Last Name</th>
-							isHR && {<th scope="col">Email</th>}
+							{isHR && <th scope="col">Email</th>}
 							<th scope="col">Department</th>
 							<th scope="col">Role</th>
-							isHR && {<th scope="col">Salary</th>}
+							{isHR && <th scope="col">Salary</th>}
 						</tr>
 					</thead>
 					<tbody>
@@ -66,10 +66,10 @@ export const TableList = () => {
 										<th scope="row"><Link to={"/worker/" + item.id}>{index + 1}</Link></th>
 										<td><Link to={"/worker/" + item.id}>{item.name}</Link></td>
 										<td><Link to={"/worker/" + item.id}>{item.last_name}</Link></td>
-										isHR && {<td><Link to={"/worker/" + item.id}>{item.email}</Link></td>}
+										{isHR && <td><Link to={"/worker/" + item.id}>{item.email}</Link></td>}
 										<td>{item.department ? item.department.name : "No Department"}</td>
 										<td>{item.role ? item.role.name : "No Role"}</td>
-                    {isHR && <td>{item.salary ? item.salary.gross_salary : "No Data"}</td>}
+                    					{isHR && <td>{item.salary ? item.salary.gross_salary : "No Data"}</td>}
 									</tr>
 								)
 							})
