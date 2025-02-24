@@ -51,14 +51,14 @@ export const WorkerDataForm = (id) => {
 							</>
 							: null}
 					</div>
-					<div className="card-footer text-center">
+					{isHR && <div className="card-footer text-center">
 						<Link to={"/signup"}>
 							<button className="btn me-2">Editar</button>
 						</Link>
 						<Link to="/">
 							<button className="btn" onClick={() => deleteProfile()}>Eliminar</button>
 						</Link>
-					</div>
+					</div>}
 				</div>
 			</div>
 		</>
