@@ -130,6 +130,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 			},
 			getWorkerData: (id) => {
+				console.log(id);
 				const result = getStore().employeesList.filter((worker)=>worker.id == id)[0]
 				setStore({workerData: result})
 				return true

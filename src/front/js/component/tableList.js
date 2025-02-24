@@ -10,10 +10,7 @@ export const TableList = () => {
 
 
 	useEffect(() => {
-		// console.log(searchText.text);
 		actions.getEmployeesList()
-		// setEmployeesList(store.employeesList)
-		// console.log(employeesList);
 		if (store.user.department === "RRHH") {
             setIsHR(true);
         }
