@@ -33,7 +33,7 @@ export const EmployeesList = () => {
 						<div className="search col-11 col-lg-4">
 							<div id="searchForm" role="search" className="rounded-pill p-2">
 								<i className="fa-solid fa-magnifying-glass col-1"></i>
-								<input className="search-input border-0 col-11" type="search" placeholder="Search" onChange={(e) => actions.filterList(e.target.value)}/>
+								<input className="search-input border-0 col-11" type="search" placeholder="Search name" onChange={(e) => actions.filterList(e.target.value)}/>
 							</div>
 						</div>
 						<div className="col-11 col-lg-6 d-flex justify-content-end gap-3 my-3" aria-label="Edit buttons">
