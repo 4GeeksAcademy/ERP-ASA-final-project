@@ -7,12 +7,16 @@ import { useNavigate, Link } from "react-router-dom";
 export const WorkerDataForm = (id) => {
 
 	const { store, actions } = useContext(Context);
+	const [isHR, setIsHR] = useState(false);
 
 	let navigate = useNavigate();
 
 	useEffect(() => {
 		!store.auth ? navigate("/") : null
 		actions.getWorkerData(id.id)
+		if (store.user.department === "RRHH" || store.workerData.id == store.user.id) {
+            setIsHR(true);
+        }
 	}, [store.workerData])
 
 	const deleteProfile = () => {
@@ -35,12 +39,12 @@ export const WorkerDataForm = (id) => {
 							<>
 								<ul className="col-lg-8 col-12 list-group list-group-flush">
 									<li className="list-group-item"><strong>Name:</strong> {store.workerData.name}</li>
-									<li className="list-group-item"><strong>Last Name:</strong> {store.workerData.lastname}</li>
-									<li className="list-group-item"><strong>DNI:</strong> {store.workerData.dni}</li>
-									<li className="list-group-item"><strong>Address:</strong> {store.workerData.address}</li>
-									<li className="list-group-item"><strong>Email:</strong> {store.workerData.email}</li>
-									<li className="list-group-item"><strong>Birthdate:</strong> {store.workerData.birthdate}</li>
-									<li className="list-group-item"><strong>Salary:</strong> {store.workerData.salary?.gross_salary}</li>
+									<li className="list-group-item"><strong>Last Name:</strong> {store.workerData.last_name}</li>
+									{isHR && <li className="list-group-item"><strong>DNI:</strong> {store.workerData.dni}</li>}
+									{isHR && <li className="list-group-item"><strong>Address:</strong> {store.workerData.address}</li>}
+									{isHR && <li className="list-group-item"><strong>Email:</strong> {store.workerData.email}</li>}
+									{isHR && <li className="list-group-item"><strong>Birthdate:</strong> {store.workerData.birthdate}</li>}
+									{isHR && <li className="list-group-item"><strong>Salary:</strong> {store.workerData.salary?.gross_salary}</li>}
 									<li className="list-group-item"><strong>Department:</strong> {store.workerData.department?.name}</li>
 									<li className="list-group-item"><strong>Role:</strong> {store.workerData.role?.name}</li>
 								</ul>

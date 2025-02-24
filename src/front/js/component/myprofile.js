@@ -1,15 +1,20 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect,useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const MyProfile = () => {
 
 	const { store, actions } = useContext(Context);
+	const [isHR, setIsHR] = useState(false);
 
 	let navigate = useNavigate();
-
+	//console.log("Departamento del usuario:", store.user.department);
 	useEffect(() => {
 		actions.getProfile()
+        // Obtener el departamento del usuario logueado desde localStorage
+        if (store.personalData.id==store.user.id || store.user.department === "RRHH") {
+            setIsHR(true);
+        }
 	}, [store.auth])
 
 	const deleteMyProfile = () => {
@@ -33,7 +38,7 @@ export const MyProfile = () => {
 								</div>
 								<ul className="col-lg-8 col-12 list-group list-group-flush">
 									<li className="list-group-item"><strong>Name:</strong> {store.personalData.name}</li>
-									<li className="list-group-item"><strong>Last Name:</strong> {store.personalData.lastname}</li>
+									<li className="list-group-item"><strong>Last Name:</strong> {store.personalData.last_name}</li>
 									<li className="list-group-item"><strong>DNI:</strong> {store.personalData.dni}</li>
 									<li className="list-group-item"><strong>Address:</strong> {store.personalData.address}</li>
 									<li className="list-group-item"><strong>Email:</strong> {store.personalData.email}</li>
