@@ -47,7 +47,6 @@ def add_worker():
             dni = data['dni'],
             address = data['address'],
             email = data['email'],
-            password = data['password'],
             birthdate = data['birthdate'],
             department_id = data['department_id'],
             salary_id = data['salary_id'],
@@ -149,7 +148,6 @@ def login():
         email = request.json.get("email", None)
         password = request.json.get("password", None)
         user = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one()
-
 
 
         if user and user.check_password(password):
