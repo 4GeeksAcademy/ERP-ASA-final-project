@@ -71,6 +71,7 @@ export const TableList = () => {
 										<td>{item.role ? item.role.name : "No Role"}</td>
                     					{isHR && <td>{item.salary ? item.salary.gross_salary : "No Data"}</td>}
 									</tr>
+									
 								)
 							})
 						}
