@@ -46,17 +46,8 @@ export const MyProfile = () => {
 									<li className="list-group-item"><strong>Salary:</strong> {store.personalData.salary?.gross_salary}</li>
 									<li className="list-group-item"><strong>Department:</strong> {store.personalData.department?.name}</li>
 									<li className="list-group-item"><strong>Role:</strong> {store.personalData.role?.name}</li>
-									<li className="list-group-item"><strong>Level:</strong> {store.personalData.level}</li>
 								</ul>
 							</div>
-							{/* <div className="card-footer text-center">
-								<Link to={"/worker/" + store.personalData.id}>
-									<button className="btn me-2">Editar</button>
-								</Link>
-								<Link to="/">
-									<button className="btn" onClick={() => deleteMyProfile()}>Eliminar</button>
-								</Link>
-							</div> */}
 						</>
 						: null}
 				</div>
