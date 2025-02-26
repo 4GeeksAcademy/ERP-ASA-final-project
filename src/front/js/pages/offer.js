@@ -4,10 +4,13 @@ import { Context } from "../store/appContext";
 import "../../styles/login.css"
 
 export const OfferView = () => {
-    const {store, actions} = useContext(Context)
-
-    return(
-        <Offer/>
+    const { store, actions } = useContext(Context)
+    
+    useEffect(() => {
+        actions.resetWorkerData()
+    }, [])
+    
+    return (
+        <Offer />
     )
 }
-    

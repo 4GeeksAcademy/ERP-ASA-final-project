@@ -1,13 +1,25 @@
 .burger-btn:focus,
 .burger-btn:active,
 .burger-btn:hover {
-    background-color: #4F46E5 !important;
-    color: #ffffff !important;
-    border: 1px solid #e5e7eb !important;
+    background-color: #4F46E5;
+    color: #ffffff;
+    border: 1px solid #c6cde6;
 }
-.dropdown-item > a{
+.dropdown-menu > a{
     text-decoration: none;
 }
-.dropdown-item > a:hover{
+.dropdown-menu > a > li{
+    color: #4F46E5;
+}
+.dropdown-menu > a:hover > li{
+    background-color: #2D336B;
+    color: #c6cde6;
+    text-decoration-color: #4F46E5;
     text-decoration: underline;
+}
+.dropdown-menu{
+    background-color: #c6cde6;
+}
+.logo{
+    max-width: 60px;
 }

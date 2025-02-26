@@ -9,12 +9,11 @@ export const WorkerData = props => {
 	const params = useParams();
 	
 	useEffect(()=>{
-		console.log(params);
 		actions.resetWorkerData()
 	}, [])
 
 	return (
-		<div className="form-style flex-column">
+		<div className="form-style">
 			<WorkerDataForm id={params.id}/>
 		</div>
 	);
