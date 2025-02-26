@@ -34,7 +34,7 @@ export const MyProfile = () => {
 						<>
 							<div className="card-body row">
 								<div className="text-center mb-3 img-container col-lg-4 col-11 d-flex align-items-center">
-									<img src="https://cdn-icons-png.flaticon.com/512/3736/3736502.png" className="rounded-circle profile-img col-lg-12 col-5" alt="Foto del trabajador" />
+								<img src={store.personalData.profile_image_url || "https://cdn-icons-png.flaticon.com/512/3736/3736502.png"} alt="Profile_pic" className="img-thumbnail" />
 								</div>
 								<ul className="col-lg-8 col-12 list-group list-group-flush">
 									<li className="list-group-item"><strong>Name:</strong> {store.personalData.name}</li>

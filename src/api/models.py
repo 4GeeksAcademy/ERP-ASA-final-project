@@ -19,6 +19,7 @@ class Worker(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), unique=False, nullable=False)
     birthdate = db.Column(db.String(20), unique=False, nullable=False)
+    profile_image_url = db.Column(db.String(255), nullable=True)
 
     department_id = mapped_column(ForeignKey("department_table.id"))
     salary_id = mapped_column(ForeignKey("salary_table.id"))
@@ -86,6 +87,8 @@ class Worker(db.Model):
             "salary": self.salary.serialize() if self.salary else None,
             "department": self.department.serialize() if self.department else None,
             "role": self.role.serialize() if self.role else None,
+            "profile_image_url": self.profile_image_url
+            
             # do not serialize the password, its a security breach
         }
 

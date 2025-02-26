@@ -7,14 +7,14 @@ from werkzeug.security import generate_password_hash
 
 
 class WorkerView(ModelView):
-    column_list = ('id', 'name', 'last_name','email', 'dni', 'address', 'birthdate','password_hash', 'department_name', 'role_name', 'gross_salary')
+    column_list = ('id', 'name', 'last_name','email', 'dni', 'address', 'birthdate','password_hash', 'department_name', 'role_name', 'gross_salary', "image_url")
 
     column_formatters = {
         'department_name': lambda v, c, m, p: m.department.name if m.department else 'N/A',
         'role_name': lambda v, c, m, p: m.role.name if m.role else 'N/A',
         'gross_salary': lambda v, c, m, p: m.salary.gross_salary if m.salary else 'N/A'
     }
-    column_sortable_list = ('id', 'name', 'last_name', 'email', 'dni', 'address', 'birthdate', 'password_hash', ('department_name', 'department.name'), 
+    column_sortable_list = ('id', 'name', 'last_name', 'email', 'dni', 'address', 'birthdate', 'password_hash', ('department_name', 'department.name','profile_image_url'), 
                             ('role_name', 'role.name'), ('gross_salary', 'salary.gross_salary'))
 
     form_args = {
