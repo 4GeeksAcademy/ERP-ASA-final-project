@@ -89,46 +89,45 @@ export const SignupForm = () => {
 						return true
 					}}
 				>
-
-					<Form className="row d-flex justify-content-center gap-3 form-2 m-0">
-						<div className="col-11 col-md-5">
+					<Form className="row d-flex justify-content-around form-2 m-0 w-100">
+						<div className="col-md-5">
 							<h5>Name</h5>
 							<div className="input-container-2">
 								<Field placeholder="Name" name="name" type="text" />
-								<div className="error-container">
-									<ErrorMessage name="name" component="p" className="error" />
+								<div>
+									<ErrorMessage name="name" component="p" className="error text-danger" />
 								</div>
 							</div>
 							<h5>Last name</h5>
 							<div className="input-container-2">
 								<Field placeholder="Last name" name="lastname" type="text" />
-								<div className="error-container">
-									<ErrorMessage name="lastname" component="p" className="error" />
+								<div>
+									<ErrorMessage name="lastname" component="p" className="error text-danger" />
 								</div>
 							</div>
 							<h5>DNI</h5>
 							<div className="input-container-2">
 								<Field placeholder="Dni" name="dni" type="text" />
-								<div className="error-container">
-									<ErrorMessage name="dni" component="p" className="error" />
+								<div>
+									<ErrorMessage name="dni" component="p" className="error text-danger" />
 								</div>
 							</div>
 							<h5>Address</h5>
 							<div className="input-container-2">
 								<Field placeholder="Address" name="address" type="text" />
-								<div className="error-container">
-									<ErrorMessage name="address" component="p" className="error" />
+								<div>
+									<ErrorMessage name="address" component="p" className="error text-danger" />
 								</div>
 							</div>
 							<h5>Birth date</h5>
 							<div className="input-container-2">
 								<Field placeholder="00/00/0000" name="birthDate" type="text" />
-								<div className="error-container">
-									<ErrorMessage name="birthDate" component="p" className="error" />
+								<div>
+									<ErrorMessage name="birthDate" component="p" className="error text-danger" />
 								</div>
 							</div>
 						</div>
-						<div className="col-11 col-md-5">
+						<div className="col-md-5">
 							<h5>Salary</h5>
 							<div className="input-container-2">
 								<Field as="select" name="salaryId">
@@ -137,8 +136,8 @@ export const SignupForm = () => {
 										<option key={salary.id} value={salary.id}>{salary.gross_salary}</option>
 									))}
 								</Field>
-								<div className="error-container">
-									<ErrorMessage name="salaryId" component="p" className="error" />
+								<div>
+									<ErrorMessage name="salaryId" component="p" className="error text-danger" />
 								</div>
 							</div>
 							<div className="input-container-2">
@@ -149,8 +148,8 @@ export const SignupForm = () => {
 										<option key={role.id} value={role.id}>{role.name}</option>
 									))}
 								</Field>
-								<div className="error-container">
-									<ErrorMessage name="roleId" component="p" className="error" />
+								<div>
+									<ErrorMessage name="roleId" component="p" className="error text-danger" />
 								</div>
 							</div>
 							<h5>Department</h5>
@@ -160,26 +159,26 @@ export const SignupForm = () => {
 									<option key={department.id} value={department.id}>{department.name}</option>
 								))}
 							</Field>
-								<div className="error-container">
-									<ErrorMessage name="departmentId" component="p" className="error" />
+								<div>
+									<ErrorMessage name="departmentId" component="p" className="error text-danger" />
 								</div>
 							</div>
 							<h5>Email</h5>
 							<div className="input-container-2">
 								<Field placeholder="Email" name="email" type="email" />
-								<div className="error-container">
-									<ErrorMessage name="email" component="p" className="error" />
+								<div>
+									<ErrorMessage name="email" component="p" className="error text-danger" />
 								</div>
 							</div>
 							<h5>Password</h5>
 							<div className="input-container-2">
 								<Field placeholder="Password" name="password" type="password" />
-								<div className="error-container">
-									<ErrorMessage name="password" component="p" className="error" />
+								<div>
+									<ErrorMessage name="password" component="p" className="error text-danger" />
 								</div>
 							</div>
 						</div>
-						<button className="submit-2 col-10" type="submit">
+						<button className="submit-2 col-10 mt-4" type="submit">
 							Send
 						</button>
 					</Form>

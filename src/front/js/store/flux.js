@@ -34,7 +34,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			deleteWorker: async (ids) => {
 				try {
 					const resp = await Promise.all(ids.map(async (id)=>{
-						const resp = fetch(process.env.BACKEND_URL + "api/employees/" + id, {method: "DELETE"})
+						const resp = fetch(process.env.BACKEND_URL + "/api/employees/" + id, {method: "DELETE"})
 						return resp
 					}))
 
@@ -130,7 +130,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 			},
 			getWorkerData: (id) => {
-				console.log(id);
 				const result = getStore().employeesList.filter((worker)=>worker.id == id)[0]
 				setStore({workerData: result})
 				return true
