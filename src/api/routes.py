@@ -10,10 +10,14 @@ from sqlalchemy import select
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from flask_admin import Admin
 from datetime import datetime, timedelta
+
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
 from mail_config import mail
 import jwt
+
+import cloudinary.uploader
+
 
 api = Blueprint('api', __name__)
 
@@ -39,65 +43,148 @@ def get_employees():
 
 @api.route('/worker', methods=['POST'])
 def add_worker():
-    data = request.get_json()
-    print("data")
-    print(data)
-    if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id', 'role_id']):
-        return jsonify({"message": "Missing required fields"}), 400
     try:
-        new_worker = Worker(
-            name = data['name'],
-            last_name = data['last_name'],
-            dni = data['dni'],
-            address = data['address'],
-            email = data['email'],
-            birthdate = data['birthdate'],
-            department_id = data['department_id'],
-            salary_id = data['salary_id'],
-            role_id = data['role_id'],
-        )
+        data = request.form  # Usamos request.form en lugar de request.get_json()
+        file = request.files.get('profile_image_url')  # Obtener el archivo de imagen
 
+        if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id', 'role_id']):
+            return jsonify({"message": "Missing required fields"}), 400
+
+        image_url = None 
+        
+        # Subir imagen a Cloudinary si se proporciona
+        if file:
+            print(file)
+            try:
+                upload_result = cloudinary.uploader.upload(file)
+                print("Cloudinary response:", upload_result)
+                image_url = upload_result.get("secure_url")
+            except Exception as e:
+                print("Cloudinary upload error:", str(e))
+                return jsonify({"msg": "Error uploading image", "error": str(e)}), 500
+        else:
+            print("no file")
+            image_url = None
+        print("Final image_url before saving:", image_url) 
+        new_worker = Worker(
+            name=data['name'],
+            last_name=data['last_name'],
+            dni=data['dni'],
+            address=data['address'],
+            email=data['email'],
+            birthdate=data['birthdate'],
+            department_id=data['department_id'],
+            salary_id=data['salary_id'],
+            role_id=data['role_id'],
+            profile_image_url=image_url  # Guardar la URL de la imagen
+        )
+         
         new_worker.set_password(data['password'])
         db.session.add(new_worker)
-        print("New Worker:", new_worker)
         db.session.commit()
 
         return jsonify({"msg": "Worker added successfully", "worker": new_worker.serialize()}), 201
-    
+
     except Exception as err:
-        print("err")
-        print(err)
         db.session.rollback()
-        return jsonify({"msg": "Error adding worker"}), 500
-    
+        print("Error adding worker:", str(err))  # Agrega este print para ver el error
+        return jsonify({"msg": "Error adding worker", "error": str(err)}), 500
+
 @api.route('/worker', methods=['PUT'])
 def edit_worker():
-    data = request.get_json()
-    if not all(key in data for key in ['id', 'name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id', 'role_id']):
-        return jsonify({"message": "Missing required fields"}), 400
+    data = request.form  # Recibir datos del formulario
+    file = request.files.get('profile_image')  # Recibir la imagen correctamente
     
+    # Validar datos obligatorios
+    required_fields = ['id', 'name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id', 'role_id']
+    if not all(key in data for key in required_fields):
+        return jsonify({"message": "Missing required fields"}), 400
+
+    # Subir imagen a Cloudinary si se proporciona
+    image_url = None
+    if file:
+        try:
+            upload_result = cloudinary.uploader.upload(file)
+            image_url = upload_result.get("secure_url")
+        except Exception as e:
+            print("Cloudinary upload error:", str(e))
+            return jsonify({"msg": "Error uploading image", "error": str(e)}), 500
+
     try:
-        worker = db.session.execute(select(Worker).filter_by(id=data['id'])).scalar_one()
+        # Buscar el trabajador por ID
+        worker = db.session.execute(select(Worker).filter_by(id=int(data['id']))).scalar_one()
         
-        worker.id = data["id"]
         worker.name = data["name"]
         worker.last_name = data["last_name"]
         worker.dni = data["dni"]
         worker.address = data["address"]
         worker.email = data["email"]
         worker.birthdate = data["birthdate"]
-        worker.department_id = data["department_id"]
-        worker.salary_id = data["salary_id"]
-        worker.role_id = data["role_id"]
+        worker.department_id = int(data["department_id"])
+        worker.salary_id = int(data["salary_id"])
+        worker.role_id = int(data["role_id"])
         worker.set_password(data['password'])
+
+        # Solo actualizar la imagen si se subió una nueva
+        if image_url:
+            worker.profile_image_url = image_url
+
         db.session.commit()
 
-        return jsonify({"msg": "Worker edit successfully", "worker": worker.serialize()}), 201
+        return jsonify({"msg": "Worker edited successfully", "worker": worker.serialize()}), 200
     
     except Exception as err:
-        print(err)
+        print("Error updating worker:", err)
         db.session.rollback()
         return jsonify({"msg": "Error updating worker"}), 500
+
+# @api.route('/worker', methods=['PUT'])
+# def edit_worker():
+#     data = request.form
+#     file = request.files.get('profile_image_url') 
+    
+#     if not all(key in data for key in ['id', 'name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id', 'role_id']):
+#         return jsonify({"message": "Missing required fields"}), 400
+    
+#     image_url = None  
+        
+#     # Subir imagen a Cloudinary si se proporciona
+#     if file:
+#         print(file)
+#         try:
+#             upload_result = cloudinary.uploader.upload(file)
+#             print("Cloudinary response edit:", upload_result)
+#             image_url = upload_result.get("secure_url")
+#         except Exception as e:
+#             print("Cloudinary upload error:", str(e))
+#             return jsonify({"msg": "Error uploading image", "error": str(e)}), 500
+#     else:
+#         print("no file")
+#         image_url = None
+    
+#     try:
+#         worker = db.session.execute(select(Worker).filter_by(id=data['id'])).scalar_one()
+        
+#         worker.id = data["id"]
+#         worker.name = data["name"]
+#         worker.last_name = data["last_name"]
+#         worker.dni = data["dni"]
+#         worker.address = data["address"]
+#         worker.email = data["email"]
+#         worker.birthdate = data["birthdate"]
+#         worker.department_id = data["department_id"]
+#         worker.salary_id = data["salary_id"]
+#         worker.role_id = data["role_id"]
+#         worker.set_password(data['password'])
+#         worker.profile_image_url = image_url
+#         db.session.commit()
+
+#         return jsonify({"msg": "Worker edit successfully", "worker": worker.serialize()}), 201
+    
+#     except Exception as err:
+#         print(err)
+#         db.session.rollback()
+#         return jsonify({"msg": "Error updating worker"}), 500
     
 
 @api.route('/employees/<int:id>', methods=['DELETE'])
@@ -196,6 +283,7 @@ def get_roles():
     roles = Role.query.all()
     return jsonify([role.serialize() for role in roles]), 200
 
+
 s = None
 
 @api.before_app_request
@@ -271,3 +359,23 @@ def reset_password_request():
         return jsonify({"message": "An email with instructions to reset your password has been sent."}), 200
     else:
         return jsonify({"message": "Email not found."}), 404
+
+@api.route('/upload_image', methods=['POST'])
+def upload_image():
+    user_id = get_jwt_identity()
+    worker = Worker.query.get(user_id)
+
+    if not worker:
+        return jsonify({"error": "Worker not found"}), 404
+
+    if 'file' not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    file = request.files['file']
+    result = cloudinary.uploader.upload(file)
+
+    worker.profile_image_url = result['secure_url']
+    db.session.commit()
+
+    return jsonify({"message": "Image uploaded successfully", "image_url": worker.profile_image_url})
+

@@ -1,6 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from 'yup';
 import { Context } from "../store/appContext";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -12,28 +10,35 @@ export const WorkerDataForm = (id) => {
 	let navigate = useNavigate();
 
 	useEffect(() => {
-		!store.auth ? navigate("/") : null
+		if (!store.auth) navigate("/")
 		actions.getWorkerData(id.id)
-		if (store.user.department === "RRHH" || store.workerData.id == store.user.id) {
-            setIsHR(true);
-        }
+		if (store.auth && (store.user.department === "RRHH" || store.workerData.id == store.user.id)) {
+			setIsHR(true);
+		}
 	}, [store.workerData])
 
-	const deleteProfile = () => {
-		actions.deleteWorker([store.workerData.id])
-		navigate("/employees")
+
+	const handleDelete = async () => {
+		const promise = await actions.deleteWorker([store.workerData.id])
+		actions.getEmployeesList()
+		navigate("/")
+		if (store.workerData.id === store.personalData.id && promise) {
+			actions.logout()
+		}
 	}
 
 	return (
 		<>
 			<div className="container mt-5">
-				<div className="row col-11 card mx-auto">
+				<div className="row col-11 card align-items-center mx-auto border-0">
 					<div className="row card-header text-center text-white">
 						<h3>Worker personal data</h3>
 					</div>
-					<div className="card-body row">
-						<div className="text-center mb-3 img-container col-lg-4 col-11 d-flex align-items-center">
-							<img src="https://cdn-icons-png.flaticon.com/512/3736/3736502.png" className="rounded-circle profile-img col-lg-12 col-5" alt="Foto del trabajador" />
+
+					<div className="card-body row justify-content-center">
+						<div className="text-center my-2 img-container col-lg-4 col-11 d-flex justify-content-center align-items-center">
+							<img src={store.workerData.profile_image_url || "https://cdn-icons-png.flaticon.com/512/3736/3736502.png"} className="rounded profile-img col-lg-12 col-5" alt="Foto del trabajador" />
+
 						</div>
 						{store.workerData ?
 							<>
@@ -51,13 +56,30 @@ export const WorkerDataForm = (id) => {
 							</>
 							: null}
 					</div>
-					{isHR && <div className="card-footer text-center">
+					{isHR && <div className="card-footer text-center border-0">
 						<Link to={"/signup"}>
-							<button className="btn me-2">Editar</button>
+							<button className="btn button me-2">Editar</button>
 						</Link>
-						<Link to="/">
-							<button className="btn" onClick={() => deleteProfile()}>Eliminar</button>
-						</Link>
+						<button type="button" className="button" data-bs-toggle="modal" data-bs-target="#exampleModal2">Delete</button>
+
+						{/* <!-- Modal --> */}
+						<div className="modal fade" id="exampleModal2" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+							<div className="modal-dialog">
+								<div className="modal-content">
+									<div className="modal-header">
+										<h1 className="modal-title fs-5" id="exampleModalLabel">Delete {store.workerData.name + " " + store.workerData.last_name}</h1>
+										<button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div className="modal-body">
+										Are you sure you want to delete {store.workerData.name + " " + store.workerData.last_name} as worker?
+									</div>
+									<div className="modal-footer">
+										<button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+										<button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleDelete}>Delete worker</button>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>}
 				</div>
 			</div>

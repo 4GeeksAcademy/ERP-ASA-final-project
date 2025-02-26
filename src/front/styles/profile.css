@@ -8,3 +8,6 @@
 .card-header{
     background-color: #2D336B;
 }
+.card-header, .card-body{
+    border: solid 3px #2D336B;
+}
