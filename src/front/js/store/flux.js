@@ -35,7 +35,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			deleteWorker: async (ids) => {
 				try {
 					const resp = await Promise.all(ids.map(async (id) => {
-						const resp = fetch(process.env.BACKEND_URL + "api/employees/" + id, { method: "DELETE" })
+						const resp = fetch(process.env.BACKEND_URL + "/api/employees/" + id, { method: "DELETE" })
 						return resp
 					}))
 
@@ -132,7 +132,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 			},
 			getWorkerData: (id) => {
-				console.log(id);
 				const result = getStore().employeesList.filter((worker) => worker.id == id)[0]
 				setStore({ workerData: result })
 				return true
@@ -141,28 +140,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ workerData: {} })
 				return true
 			},
-			addWorker: async (name, last_name, dni, address, email, password, birthdate, department_id, salary_id, role_id) => {
-				let token = localStorage.getItem("token")
+			addWorker: async (name, last_name, dni, address, email, password, birthdate, department_id, salary_id, role_id, file) => {
+				let token = localStorage.getItem("token");
 				try {
+					let formData = new FormData();
+					formData.append("name", name);
+					formData.append("last_name", last_name);
+					formData.append("dni", dni);
+					formData.append("address", address);
+					formData.append("email", email);
+					formData.append("password", password);
+					formData.append("birthdate", birthdate);
+					formData.append("department_id", parseInt(department_id));
+					formData.append("salary_id", parseInt(salary_id));
+					formData.append("role_id", parseInt(role_id));
+					
+					if (file) {
+						formData.append("profile_image_url", file);
+					}
+			
 					const response = await fetch(process.env.BACKEND_URL + "/api/worker", {
 						method: "POST",
 						headers: {
-							"Content-Type": "application/json",
 							"Authorization": `Bearer ${token}`
 						},
-						body: JSON.stringify({
-							"name": name,
-							"last_name": last_name,
-							"dni": dni,
-							"address": address,
-							"email": email,
-							"password": password,
-							"birthdate": birthdate,
-							"department_id": parseInt(department_id),
-							"salary_id": parseInt(salary_id),
-							"role_id": parseInt(role_id)
-						})
+						body: formData // Enviar datos en formato FormData
 					});
+			
 					if (response.ok) {
 						const result = await response.json();
 						console.log(result);
@@ -173,32 +177,41 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				} catch (error) {
 					console.error(error);
-					return false
-				};
+					return false;
+				}
 			},
-			editWorker: async (id, name, last_name, dni, address, email, password, birthdate, department_id, salary_id, role_id) => {
-				let token = localStorage.getItem("token")
+
+			editWorker: async (id, name, last_name, dni, address, email, password, birthdate, department_id, salary_id, role_id, file) => {
+				let token = localStorage.getItem("token");
+			
 				try {
+					// Usamos FormData para enviar datos y archivos correctamente
+					let formData = new FormData();
+					formData.append("id", id);
+					formData.append("name", name);
+					formData.append("last_name", last_name);
+					formData.append("dni", dni);
+					formData.append("address", address);
+					formData.append("email", email);
+					formData.append("password", password);
+					formData.append("birthdate", birthdate);
+					formData.append("department_id", String(department_id));
+					formData.append("salary_id", String(salary_id));
+					formData.append("role_id", String(role_id));
+			
+					// Solo agregar la imagen si se proporciona
+					if (file) {
+						formData.append("profile_image", file);
+					}
+			
 					const response = await fetch(process.env.BACKEND_URL + "/api/worker", {
 						method: "PUT",
 						headers: {
-							"Content-Type": "application/json",
-							"Authorization": `Bearer ${token}`
+							"Authorization": `Bearer ${token}` // No agregamos "Content-Type", FormData lo maneja
 						},
-						body: JSON.stringify({
-							"id": id,
-							"name": name,
-							"last_name": last_name,
-							"dni": dni,
-							"address": address,
-							"email": email,
-							"password": password,
-							"birthdate": birthdate,
-							"department_id": parseInt(department_id),
-							"salary_id": parseInt(salary_id),
-							"role_id": parseInt(role_id)
-						})
+						body: formData
 					});
+			
 					if (response.ok) {
 						const result = await response.json();
 						console.log(result);
@@ -344,8 +357,31 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			filterList: (text) => {
-				const result = getStore().employeesListFilter.filter((worker) => worker.name.toLowerCase() == text.toLowerCase())
-				result.length > 0 ? setStore({ employeesListFilter: result }) : setStore({ employeesListFilter: getStore().employeesList })
+                const result = getStore().employeesListFilter.filter((worker) => worker.name.toLowerCase() == text.toLowerCase())
+				result.length > 0 ? setStore({employeesListFilter: result}) : setStore({employeesListFilter: getStore().employeesList})
+            },
+			uploadImage: async (file) => {
+				const formData = new FormData();
+				formData.append("file", file);
+			
+				try {
+					const token = localStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "/upload_image", {
+						method: "POST",
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+						body: formData
+					});
+			
+					if (!resp.ok) throw new Error("Error uploading image");
+			
+					const data = await resp.json();
+					setStore({ profileImageUrl: data.image_url });
+				} catch (error) {
+					console.error("Upload error:", error);
+				}
+			}
 			}, 
 			recoveryPassword: async (email) => {
 				try {

@@ -22,14 +22,76 @@
 }
 
 .light-background{
-    background-color:#A9B5DF;
-}
-
-.center-column{
-    height:90vh;
-    padding: 50px;
+    background-color:#c8cfe9;
 }
 
 .section{
     max-width: 600px;
 }
+
+.darkblue-text{
+  color: #2D336B;
+}
+
+.reason{
+  background-color: #A9B5DF;
+  border: solid 3px #A9B5DF;
+}
+.reason:hover{
+  background-color: #ffffff;
+}
+
+.btn-demo {
+    font-family: inherit;
+    font-size: 20px;
+    background: #2D336B;
+    color: white;
+    padding: 0.7em 1em;
+    padding-left: 0.9em;
+    display: flex;
+    align-items: center;
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  
+  .btn-demo span {
+    display: block;
+    margin-left: 0.3em;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .btn-demo svg {
+    display: block;
+    transform-origin: center center;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .btn-demo:hover .svg-wrapper {
+    animation: fly-1 0.6s ease-in-out infinite alternate;
+  }
+  
+  .btn-demo:hover svg {
+    transform: translateX(1.2em) rotate(45deg) scale(1.1);
+  }
+  
+  .btn-demo:hover span {
+    transform: translateX(5em);
+  }
+  
+  .btn-demo:active {
+    transform: scale(0.95);
+  }
+  
+  @keyframes fly-1 {
+    from {
+      transform: translateY(0.1em);
+    }
+  
+    to {
+      transform: translateY(-0.1em);
+    }
+  }
+  

@@ -33,9 +33,9 @@ export const LoginForm = () => {
 
 	return (
 		<>
-			<div className="d-flex flex-column align-items-center">
-				<p className="form-title">{store.recoveryPassword ? "Recovery Password" : "Welcome"}</p>
-				<form className="form" onSubmit={handleSubmit}>
+			<div className="container d-flex flex-column align-items-center">
+				<p className="form-title w-100">Welcome</p>
+				<form className="form w-100" onSubmit={handleSubmit}>
 					<div className="input-container">
 						<input placeholder="Enter email" type="email" onChange={(e) => setEmail(e.target.value)} />
 						<span>

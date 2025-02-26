@@ -8,33 +8,26 @@ export const MyProfile = () => {
 	const [isHR, setIsHR] = useState(false);
 
 	let navigate = useNavigate();
-	//console.log("Departamento del usuario:", store.user.department);
-	useEffect(() => {
-		actions.getProfile()
-        // Obtener el departamento del usuario logueado desde localStorage
-        if (store.personalData.id==store.user.id || store.user.department === "RRHH") {
-            setIsHR(true);
-        }
-	}, [store.auth])
 
-	const deleteMyProfile = () => {
-		actions.deleteWorker([store.personalData.id])
-		actions.logout()
-		navigate("/")
-	}
+	useEffect(() => {
+		if (!store.auth) navigate("/")
+		actions.getProfile()
+	}, [store.auth])
 
 	return (
 		<>
-			<div className="container mt-5">
-				<div className="row col-11 card mx-auto">
+			<div className="container mt-3">
+				<div className="row col-11 card align-items-center mx-auto border-0">
 					<div className="row card-header text-center text-white">
 						<h3>My personal data</h3>
 					</div>
 					{store.auth ?
 						<>
-							<div className="card-body row">
-								<div className="text-center mb-3 img-container col-lg-4 col-11 d-flex align-items-center">
-									<img src="https://cdn-icons-png.flaticon.com/512/3736/3736502.png" className="rounded-circle profile-img col-lg-12 col-5" alt="Foto del trabajador" />
+
+							<div className="card-body row justify-content-center">
+								<div className="text-center my-2 img-container col-lg-4 col-11 d-flex justify-content-center align-items-center">
+									<img src={store.personalData.profile_image_url || "https://cdn-icons-png.flaticon.com/512/3736/3736502.png"} className="rounded profile-img col-lg-12 col-5" alt="Foto del trabajador" />
+
 								</div>
 								<ul className="col-lg-8 col-12 list-group list-group-flush">
 									<li className="list-group-item"><strong>Name:</strong> {store.personalData.name}</li>
