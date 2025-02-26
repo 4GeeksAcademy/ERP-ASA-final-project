@@ -34,9 +34,11 @@ export const WorkerDataForm = (id) => {
 					<div className="row card-header text-center text-white">
 						<h3>Worker personal data</h3>
 					</div>
+
 					<div className="card-body row justify-content-center">
 						<div className="text-center my-2 img-container col-lg-4 col-11 d-flex justify-content-center align-items-center">
-							<img src="https://cdn-icons-png.flaticon.com/512/3736/3736502.png" className="rounded profile-img col-lg-12 col-5" alt="Foto del trabajador" />
+							<img src={store.workerData.profile_image_url || "https://cdn-icons-png.flaticon.com/512/3736/3736502.png"} className="rounded profile-img col-lg-12 col-5" alt="Foto del trabajador" />
+
 						</div>
 						{store.workerData ?
 							<>

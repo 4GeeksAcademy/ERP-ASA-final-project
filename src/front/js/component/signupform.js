@@ -1,7 +1,7 @@
 import React from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from 'yup';
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -10,6 +10,11 @@ export const SignupForm = () => {
 
 	const { store, actions } = useContext(Context)
 	const navigate = useNavigate();
+	const [file, setFile] = useState(null);
+
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
+    };
 
 	useEffect(() => {
 		if (!store.auth) navigate("/")
@@ -73,9 +78,9 @@ export const SignupForm = () => {
 					onSubmit={(values) => {
 						let success;
 						if (store.workerData.id) {
-							success = actions.editWorker(store.workerData.id, values.name, values.lastname, values.dni, values.address, values.email, values.password, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), parseInt(values.roleId))
+							success = actions.editWorker(store.workerData.id, values.name, values.lastname, values.dni, values.address, values.email, values.password, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), parseInt(values.roleId),file)
 						} else {
-							success = actions.addWorker(values.name, values.lastname, values.dni, values.address, values.email, values.password, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), parseInt(values.roleId))
+							success = actions.addWorker(values.name, values.lastname, values.dni, values.address, values.email, values.password, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), parseInt(values.roleId),file)
 						}
 						console.log(success);
 						
@@ -176,6 +181,10 @@ export const SignupForm = () => {
 								<div>
 									<ErrorMessage name="password" component="p" className="error text-danger" />
 								</div>
+							</div>
+							<h5>Profile Image</h5>
+							<div className="input-container-2">
+                        		<input type="file" onChange={handleFileChange} />
 							</div>
 						</div>
 						<button className="submit-2 col-10 mt-4" type="submit">
