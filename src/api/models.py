@@ -2,9 +2,12 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import mapped_column, relationship, validates
 import re
-from datetime import datetime
+import jwt
+from datetime import datetime, timedelta
+from flask import current_app
 from typing import List
 from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import URLSafeTimedSerializer
 
 db = SQLAlchemy()
 
@@ -27,6 +30,13 @@ class Worker(db.Model):
     department = relationship("Department", back_populates="worker")
     salary = db.relationship("Salary", back_populates="worker")
     role = db.relationship("Role", back_populates="worker")
+
+    def get_reset_token(self):
+      s = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+      return s.dumps({'reset_password': self.id}, salt=current_app.config['SECURITY_PASSWORD_SALT'])
+
+
+    
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

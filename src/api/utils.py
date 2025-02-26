@@ -1,4 +1,6 @@
-from flask import jsonify, url_for
+from flask import jsonify, url_for, request
+import requests
+from flask import current_app
 
 class APIException(Exception):
     status_code = 400
@@ -23,8 +25,7 @@ def has_no_empty_params(rule):
 def generate_sitemap(app):
     links = ['/admin/']
     for rule in app.url_map.iter_rules():
-        # Filter out rules we can't navigate to in a browser
-        # and rules that require parameters
+        # Filtrar reglas que no sean accesibles desde el navegador
         if "GET" in rule.methods and has_no_empty_params(rule):
             url = url_for(rule.endpoint, **(rule.defaults or {}))
             if "/admin/" not in url:
@@ -39,5 +40,4 @@ def generate_sitemap(app):
         <p>Start working on your project by following the <a href="https://start.4geeksacademy.com/starters/full-stack" target="_blank">Quick Start</a></p>
         <p>Remember to specify a real endpoint path like: </p>
         <ul style="text-align: left;">"""+links_html+"</ul></div>"
-
 
