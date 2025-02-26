@@ -7,11 +7,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 			employeesListFilter: [],
 			selected: [],
 			auth: false,
+			recoveryPassword: false,
 			personalData: {},
 			workerData: {},
 			departments: [],
-            salaries: [],
-            roles: [],
+			salaries: [],
+			roles: [],
 			offers: [],
 
 		},
@@ -24,7 +25,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ employeesList: data.results })
 					setStore({ employeesListFilter: data.results })
 					console.log(data.results);
-					
+
 					return true;
 				} catch (error) {
 					console.log("Error loading message from backend", error)
@@ -33,19 +34,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			deleteWorker: async (ids) => {
 				try {
-					const resp = await Promise.all(ids.map(async (id)=>{
-						const resp = fetch(process.env.BACKEND_URL + "api/employees/" + id, {method: "DELETE"})
+					const resp = await Promise.all(ids.map(async (id) => {
+						const resp = fetch(process.env.BACKEND_URL + "api/employees/" + id, { method: "DELETE" })
 						return resp
 					}))
 
-					resp.map(async (response)=>{
+					resp.map(async (response) => {
 						const dato = await response.json()
 						setStore({ employeesList: dato.results })
 						return true
 					})
-					
+
 					setStore({ selected: [] })
-					
+
 					return true;
 				} catch (error) {
 					console.log("Error loading message from backend", error)
@@ -54,42 +55,43 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			setSelected: (id) => {
 				const selected = [...getStore().selected]
-				
-				if (selected.some((item_id) => item_id === id)){
+
+				if (selected.some((item_id) => item_id === id)) {
 					let deleteId = selected.filter((item) => item !== id)
-					setStore({selected: deleteId})
+					setStore({ selected: deleteId })
 				} else {
 					selected.push(id);
-					setStore({selected: selected})
+					setStore({ selected: selected })
 				}
 				return true
 			},
 			login: async (email, password) => {
 				const myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
-			
+
 				const raw = JSON.stringify({
 					"email": email,
 					"password": password
 				});
-			
+
 				const requestOptions = {
 					method: "POST",
 					headers: myHeaders,
 					body: raw,
 					redirect: "follow"
 				};
-			
+
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/login", requestOptions);
 					const result = await response.json();
-					
+
 					if (response.status === 200) {
 						localStorage.setItem("token", result.access_token);
-			
+
 						// Decodificar el token para obtener información del usuario
 						const decoded = decodeJWT(result.access_token);
-			
+						console.log(decoded);
+						
 						if (decoded) {
 							setStore({
 								auth: true,
@@ -102,7 +104,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						} else {
 							console.error("No se pudo decodificar el token");
 						}
-			
+
 						return true;
 					}
 				} catch (error) {
@@ -121,7 +123,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					if (response.status === 200) {
 						const result = await response.json();
-						setStore({personalData: result})
+						setStore({ personalData: result })
 						return true;
 					}
 				} catch (error) {
@@ -131,12 +133,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			getWorkerData: (id) => {
 				console.log(id);
-				const result = getStore().employeesList.filter((worker)=>worker.id == id)[0]
-				setStore({workerData: result})
+				const result = getStore().employeesList.filter((worker) => worker.id == id)[0]
+				setStore({ workerData: result })
 				return true
 			},
 			resetWorkerData: () => {
-				setStore({workerData: {}})
+				setStore({ workerData: {} })
 				return true
 			},
 			addWorker: async (name, last_name, dni, address, email, password, birthdate, department_id, salary_id, role_id) => {
@@ -157,7 +159,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"password": password,
 							"birthdate": birthdate,
 							"department_id": parseInt(department_id),
-							"salary_id":parseInt(salary_id),
+							"salary_id": parseInt(salary_id),
 							"role_id": parseInt(role_id)
 						})
 					});
@@ -193,7 +195,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"password": password,
 							"birthdate": birthdate,
 							"department_id": parseInt(department_id),
-							"salary_id":parseInt(salary_id),
+							"salary_id": parseInt(salary_id),
 							"role_id": parseInt(role_id)
 						})
 					});
@@ -229,7 +231,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"password": password,
 							"birthdate": birthdate,
 							"department_id": parseInt(department_id),
-							"salary_id":parseInt(salary_id),
+							"salary_id": parseInt(salary_id),
 							"role_id": parseInt(role_id)
 						})
 					});
@@ -245,10 +247,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(error);
 					return false
 				};
-			},addOffer: async (title, description, requirements) => {
+			}, addOffer: async (title, description, requirements) => {
 				let token = localStorage.getItem("token")
 				try {
-					const response = await fetch(process.env.BACKEND_URL + "/api/offer",{
+					const response = await fetch(process.env.BACKEND_URL + "/api/offer", {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
@@ -275,10 +277,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(error);
 					return false
 				};
-			},addOffer: async (title, description, requirements) => {
+			}, addOffer: async (title, description, requirements) => {
 				let token = localStorage.getItem("token")
 				try {
-					const response = await fetch(process.env.BACKEND_URL + "/api/offer",{
+					const response = await fetch(process.env.BACKEND_URL + "/api/offer", {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
@@ -307,38 +309,73 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 			},
 			changeAuth: () => {
-				setStore({auth: !getStore().auth})
+				setStore({ auth: !getStore().auth })
 			},
 			resetSelected: () => {
-				setStore({selected: []})
+				setStore({ selected: [] })
 			},
-			logout:()=>{
-				setStore({auth: false})
+			setRecoveryPassword: () => {
+				setStore({recoveryPassword: true})
+			},
+			resetRecoveryPassword: () => {
+				setStore({recoveryPassword: false})
+			},
+			logout: () => {
+				setStore({ auth: false })
 				localStorage.removeItem("token")
 			},
 			fetchData: async () => {
-                try {
-                    const deptResponse = await fetch(process.env.BACKEND_URL + "/api/departments");
-                    const salaryResponse = await fetch(process.env.BACKEND_URL + "/api/salaries");
-                    const roleResponse = await fetch(process.env.BACKEND_URL + "/api/roles");
-
-                    const deptData = await deptResponse.json();
-                    const salaryData = await salaryResponse.json();
-                    const roleData = await roleResponse.json();
-
-                    setStore({
-                        departments: deptData,
-                        salaries: salaryData,
-                        roles: roleData
-                    });
-                } catch (error) {
-                    console.error("Error fetching data:", error);
-                }
-            },
+				try {
+					const deptResponse = await fetch(process.env.BACKEND_URL + "/api/departments");
+					const salaryResponse = await fetch(process.env.BACKEND_URL + "/api/salaries");
+					const roleResponse = await fetch(process.env.BACKEND_URL + "/api/roles");
+					
+					const deptData = await deptResponse.json();
+					const salaryData = await salaryResponse.json();
+					const roleData = await roleResponse.json();
+					
+					setStore({
+						departments: deptData,
+						salaries: salaryData,
+						roles: roleData
+					});
+				} catch (error) {
+					console.error("Error fetching data:", error);
+				}
+			},
 			filterList: (text) => {
-                const result = getStore().employeesListFilter.filter((worker) => worker.name.toLowerCase() == text.toLowerCase())
-				result.length > 0 ? setStore({employeesListFilter: result}) : setStore({employeesListFilter: getStore().employeesList})
-            }
+				const result = getStore().employeesListFilter.filter((worker) => worker.name.toLowerCase() == text.toLowerCase())
+				result.length > 0 ? setStore({ employeesListFilter: result }) : setStore({ employeesListFilter: getStore().employeesList })
+			}, 
+			recoveryPassword: async (email) => {
+				try {
+					const response = await fetch("https://send.api.mailtrap.io/api/send", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": `Bearer 2587afd8543c15ae27c2e50608d16cc9`
+						},
+						body: JSON.stringify({
+							"from":	{"email":"hello@demomailtrap.com","name":"Mailtrap Test"},
+							"to":	{"email":email,"name":"Mailtrap Test"},
+							"subject":"You are awesome!",
+							"text":"Congrats for sending test email with Mailtrap!",
+							"category":"Integration Test"})
+					});
+					console.log(response);
+					
+					if (response.ok) {
+						return true;
+					} else {
+						console.error("API error:", response.status);
+						return false;
+					}
+				} catch (error) {
+					console.error("error");
+					console.error(error);
+					return false
+				};
+			},
 		}
 	};
 };

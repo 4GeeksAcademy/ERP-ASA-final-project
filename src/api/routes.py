@@ -149,9 +149,7 @@ def login():
         password = request.json.get("password", None)
         user = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one()
 
-
         if user and user.check_password(password):
-            #access_token = create_access_token(identity=email, expires_delta=timedelta(hours = 1))
             access_token = create_access_token(identity=email, additional_claims={
                 "name": user.name,
                 "email": user.email,
