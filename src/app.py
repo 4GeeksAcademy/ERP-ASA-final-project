@@ -12,6 +12,7 @@ from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from mail_config import mail 
 import cloudinary
 import cloudinary.uploader
 
@@ -21,6 +22,7 @@ cloudinary.config(
     api_secret=os.getenv("CLOUDINARY_API_SECRET"),
     secure=True
 )
+
 
 # from models import Person
 
@@ -57,15 +59,11 @@ setup_commands(app)
 app.register_blueprint(api, url_prefix='/api')
 
 # Handle/serialize errors like a JSON object
-
-
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
 
 # generate sitemap with all your endpoints
-
-
 @app.route('/')
 def sitemap():
     if ENV == "development":
@@ -81,6 +79,18 @@ def serve_any_other_file(path):
     response.cache_control.max_age = 0  # avoid cache memory
     return response
 
+# Configuración de Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'  
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = ''  
+app.config['MAIL_PASSWORD'] = ''  
+app.config['MAIL_DEFAULT_SENDER'] = 'tucorreo@gmail.com'  
+
+mail.init_app(app)  # Inicializa Flask-Mail aquí
+
+app.config['SECRET_KEY'] = 'tu_clave_secreta'
+app.config['SECURITY_PASSWORD_SALT'] = 'una_clave_secreta_aleatoria'
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
