@@ -91,7 +91,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						// Decodificar el token para obtener información del usuario
 						const decoded = decodeJWT(result.access_token);
 						console.log(decoded);
-						
+
 						if (decoded) {
 							setStore({
 								auth: true,
@@ -154,11 +154,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 					formData.append("department_id", parseInt(department_id));
 					formData.append("salary_id", parseInt(salary_id));
 					formData.append("role_id", parseInt(role_id));
-					
+
 					if (file) {
 						formData.append("profile_image_url", file);
 					}
-			
+
 					const response = await fetch(process.env.BACKEND_URL + "/api/worker", {
 						method: "POST",
 						headers: {
@@ -166,7 +166,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: formData // Enviar datos en formato FormData
 					});
-			
+
 					if (response.ok) {
 						const result = await response.json();
 						console.log(result);
@@ -180,10 +180,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
-
 			editWorker: async (id, name, last_name, dni, address, email, password, birthdate, department_id, salary_id, role_id, file) => {
 				let token = localStorage.getItem("token");
-			
+
 				try {
 					// Usamos FormData para enviar datos y archivos correctamente
 					let formData = new FormData();
@@ -198,12 +197,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 					formData.append("department_id", String(department_id));
 					formData.append("salary_id", String(salary_id));
 					formData.append("role_id", String(role_id));
-			
+
 					// Solo agregar la imagen si se proporciona
 					if (file) {
 						formData.append("profile_image", file);
 					}
-			
+
 					const response = await fetch(process.env.BACKEND_URL + "/api/worker", {
 						method: "PUT",
 						headers: {
@@ -211,7 +210,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: formData
 					});
-			
+
 					if (response.ok) {
 						const result = await response.json();
 						console.log(result);
@@ -225,72 +224,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false
 				};
 			},
-			editWorker: async (id, name, last_name, dni, address, email, password, birthdate, department_id, salary_id, role_id) => {
-				let token = localStorage.getItem("token")
-				try {
-					const response = await fetch(process.env.BACKEND_URL + "/api/worker", {
-						method: "PUT",
-						headers: {
-							"Content-Type": "application/json",
-							"Authorization": `Bearer ${token}`
-						},
-						body: JSON.stringify({
-							"id": id,
-							"name": name,
-							"last_name": last_name,
-							"dni": dni,
-							"address": address,
-							"email": email,
-							"password": password,
-							"birthdate": birthdate,
-							"department_id": parseInt(department_id),
-							"salary_id": parseInt(salary_id),
-							"role_id": parseInt(role_id)
-						})
-					});
-					if (response.ok) {
-						const result = await response.json();
-						return true;
-					} else {
-						console.error("API error:", response.status);
-						return false;
-					}
-				} catch (error) {
-					console.error("error");
-					console.error(error);
-					return false
-				};
-			}, addOffer: async (title, description, requirements) => {
-				let token = localStorage.getItem("token")
-				try {
-					const response = await fetch(process.env.BACKEND_URL + "/api/offer", {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							"Authorization": `Bearer ${token}`
-						},
-						body: JSON.stringify({
-							"title": title,
-							"description": description,
-							"requirements": requirements
-						})
-					});
-					if (response.ok) {
-						const result = await response.json();
-						setStore({
-							offers: [...getStore().offers, result.offer]
-						});
-						return true;
-					} else {
-						console.error("API error:", response.status);
-						return false;
-					}
-				} catch (error) {
-					console.error("error");
-					console.error(error);
-					return false
-				};
-			}, addOffer: async (title, description, requirements) => {
+			addOffer: async (title, description, requirements) => {
 				let token = localStorage.getItem("token")
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/offer", {
@@ -328,10 +262,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ selected: [] })
 			},
 			setRecoveryPassword: () => {
-				setStore({recoveryPassword: true})
+				setStore({ recoveryPassword: true })
 			},
 			resetRecoveryPassword: () => {
-				setStore({recoveryPassword: false})
+				setStore({ recoveryPassword: false })
 			},
 			logout: () => {
 				setStore({ auth: false })
@@ -342,11 +276,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const deptResponse = await fetch(process.env.BACKEND_URL + "/api/departments");
 					const salaryResponse = await fetch(process.env.BACKEND_URL + "/api/salaries");
 					const roleResponse = await fetch(process.env.BACKEND_URL + "/api/roles");
-					
+
 					const deptData = await deptResponse.json();
 					const salaryData = await salaryResponse.json();
 					const roleData = await roleResponse.json();
-					
+
 					setStore({
 						departments: deptData,
 						salaries: salaryData,
@@ -357,49 +291,45 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			filterList: (text) => {
-                const result = getStore().employeesListFilter.filter((worker) => worker.name.toLowerCase() == text.toLowerCase())
-				result.length > 0 ? setStore({employeesListFilter: result}) : setStore({employeesListFilter: getStore().employeesList})
-            },
+				const result = getStore().employeesListFilter.filter((worker) => worker.name.toLowerCase() == text.toLowerCase())
+				result.length > 0 ? setStore({ employeesListFilter: result }) : setStore({ employeesListFilter: getStore().employeesList })
+			},
 			uploadImage: async (file) => {
 				const formData = new FormData();
 				formData.append("file", file);
-			
+
 				try {
 					const token = localStorage.getItem("token");
-					const resp = await fetch(process.env.BACKEND_URL + "/upload_image", {
+					const resp = await fetch(process.env.BACKEND_URL + "/api/upload_image", {
 						method: "POST",
 						headers: {
 							Authorization: `Bearer ${token}`,
 						},
 						body: formData
 					});
-			
+
 					if (!resp.ok) throw new Error("Error uploading image");
-			
+
 					const data = await resp.json();
 					setStore({ profileImageUrl: data.image_url });
 				} catch (error) {
 					console.error("Upload error:", error);
 				}
-			}
-			}, 
+			},
 			recoveryPassword: async (email) => {
 				try {
-					const response = await fetch("https://send.api.mailtrap.io/api/send", {
+					const response = await fetch(process.env.BACKEND_URL + "/api/reset-password-request", {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
-							"Authorization": `Bearer 2587afd8543c15ae27c2e50608d16cc9`
+							"Authorization": `Bearer ${token}`
 						},
 						body: JSON.stringify({
-							"from":	{"email":"hello@demomailtrap.com","name":"Mailtrap Test"},
-							"to":	{"email":email,"name":"Mailtrap Test"},
-							"subject":"You are awesome!",
-							"text":"Congrats for sending test email with Mailtrap!",
-							"category":"Integration Test"})
+							email: email
+						})
 					});
 					console.log(response);
-					
+
 					if (response.ok) {
 						return true;
 					} else {

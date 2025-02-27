@@ -6,7 +6,7 @@ import { BackendURL } from "./component/backendURL";
 import { Home } from "./pages/home";
 import { Login } from "./pages/login";
 import { Signup } from "./pages/signup";
-import { Offer } from "./component/offerForm";
+import { OfferView } from "./pages/offer";
 import { Employees } from "./pages/employees";
 import { Profile } from "./pages/profile";
 import { WorkerData } from "./pages/workerData";
@@ -35,7 +35,7 @@ const Layout = () => {
                         <Route element={<Login />} path="/login" />
                         <Route element={<Signup />} path="/signup" />
                         <Route element={<Employees />} path="/employees" />
-                        <Route element={<Offer />} path="/offers" />
+                        <Route element={<OfferView />} path="/offers" />
                         <Route element={<Profile />} path="/profile" />
                         <Route element={<WorkerData />} path="/worker/:id" />
                         <Route element={<h1>Not found!</h1>} />

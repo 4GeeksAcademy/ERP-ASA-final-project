@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Offer } from "../component/offerForm";
 import { Context } from "../store/appContext";
 import "../../styles/login.css"
@@ -8,9 +8,12 @@ export const OfferView = () => {
     
     useEffect(() => {
         actions.resetWorkerData()
+        console.log(store.workerData);
     }, [])
     
     return (
-        <Offer />
+        <div className="pb-5">
+            <Offer />
+        </div>
     )
 }

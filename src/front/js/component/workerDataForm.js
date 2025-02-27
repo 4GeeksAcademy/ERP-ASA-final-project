@@ -21,10 +21,11 @@ export const WorkerDataForm = (id) => {
 	const handleDelete = async () => {
 		const promise = await actions.deleteWorker([store.workerData.id])
 		actions.getEmployeesList()
-		navigate("/")
 		if (store.workerData.id === store.personalData.id && promise) {
 			actions.logout()
+			navigate("/")
 		}
+		navigate("/employees")
 	}
 
 	return (
@@ -58,9 +59,9 @@ export const WorkerDataForm = (id) => {
 					</div>
 					{isHR && <div className="card-footer text-center border-0">
 						<Link to={"/signup"}>
-							<button className="btn button me-2">Editar</button>
+							<button className="btn button me-2 w-25">Edit</button>
 						</Link>
-						<button type="button" className="button" data-bs-toggle="modal" data-bs-target="#exampleModal2">Delete</button>
+						<button type="button" className="button w-25" data-bs-toggle="modal" data-bs-target="#exampleModal2">Delete</button>
 
 						{/* <!-- Modal --> */}
 						<div className="modal fade" id="exampleModal2" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

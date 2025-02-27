@@ -11,7 +11,7 @@ export const Home = () => {
 	}, [])
 
 	return (
-		<div className="container my-5">
+		<div className="container my-5 pb-5">
 			<section className="text-center text-white d-flex flex-column justify-content-center align-items-center medium-background p-5">
 				<h1 className="fw-bold">Optimise Human Resource Management</h1>
 				<p className="mt-3 section">

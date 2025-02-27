@@ -301,7 +301,6 @@ def reset_password(token):
         new_password = data.get('new_password')
         
         if user:
-         
             user.password = new_password  
             db.session.commit()
             return jsonify({"message": "Your password has been updated."}), 200
@@ -357,6 +356,7 @@ def reset_password_request():
         return jsonify({"message": "An email with instructions to reset your password has been sent."}), 200
     else:
         return jsonify({"message": "Email not found."}), 404
+
 
 @api.route('/upload_image', methods=['POST'])
 def upload_image():

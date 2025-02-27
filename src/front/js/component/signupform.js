@@ -12,9 +12,9 @@ export const SignupForm = () => {
 	const navigate = useNavigate();
 	const [file, setFile] = useState(null);
 
-    const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
-    };
+	const handleFileChange = (e) => {
+		setFile(e.target.files[0]);
+	};
 
 	useEffect(() => {
 		if (!store.auth) navigate("/")
@@ -25,7 +25,7 @@ export const SignupForm = () => {
 		name: Yup.string().required("Name is required"),
 		lastname: Yup.string().required("Last name is required"),
 		dni: Yup.string()
-		.matches(/^\d{8}$/, "DNI must be 8 digits")
+			.matches(/^\d{8}$/, "DNI must be 8 digits")
 			.required("DNI is required"),
 		address: Yup.string().required("Address is required"),
 		email: Yup.string()
@@ -49,8 +49,8 @@ export const SignupForm = () => {
 		<>
 			<div className="form-container-2 container d-flex flex-column align-items-center">
 				<Formik
-					initialValues={ 
-						 store.workerData.name ? {
+					initialValues={
+						store.workerData.name ? {
 							name: store.workerData.name,
 							lastname: store.workerData.last_name,
 							dni: store.workerData.dni,
@@ -61,29 +61,29 @@ export const SignupForm = () => {
 							salaryId: "",
 							roleId: "",
 							password: ""
-						}: 
-					{
-						name: "",
-						lastname: "",
-						dni: "",
-						address: "",
-						birthDate: "",
-						email: "",
-						departmentId: "",
-						salaryId: "",
-						roleId: "",
-						password: ""
-					}}
+						} :
+							{
+								name: "",
+								lastname: "",
+								dni: "",
+								address: "",
+								birthDate: "",
+								email: "",
+								departmentId: "",
+								salaryId: "",
+								roleId: "",
+								password: ""
+							}}
 					validationSchema={validationSchema}
 					onSubmit={(values) => {
 						let success;
 						if (store.workerData.id) {
-							success = actions.editWorker(store.workerData.id, values.name, values.lastname, values.dni, values.address, values.email, values.password, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), parseInt(values.roleId),file)
+							success = actions.editWorker(store.workerData.id, values.name, values.lastname, values.dni, values.address, values.email, values.password, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), parseInt(values.roleId), file)
 						} else {
-							success = actions.addWorker(values.name, values.lastname, values.dni, values.address, values.email, values.password, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), parseInt(values.roleId),file)
+							success = actions.addWorker(values.name, values.lastname, values.dni, values.address, values.email, values.password, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), parseInt(values.roleId), file)
 						}
 						console.log(success);
-						
+
 						if (success) {
 							navigate("/profile")
 						}
@@ -95,97 +95,94 @@ export const SignupForm = () => {
 					}}
 				>
 					<Form className="row d-flex justify-content-around form-2 m-0 w-100">
-						<div className="col-md-5">
-							<h5>Name</h5>
-							<div className="input-container-2">
-								<Field placeholder="Name" name="name" type="text" />
-								<div>
-									<ErrorMessage name="name" component="p" className="error text-danger" />
-								</div>
-							</div>
-							<h5>Last name</h5>
-							<div className="input-container-2">
-								<Field placeholder="Last name" name="lastname" type="text" />
-								<div>
-									<ErrorMessage name="lastname" component="p" className="error text-danger" />
-								</div>
-							</div>
-							<h5>DNI</h5>
-							<div className="input-container-2">
-								<Field placeholder="Dni" name="dni" type="text" />
-								<div>
-									<ErrorMessage name="dni" component="p" className="error text-danger" />
-								</div>
-							</div>
-							<h5>Address</h5>
-							<div className="input-container-2">
-								<Field placeholder="Address" name="address" type="text" />
-								<div>
-									<ErrorMessage name="address" component="p" className="error text-danger" />
-								</div>
-							</div>
-							<h5>Birth date</h5>
-							<div className="input-container-2">
-								<Field placeholder="00/00/0000" name="birthDate" type="text" />
-								<div>
-									<ErrorMessage name="birthDate" component="p" className="error text-danger" />
-								</div>
+						<div className="input-container-2 col-md-5 ">
+							<h5 className="strong-background">Name</h5>
+							<Field placeholder="Name" name="name" type="text" />
+							<div>
+								<ErrorMessage name="name" component="p" className="error text-danger" />
 							</div>
 						</div>
-						<div className="col-md-5">
-							<h5>Salary</h5>
-							<div className="input-container-2">
-								<Field as="select" name="salaryId">
-									<option value="">Select Salary</option>
-									{store.salaries.map((salary) => (
-										<option key={salary.id} value={salary.id}>{salary.gross_salary}</option>
-									))}
-								</Field>
-								<div>
-									<ErrorMessage name="salaryId" component="p" className="error text-danger" />
-								</div>
+						<div className="input-container-2 col-md-5">
+							<h5 className="strong-background">Last name</h5>
+							<Field placeholder="Last name" name="lastname" type="text" />
+							<div>
+								<ErrorMessage name="lastname" component="p" className="error text-danger" />
 							</div>
-							<div className="input-container-2">
-								<h5>Role</h5>
-								<Field as="select" name="roleId">
-									<option value="">Select Role</option>
-									{store.roles.map((role) => (
-										<option key={role.id} value={role.id}>{role.name}</option>
-									))}
-								</Field>
-								<div>
-									<ErrorMessage name="roleId" component="p" className="error text-danger" />
-								</div>
+						</div>
+						<div className="input-container-2 col-md-5">
+							<h5 className="strong-background">DNI</h5>
+							<Field placeholder="Dni" name="dni" type="text" />
+							<div>
+								<ErrorMessage name="dni" component="p" className="error text-danger" />
 							</div>
-							<h5>Department</h5>
-							<div className="input-container-2"><Field as="select" name="departmentId">
+						</div>
+						<div className="input-container-2 col-md-5">
+							<h5 className="strong-background">Address</h5>
+							<Field placeholder="Address" name="address" type="text" />
+							<div>
+								<ErrorMessage name="address" component="p" className="error text-danger" />
+							</div>
+						</div>
+						<div className="input-container-2 col-md-5">
+							<h5 className="strong-background">Birth date</h5>
+							<Field placeholder="00/00/0000" name="birthDate" type="text" />
+							<div>
+								<ErrorMessage name="birthDate" component="p" className="error text-danger" />
+							</div>
+						</div>
+						<div className="input-container-2 col-md-5">
+							<h5 className="strong-background">Salary</h5>
+							<Field as="select" name="salaryId">
+								<option value="">Select Salary</option>
+								{store.salaries.map((salary) => (
+									<option key={salary.id} value={salary.id}>{salary.gross_salary}</option>
+								))}
+							</Field>
+							<div>
+								<ErrorMessage name="salaryId" component="p" className="error text-danger" />
+							</div>
+						</div>
+						<div className="input-container-2 col-md-5">
+							<h5 className="strong-background">Role</h5>
+							<Field as="select" name="roleId">
+								<option value="">Select Role</option>
+								{store.roles.map((role) => (
+									<option key={role.id} value={role.id}>{role.name}</option>
+								))}
+							</Field>
+							<div>
+								<ErrorMessage name="roleId" component="p" className="error text-danger" />
+							</div>
+						</div>
+						<div className="input-container-2 col-md-5">
+							<h5 className="strong-background">Department</h5>
+							<Field as="select" name="departmentId">
 								<option value="">Select Department</option>
 								{store.departments.map((department) => (
 									<option key={department.id} value={department.id}>{department.name}</option>
 								))}
 							</Field>
-								<div>
-									<ErrorMessage name="departmentId" component="p" className="error text-danger" />
-								</div>
+							<div>
+								<ErrorMessage name="departmentId" component="p" className="error text-danger" />
 							</div>
-							<h5>Email</h5>
-							<div className="input-container-2">
-								<Field placeholder="Email" name="email" type="email" />
-								<div>
-									<ErrorMessage name="email" component="p" className="error text-danger" />
-								</div>
+						</div>
+						<div className="input-container-2 col-md-5">
+							<h5 className="strong-background">Email</h5>
+							<Field placeholder="Email" name="email" type="email" />
+							<div>
+								<ErrorMessage name="email" component="p" className="error text-danger" />
 							</div>
-							<h5>Password</h5>
-							<div className="input-container-2">
-								<Field placeholder="Password" name="password" type="password" />
-								<div>
-									<ErrorMessage name="password" component="p" className="error text-danger" />
-								</div>
+						</div>
+						<div className="input-container-2 col-md-5">
+							<h5 className="strong-background">Password</h5>
+							<Field placeholder="Password" name="password" type="password" />
+							<div>
+								<ErrorMessage name="password" component="p" className="error text-danger" />
 							</div>
-							<h5>Profile Image</h5>
-							<div className="input-container-2">
-                        		<input type="file" onChange={handleFileChange} />
-							</div>
+						</div>
+						<div className="input-container-2 col-md-5">
+							<h5 className="strong-background">Profile Image</h5>
+							<input type="file" onChange={handleFileChange} />
 						</div>
 						<button className="submit-2 col-10 mt-4" type="submit">
 							Send
