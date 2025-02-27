@@ -83,9 +83,9 @@ def serve_any_other_file(path):
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-# hacer el username dinamico para que obtenga el input
-app.config['MAIL_USERNAME'] = ''  
-# crear un correo con contraseña de aplicacion
+# añadir correo 
+app.config['MAIL_USERNAME'] = '' 
+# añadir contraseña de aplicacion 
 app.config['MAIL_PASSWORD'] = ''  
 app.config['MAIL_DEFAULT_SENDER'] = 'tucorreo@gmail.com'  
 

@@ -356,6 +356,8 @@ def reset_password_request():
         identity=email,
         expires_delta=timedelta(hours=1)
     )
+
+    send_reset_email(user)
     
     print(f"Token generado: {reset_token}")
     return jsonify({"message": "Se ha enviado el correo de restablecimiento de contraseña"}), 200
