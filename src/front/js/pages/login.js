@@ -11,7 +11,7 @@ export const Login = () => {
 	}, [])
 
 	return (
-		<div className="form-style">
+		<div className="form-style pb-5">
 			<LoginForm/>
 		</div>
 	);

@@ -240,9 +240,7 @@ def login():
         password = request.json.get("password", None)
         user = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one()
 
-
         if user and user.check_password(password):
-            #access_token = create_access_token(identity=email, expires_delta=timedelta(hours = 1))
             access_token = create_access_token(identity=email, additional_claims={
                 "name": user.name,
                 "email": user.email,
@@ -291,10 +289,9 @@ def init_serializer():
     global s
     s = URLSafeTimedSerializer(current_app.config["JWT_SECRET_KEY"])
 
-@api.route('/api/reset-password/<token>', methods=['POST'])
+@api.route('/reset-password/<token>', methods=['POST'])
 def reset_password(token):
     try:
-
         user_id = jwt.decode(token, current_app.config['JWT_SECRET_KEY'], algorithms=["HS256"])['reset_password']
         user = Worker.query.get(user_id)
         
@@ -303,7 +300,6 @@ def reset_password(token):
         new_password = data.get('new_password')
         
         if user:
-         
             user.password = new_password  
             db.session.commit()
             return jsonify({"message": "Your password has been updated."}), 200
@@ -359,6 +355,7 @@ def reset_password_request():
         return jsonify({"message": "An email with instructions to reset your password has been sent."}), 200
     else:
         return jsonify({"message": "Email not found."}), 404
+
 
 @api.route('/upload_image', methods=['POST'])
 def upload_image():

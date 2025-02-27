@@ -22,7 +22,7 @@ export const EmployeesList = () => {
 		let logout = store.selected.find((id) => id === store.personalData.id)
 		const promise = await actions.deleteWorker(store.selected)
 		actions.getEmployeesList()
-		navigate("/")
+		navigate("/employees")
 		if (logout && promise) {
 			actions.logout()
 			navigate("/")

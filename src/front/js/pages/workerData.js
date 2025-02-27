@@ -13,7 +13,7 @@ export const WorkerData = props => {
 	}, [])
 
 	return (
-		<div className="form-style">
+		<div className="form-style pb-5">
 			<WorkerDataForm id={params.id}/>
 		</div>
 	);

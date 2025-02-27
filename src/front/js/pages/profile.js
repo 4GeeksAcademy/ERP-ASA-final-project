@@ -11,7 +11,7 @@ export const Profile = () => {
 	}, [])
 
 	return (
-		<div className="form-style">
+		<div className="form-style pb-5">
 			<MyProfile/>
 		</div>
 	);

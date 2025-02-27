@@ -24,8 +24,6 @@ cloudinary.config(
 )
 
 
-# from models import Person
-
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
@@ -83,14 +81,16 @@ def serve_any_other_file(path):
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
+# hacer el username dinamico para que obtenga el input
 app.config['MAIL_USERNAME'] = ''  
+# crear un correo con contraseña de aplicacion
 app.config['MAIL_PASSWORD'] = ''  
 app.config['MAIL_DEFAULT_SENDER'] = 'tucorreo@gmail.com'  
 
 mail.init_app(app)  # Inicializa Flask-Mail aquí
 
-app.config['SECRET_KEY'] = 'tu_clave_secreta'
-app.config['SECURITY_PASSWORD_SALT'] = 'una_clave_secreta_aleatoria'
+app.config['SECRET_KEY'] = 'ERP-ASA'
+app.config['SECURITY_PASSWORD_SALT'] = 'ERP-ASA'
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

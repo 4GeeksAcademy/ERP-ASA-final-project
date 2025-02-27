@@ -11,7 +11,7 @@ export const Employees = () => {
 	}, [])
 
 	return (
-		<div className="form-style">
+		<div className="form-style pb-5">
 			<EmployeesList/>
 		</div>
 	);
