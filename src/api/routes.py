@@ -1,7 +1,7 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
-from flask import Flask, request, jsonify, url_for, Blueprint
+from flask import Flask, request, jsonify, url_for, Blueprint, current_app
 from api.models import db
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
@@ -10,7 +10,14 @@ from sqlalchemy import select
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from flask_admin import Admin
 from datetime import datetime, timedelta
+
+from itsdangerous import URLSafeTimedSerializer
+from flask_mail import Message
+from mail_config import mail
+import jwt
+
 import cloudinary.uploader
+
 
 api = Blueprint('api', __name__)
 
@@ -276,6 +283,83 @@ def get_roles():
     roles = Role.query.all()
     return jsonify([role.serialize() for role in roles]), 200
 
+
+s = None
+
+@api.before_app_request
+def init_serializer():
+    global s
+    s = URLSafeTimedSerializer(current_app.config["JWT_SECRET_KEY"])
+
+@api.route('/api/reset-password/<token>', methods=['POST'])
+def reset_password(token):
+    try:
+
+        user_id = jwt.decode(token, current_app.config['JWT_SECRET_KEY'], algorithms=["HS256"])['reset_password']
+        user = Worker.query.get(user_id)
+        
+       
+        data = request.get_json()
+        new_password = data.get('new_password')
+        
+        if user:
+         
+            user.password = new_password  
+            db.session.commit()
+            return jsonify({"message": "Your password has been updated."}), 200
+        else:
+            return jsonify({"message": "Invalid token."}), 400
+
+    except jwt.ExpiredSignatureError:
+        return jsonify({"message": "The token has expired."}), 400
+    except jwt.InvalidTokenError:
+        return jsonify({"message": "Invalid token."}), 400
+
+
+
+def send_reset_email(user):
+    try:
+        token = user.get_reset_token()
+
+        reset_url = url_for('api.reset_password', token=token, _external=True)
+        
+        msg = Message(
+            'Recuperación de contraseña',  
+            recipients=[user.email],  
+            charset='utf-8'  
+        )
+        
+      
+        msg.body = f'Para restablecer tu contraseña, sigue este enlace: {reset_url}'
+        
+        
+        msg.body = msg.body.encode('utf-8').decode('utf-8')
+        
+        mail.send(msg)
+        print("Correo enviado correctamente")
+    
+    except Exception as e:
+        print(f"Error al enviar el correo: {e}")
+
+
+
+
+@api.route("/reset-password-request", methods=["POST"])
+def reset_password_request():
+    email = request.json.get("email")
+
+    if not email:
+        return jsonify({"message": "Email is required."}), 400
+
+  
+    user = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one_or_none()
+
+    if user:
+        send_reset_email(user)  
+        return jsonify({"message": "An email with instructions to reset your password has been sent."}), 200
+    else:
+        return jsonify({"message": "Email not found."}), 404
+
 @api.route('/upload_image', methods=['POST'])
 def upload_image():
     user_id = get_jwt_identity()
@@ -294,3 +378,4 @@ def upload_image():
     db.session.commit()
 
     return jsonify({"message": "Image uploaded successfully", "image_url": worker.profile_image_url})
+
