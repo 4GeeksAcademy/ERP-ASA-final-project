@@ -35,7 +35,7 @@ export const LoginForm = () => {
 				<p className="form-title w-100">Welcome</p>
 				<form className="form w-100" onSubmit={handleSubmit} autofill="off">
 					<div className="input-container">
-						<input autocomplete="off" placeholder="Enter email" type="email" onChange={(e) => setEmail(e.target.value)} />
+						<input autoComplete="off" placeholder="Enter email" type="email" onChange={(e) => setEmail(e.target.value)} />
 					</div>
 					{!store.recoveryPassword ?
 						<div className="input-container">

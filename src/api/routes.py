@@ -8,6 +8,7 @@ from flask_cors import CORS
 from api.models import Worker, Department, Role, Salary, Offer
 from sqlalchemy import select
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt
 from flask_admin import Admin
 from datetime import datetime, timedelta
 
@@ -282,34 +283,37 @@ def get_roles():
     return jsonify([role.serialize() for role in roles]), 200
 
 
-s = None
-
-@api.before_app_request
-def init_serializer():
-    global s
-    s = URLSafeTimedSerializer(current_app.config["JWT_SECRET_KEY"])
-
-@api.route('/reset-password/<token>', methods=['POST'])
+@api.route("/reset-password/<token>", methods=["POST"])
+@jwt_required()
 def reset_password(token):
     try:
-        user_id = jwt.decode(token, current_app.config['JWT_SECRET_KEY'], algorithms=["HS256"])['reset_password']
-        user = Worker.query.get(user_id)
-        
-       
-        data = request.get_json()
-        new_password = data.get('new_password')
-        
-        if user:
-            user.password = new_password  
-            db.session.commit()
-            return jsonify({"message": "Your password has been updated."}), 200
-        else:
-            return jsonify({"message": "Invalid token."}), 400
+        email = get_jwt_identity()  
 
-    except jwt.ExpiredSignatureError:
-        return jsonify({"message": "The token has expired."}), 400
-    except jwt.InvalidTokenError:
-        return jsonify({"message": "Invalid token."}), 400
+        if not email:
+            return jsonify({"msg": "Invalid token."}), 400
+
+        user = Worker.query.filter_by(email=email).first()
+        if not user:
+            return jsonify({"msg": "User not found"}), 404
+
+        new_password = request.json.get('password')
+        if not new_password:
+            return jsonify({"msg": "Password is required"}), 400
+        
+        user.set_password(new_password)
+        db.session.commit()
+
+        return jsonify({"msg": "Password has been reset successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"msg": "An error occurred", "error": str(e)}), 500
+
+
+
+
+
+
+
 
 
 
@@ -340,21 +344,23 @@ def send_reset_email(user):
 
 
 
-@api.route("/reset-password-request", methods=["POST"])
+@api.route('/reset-password-request', methods=['POST'])
 def reset_password_request():
-    email = request.json.get("email")
+    email = request.json.get('email')
+    user = Worker.query.filter_by(email=email).first()
 
-    if not email:
-        return jsonify({"message": "Email is required."}), 400
+    if not user:
+        return jsonify({"message": "El correo no está registrado"}), 404
 
-  
-    user = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one_or_none()
+    reset_token = create_access_token(
+        identity=email,
+        expires_delta=timedelta(hours=1)
+    )
+    
+    print(f"Token generado: {reset_token}")
+    return jsonify({"message": "Se ha enviado el correo de restablecimiento de contraseña"}), 200
 
-    if user:
-        send_reset_email(user)  
-        return jsonify({"message": "An email with instructions to reset your password has been sent."}), 200
-    else:
-        return jsonify({"message": "Email not found."}), 404
+
 
 
 @api.route('/upload_image', methods=['POST'])
