@@ -289,10 +289,9 @@ def init_serializer():
     global s
     s = URLSafeTimedSerializer(current_app.config["JWT_SECRET_KEY"])
 
-@api.route('/api/reset-password/<token>', methods=['POST'])
+@api.route('/reset-password/<token>', methods=['POST'])
 def reset_password(token):
     try:
-
         user_id = jwt.decode(token, current_app.config['JWT_SECRET_KEY'], algorithms=["HS256"])['reset_password']
         user = Worker.query.get(user_id)
         
