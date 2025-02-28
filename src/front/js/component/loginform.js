@@ -14,13 +14,12 @@ export const LoginForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (store.recoveryPassword) {
-            const success = await actions.recoveryPassword(email);
+            const success = await actions.sendEmail(email);
             if (success) {
                 setSuccessMessage("Check your email to reset your password.");
             } else {
                 setSuccessMessage("Error sending reset email. Please try again.");
             }
-            actions.resetRecoveryPassword();
         } else {
             const success = await actions.login(email, password);
             if (success) {
@@ -64,19 +63,19 @@ export const LoginForm = () => {
                         </button>
                     )}
                 </form>
-
-                {store.recoveryPassword && successMessage && (
-                    <div className="alert alert-info mt-3" role="alert">
-                        {successMessage}
-                    </div>
-                )}
-
-                
                 {!store.recoveryPassword && (
                     <a className="reset-pw" onClick={() => actions.setRecoveryPassword()}>
                         Forgot your password?
                     </a>
                 )}
+
+                {store.recoveryPassword && successMessage && (
+                    <div className={"alert mt-3 " + (successMessage.includes("Error") ? "alert-danger" : "alert-success")} role="alert">
+                        {successMessage}
+                    </div>
+                )}
+
+                
             </div>
         </>
     );

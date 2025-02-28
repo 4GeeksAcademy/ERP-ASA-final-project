@@ -25,13 +25,9 @@ export const Offer = () => {
         e.preventDefault()
         if (!title || !description || !requirements) {
             alert("Please fill all fields");
-            navigate("/")
             return;
         }
         actions.addOffer(title, description, requirements)
-    }
-
-    const handleCancel = () => {
         navigate("/")
     }
 

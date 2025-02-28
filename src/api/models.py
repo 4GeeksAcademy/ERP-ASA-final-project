@@ -127,8 +127,8 @@ class Role(db.Model):
     __tablename__ = "role_table"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=False, nullable=True)
-    level = db.Column(db.String(80), unique=False, nullable=False)
+    name = db.Column(db.String(80), unique=False, nullable=False)
+    level = db.Column(db.String(80), unique=False, nullable=True)
 
     department_id = mapped_column(ForeignKey("department_table.id"))
     
