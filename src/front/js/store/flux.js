@@ -317,6 +317,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			recoveryPassword: async (email) => {
+				const token = localStorage.getItem("token");
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/reset-password-request", {
 						method: "POST",
@@ -324,23 +325,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"Content-Type": "application/json",
 							"Authorization": `Bearer ${token}`
 						},
-						body: JSON.stringify({
-							email: email
-						})
+						body: JSON.stringify({ email: email })
 					});
-					console.log(response);
-
+			
 					if (response.ok) {
+						console.log("Password reset email sent");
 						return true;
 					} else {
-						console.error("API error:", response.status);
-						return false;
+						console.error("Error sending reset email", response.status);
+						return false; 
 					}
 				} catch (error) {
-					console.error("error");
-					console.error(error);
-					return false
-				};
+					console.error("Error in recoveryPassword:", error);
+					return false; 
+				}
 			},
 		}
 	};

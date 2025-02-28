@@ -15,6 +15,7 @@ from flask_jwt_extended import JWTManager
 from mail_config import mail 
 import cloudinary
 import cloudinary.uploader
+from datetime import timedelta
 
 cloudinary.config(
     cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
@@ -45,6 +46,7 @@ db.init_app(app)
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = "ASA-ERP-final-project"  # Change this!
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 jwt = JWTManager(app)
 
 # add the admin
@@ -81,9 +83,9 @@ def serve_any_other_file(path):
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-# hacer el username dinamico para que obtenga el input
-app.config['MAIL_USERNAME'] = ''  
-# crear un correo con contraseña de aplicacion
+# añadir correo 
+app.config['MAIL_USERNAME'] = '' 
+# añadir contraseña de aplicacion 
 app.config['MAIL_PASSWORD'] = ''  
 app.config['MAIL_DEFAULT_SENDER'] = 'tucorreo@gmail.com'  
 
