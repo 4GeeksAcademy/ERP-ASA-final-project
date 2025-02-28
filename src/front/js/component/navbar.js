@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../../styles/navbar.css";
 import { Context } from "../store/appContext";
@@ -6,6 +6,12 @@ import "../../styles/navbar.css"
 
 export const Navbar = () => {
 	const { actions, store } = useContext(Context);
+
+	useEffect(()=> {
+		!store.auth && localStorage.getItem("token") ? actions.getProfile() : null;
+		
+		// !store.auth && localStorage.getItem(token) ? 
+	}, [])
 
 	return (
 		<nav className="navbar sticky-top">

@@ -88,23 +88,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (response.status === 200) {
 						localStorage.setItem("token", result.access_token);
 
-						// Decodificar el token para obtener información del usuario
-						const decoded = decodeJWT(result.access_token);
-						console.log(decoded);
-
-						if (decoded) {
-							setStore({
-								auth: true,
-								user: {
-									name: decoded.name,
-									email: decoded.email,
-									department: decoded.department || "No asignado"
-								}
-							});
-						} else {
-							console.error("No se pudo decodificar el token");
-						}
-
 						return true;
 					}
 				} catch (error) {
@@ -123,7 +106,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					if (response.status === 200) {
 						const result = await response.json();
-						setStore({ personalData: result })
+						// Decodificar el token para obtener información del usuario
+						const decoded = decodeJWT(token);
+						console.log(decoded);
+
+						if (decoded) {
+							setStore({
+								auth: true,
+								user: {
+									name: decoded.name,
+									email: decoded.email,
+									department: decoded.department || "No asignado"
+								},
+								personalData: result
+							});
+						} else {
+							console.error("No se pudo decodificar el token");
+						}
 						return true;
 					}
 				} catch (error) {
