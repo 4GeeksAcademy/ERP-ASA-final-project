@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../../styles/navbar.css";
 import { Context } from "../store/appContext";
@@ -7,11 +7,14 @@ import "../../styles/navbar.css"
 export const Navbar = () => {
 	const { actions, store } = useContext(Context);
 
-	useEffect(()=> {
+	const [HR, setHR] = useState("")
+
+
+	useEffect(() => {
 		!store.auth && localStorage.getItem("token") ? actions.getProfile() : null;
-		
-		// !store.auth && localStorage.getItem(token) ? 
-	}, [])
+		let aux = {...store.personalData.department};
+		setHR(aux.name)
+	}, [store.personalData])
 
 	return (
 		<nav className="navbar sticky-top">
@@ -31,12 +34,17 @@ export const Navbar = () => {
 								<Link to="/employees">
 									<li className="dropdown-item w-auto rounded mx-2">Employees List</li>
 								</Link>
-								<Link to="/signup">
-									<li className="dropdown-item w-auto rounded mx-2">New Worker</li>
-								</Link>
-								<Link to="/offers">
-									<li className="dropdown-item w-auto rounded mx-2">Create offer</li>
-								</Link>
+								{HR === "RRHH" ?
+									<>
+										<Link to="/signup">
+											<li className="dropdown-item w-auto rounded mx-2">New Worker</li>
+										</Link>
+										<Link to="/offers">
+											<li className="dropdown-item w-auto rounded mx-2">Create offer</li>
+										</Link>
+									</>
+								: null
+								}
 								<Link to="/profile">
 									<li className="dropdown-item w-auto rounded mx-2">My profile</li>
 								</Link>
