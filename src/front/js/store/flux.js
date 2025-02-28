@@ -316,16 +316,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("Upload error:", error);
 				}
 			},
-			recoveryPassword: async (email) => {
-				const token = localStorage.getItem("token");
+			sendEmail: async (email) => {
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/reset-password-request", {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
-							"Authorization": `Bearer ${token}`
+							// "Authorization": `Bearer ${token}`
 						},
-						body: JSON.stringify({ email: email })
+						body: JSON.stringify({ email: email, url: process.env.FRONTEND_URL + ""})
 					});
 			
 					if (response.ok) {
@@ -333,6 +332,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 						return true;
 					} else {
 						console.error("Error sending reset email", response.status);
+						return false; 
+					}
+				} catch (error) {
+					console.error("Error in recoveryPassword:", error);
+					return false; 
+				}
+			},
+			recoveryPassword: async (token, password) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/reset-password/" + token, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${token}`
+						},
+						body: JSON.stringify({ password: password})
+					});
+			
+					if (response.ok) {
+						console.log("Password reset correctly");
+						return true;
+					} else {
+						console.error("Error resetting password", response.status);
 						return false; 
 					}
 				} catch (error) {

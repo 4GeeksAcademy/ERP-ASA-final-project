@@ -139,54 +139,6 @@ def edit_worker():
         db.session.rollback()
         return jsonify({"msg": "Error updating worker"}), 500
 
-# @api.route('/worker', methods=['PUT'])
-# def edit_worker():
-#     data = request.form
-#     file = request.files.get('profile_image_url') 
-    
-#     if not all(key in data for key in ['id', 'name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id', 'role_id']):
-#         return jsonify({"message": "Missing required fields"}), 400
-    
-#     image_url = None  
-        
-#     # Subir imagen a Cloudinary si se proporciona
-#     if file:
-#         print(file)
-#         try:
-#             upload_result = cloudinary.uploader.upload(file)
-#             print("Cloudinary response edit:", upload_result)
-#             image_url = upload_result.get("secure_url")
-#         except Exception as e:
-#             print("Cloudinary upload error:", str(e))
-#             return jsonify({"msg": "Error uploading image", "error": str(e)}), 500
-#     else:
-#         print("no file")
-#         image_url = None
-    
-#     try:
-#         worker = db.session.execute(select(Worker).filter_by(id=data['id'])).scalar_one()
-        
-#         worker.id = data["id"]
-#         worker.name = data["name"]
-#         worker.last_name = data["last_name"]
-#         worker.dni = data["dni"]
-#         worker.address = data["address"]
-#         worker.email = data["email"]
-#         worker.birthdate = data["birthdate"]
-#         worker.department_id = data["department_id"]
-#         worker.salary_id = data["salary_id"]
-#         worker.role_id = data["role_id"]
-#         worker.set_password(data['password'])
-#         worker.profile_image_url = image_url
-#         db.session.commit()
-
-#         return jsonify({"msg": "Worker edit successfully", "worker": worker.serialize()}), 201
-    
-#     except Exception as err:
-#         print(err)
-#         db.session.rollback()
-#         return jsonify({"msg": "Error updating worker"}), 500
-    
 
 @api.route('/employees/<int:id>', methods=['DELETE'])
 def delete_worker(id):
@@ -287,7 +239,9 @@ def get_roles():
 @jwt_required()
 def reset_password(token):
     try:
+        print(token)
         email = get_jwt_identity()  
+        print(email)
 
         if not email:
             return jsonify({"msg": "Invalid token."}), 400
@@ -309,29 +263,21 @@ def reset_password(token):
         return jsonify({"msg": "An error occurred", "error": str(e)}), 500
 
 
-
-
-
-
-
-
-
-
-def send_reset_email(user):
+def send_reset_email(user, url):
     try:
         token = user.get_reset_token()
 
-        reset_url = url_for('api.reset_password', token=token, _external=True)
-        
+        reset_url = url_for('api.reset_password', token=token, _external=False)
+
+        url_formatted = reset_url.replace(".", "-")
+
         msg = Message(
             'Recuperación de contraseña',  
             recipients=[user.email],  
             charset='utf-8'  
         )
         
-      
-        msg.body = f'Para restablecer tu contraseña, sigue este enlace: {reset_url}'
-        
+        msg.body = f'Para restablecer tu contraseña, sigue este enlace: {url}{url_formatted}'
         
         msg.body = msg.body.encode('utf-8').decode('utf-8')
         
@@ -347,8 +293,10 @@ def send_reset_email(user):
 @api.route('/reset-password-request', methods=['POST'])
 def reset_password_request():
     email = request.json.get('email')
+    url = request.json.get('url')
+    
     user = Worker.query.filter_by(email=email).first()
-
+    
     if not user:
         return jsonify({"message": "El correo no está registrado"}), 404
 
@@ -357,12 +305,10 @@ def reset_password_request():
         expires_delta=timedelta(hours=1)
     )
 
-    send_reset_email(user)
+    send_reset_email(user, url)
     
     print(f"Token generado: {reset_token}")
     return jsonify({"message": "Se ha enviado el correo de restablecimiento de contraseña"}), 200
-
-
 
 
 @api.route('/upload_image', methods=['POST'])

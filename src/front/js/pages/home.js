@@ -7,7 +7,8 @@ export const Home = () => {
 	const { store, actions } = useContext(Context);
 
 	useEffect(() => {
-		actions.resetWorkerData()
+		actions.resetWorkerData();
+		
 	}, [])
 
 	return (
@@ -62,14 +63,14 @@ export const Home = () => {
 				<div className="container mt-4">
 					<div className="row">
 						<div className="col-md-6">
-							<div className="card p-3">
-								<p className="darkblue-text">‘This module has saved us a lot of time and effort in employee management.’</p>
+							<div className="card p-3 h-100 justify-content-between">
+								<p className="darkblue-text">"This module has saved us a lot of time and effort in employee management."</p>
 								<h6 className="text-end darkblue-text">- Laura Gómez, HR Manager</h6>
 							</div>
 						</div>
 						<div className="col-md-6">
-							<div className="card p-3">
-								<p className="darkblue-text">‘Process automation has improved our productivity enormously.’</p>
+							<div className="card p-3 h-100 justify-content-between">
+								<p className="darkblue-text">"Process automation has improved our productivity enormously."</p>
 								<h6 className="text-end darkblue-text">- Carlos Pérez, CEO</h6>
 							</div>
 						</div>

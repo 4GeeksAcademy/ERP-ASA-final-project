@@ -10,6 +10,7 @@ import { OfferView } from "./pages/offer";
 import { Employees } from "./pages/employees";
 import { Profile } from "./pages/profile";
 import { WorkerData } from "./pages/workerData";
+import { ResetPassword } from "./pages/resetPassword";
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -38,6 +39,7 @@ const Layout = () => {
                         <Route element={<OfferView />} path="/offers" />
                         <Route element={<Profile />} path="/profile" />
                         <Route element={<WorkerData />} path="/worker/:id" />
+                        <Route element={<ResetPassword />} path="/api/reset-password/:token" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     {/* <Footer /> */}
