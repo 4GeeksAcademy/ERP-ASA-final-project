@@ -1,6 +1,6 @@
 
 import click
-from api.models import db, Worker
+from backend.models import db, Employee
 
 """
 In this file, you can add as many commands as you want using the @app.cli.command decorator
@@ -19,7 +19,7 @@ def setup_commands(app):
     def insert_test_users(count):
         print("Creating test users")
         for x in range(1, int(count) + 1):
-            user = Worker()
+            user = Employee()
             user.name = "test_user"
             user.last_name = "test_last"
             user.dni = "test_dni"

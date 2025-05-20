@@ -2,7 +2,7 @@
 # exit on error
 set -o errexit
 
-cd src/front
+cd src/frontend
 npm install
 npm run build
 cd ../..
