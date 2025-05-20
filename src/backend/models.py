@@ -11,8 +11,8 @@ from itsdangerous import URLSafeTimedSerializer
 
 db = SQLAlchemy()
 
-class Worker(db.Model):
-    __tablename__ = "worker_table"
+class Employee(db.Model):
+    __tablename__ = "employees"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=False, nullable=False)
@@ -20,24 +20,34 @@ class Worker(db.Model):
     dni = db.Column(db.String(20), unique=True, nullable=False)
     address = db.Column(db.String(80), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), unique=False, nullable=False)
+    profile_image_url = db.Column(db.String(255), nullable=True)
     birthdate = db.Column(db.String(20), unique=False, nullable=False)
+
+    user_id = mapped_column(db.Integer, ForeignKey('users.id', ondelete= 'SET NULL'), nullable=True)
+    user = relationship("User", back_populates="employee", uselist=False)
+
+    department_id = mapped_column(db.Integer, ForeignKey('departments.id'), nullable=False)
+    department = relationship("Department", back_populates="employees", uselist=False)
+
+    salary_id = mapped_column(db.Integer, ForeignKey('salaries.id'), nullable=False)
+    salary = db.relationship("Salary", back_populates="employees", uselist=False)
+
+    role_id = mapped_column(db.Integer, ForeignKey('roles.id'), nullable=False)
+    role = db.relationship("Role", back_populates="employees", uselist=False)
+
+class User(db.Model):
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), unique=False, nullable=False)
     profile_image_url = db.Column(db.String(255), nullable=True)
 
-    department_id = mapped_column(ForeignKey("department_table.id"))
-    salary_id = mapped_column(ForeignKey("salary_table.id"))
-    role_id = mapped_column(ForeignKey("role_table.id"))
-
-    department = relationship("Department", back_populates="worker")
-    salary = db.relationship("Salary", back_populates="worker")
-    role = db.relationship("Role", back_populates="worker")
+    employee = relationship("Employee", back_populates="user", uselist=False)
 
     def get_reset_token(self):
       s = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
       return s.dumps({'reset_password': self.id}, salt=current_app.config['SECURITY_PASSWORD_SALT'])
-
-
-    
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -55,7 +65,6 @@ class Worker(db.Model):
         if not re.match(email_regex, email):
             raise ValueError('Email format is not valid')
         return email
-
 
     @validates('dni')
     def validate_dni(self, key, dni):
@@ -83,35 +92,27 @@ class Worker(db.Model):
         self.password_hash = generate_password_hash(password)
 
     def __repr__(self):
-        return f'<Worker {self.id}>'
+        return f'<User {self.id}>'
 
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name,
-            "last_name": self.last_name,
-            "dni": self.dni,
-            "address": self.address,
             "email": self.email,
-            "birthdate": self.birthdate,
-            "salary": self.salary.serialize() if self.salary else None,
-            "department": self.department.serialize() if self.department else None,
-            "role": self.role.serialize() if self.role else None,
             "profile_image_url": self.profile_image_url
-            
+
             # do not serialize the password, its a security breach
         }
 
 
 class Department(db.Model):
-    __tablename__ = "department_table"
+    __tablename__ = "departments"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=False, nullable=False)
     description = db.Column(db.String(800), unique=False, nullable=True)
 
-    worker = relationship('Worker', back_populates='department')
-    role = db.relationship("Role", back_populates='department')
+    employees = relationship('Employee', back_populates='department')
+    offers = relationship('Offer', back_populates='department')
 
     def __repr__(self):
         return self.name
@@ -124,16 +125,12 @@ class Department(db.Model):
         }
 
 class Role(db.Model):
-    __tablename__ = "role_table"
+    __tablename__ = "roles"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=False, nullable=False)
-    level = db.Column(db.String(80), unique=False, nullable=True)
-
-    department_id = mapped_column(ForeignKey("department_table.id"))
     
-    worker = relationship('Worker', back_populates='role')
-    department = db.relationship("Department", back_populates="role")
+    employees = relationship('Employee', back_populates='role')
 
     def __repr__(self):
         return self.name
@@ -142,15 +139,15 @@ class Role(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "level": self.level,
         }
 
 class Salary(db.Model):
-    __tablename__ = "salary_table"
+    __tablename__ = "salaries"
 
     id = db.Column(db.Integer, primary_key=True)
     gross_salary = db.Column(db.Integer, unique=False, nullable=False)
-    worker = db.relationship("Worker", back_populates="salary")
+    
+    employees = db.relationship("Employee", back_populates="salary")
 
     @validates('gross_salary')
     def validate_salary(self, key, gross_salary):
@@ -169,12 +166,15 @@ class Salary(db.Model):
 
 
 class Offer(db.Model):
-    __tablename__ = "offer_table"
+    __tablename__ = "offers"
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80), unique=False, nullable=True)
     description = db.Column(db.String(800), unique=False, nullable=False)
     requirements = db.Column(db.String(800), unique=False, nullable=False)
+
+    department_id = mapped_column(db.Integer, ForeignKey('departments.id', ondelete='CASCADE'), nullable=False)
+    department = relationship("Department", back_populates="offers")
 
     def __repr__(self):
         return f'<User {self.id}>'

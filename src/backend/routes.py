@@ -2,10 +2,10 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint, current_app
-from api.models import db
-from api.utils import generate_sitemap, APIException
+from backend.models import db
+from backend.utils import generate_sitemap, APIException
 from flask_cors import CORS
-from api.models import Worker, Department, Role, Salary, Offer
+from backend.models import Employee, Department, Role, Salary, Offer
 from sqlalchemy import select
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from flask_jwt_extended import get_jwt
@@ -29,7 +29,7 @@ CORS(api)
 @api.route('/employees', methods=['GET'])
 def get_employees():
     try:
-        data = db.session.scalars(select(Worker)).all()
+        data = db.session.scalars(select(Employee)).all()
         results = list(map(lambda item: item.serialize(), data))
         
         response_body = {
@@ -67,7 +67,7 @@ def add_worker():
             print("no file")
             image_url = None
         print("Final image_url before saving:", image_url) 
-        new_worker = Worker(
+        new_worker = Employee(
             name=data['name'],
             last_name=data['last_name'],
             dni=data['dni'],
@@ -113,7 +113,7 @@ def edit_worker():
 
     try:
         # Buscar el trabajador por ID
-        worker = db.session.execute(select(Worker).filter_by(id=int(data['id']))).scalar_one()
+        worker = db.session.execute(select(Employee).filter_by(id=int(data['id']))).scalar_one()
         
         worker.name = data["name"]
         worker.last_name = data["last_name"]

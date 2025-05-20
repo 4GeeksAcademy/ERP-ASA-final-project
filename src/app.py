@@ -5,11 +5,11 @@ import os
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
-from api.utils import APIException, generate_sitemap
-from api.models import db
-from api.routes import api
-from api.admin import setup_admin
-from api.commands import setup_commands
+from backend.utils import APIException, generate_sitemap
+from backend.models import db
+from backend.routes import api
+from backend.admin import setup_admin
+from backend.commands import setup_commands
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from mail_config import mail 
