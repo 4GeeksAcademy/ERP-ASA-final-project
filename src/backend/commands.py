@@ -28,7 +28,6 @@ def setup_commands(app):
             user.bithdate = "09/09/2024"
             user.password = "123456"
             user.department = "test_deparment"
-            user.role = "manager"
             user.salary = "100000"
             db.session.add(user)
             db.session.commit()

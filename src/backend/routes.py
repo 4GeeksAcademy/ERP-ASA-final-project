@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify, url_for, Blueprint, current_app
 from backend.models import db
 from backend.utils import generate_sitemap, APIException
 from flask_cors import CORS
-from backend.models import Employee, Department, Role, Salary, Offer
+from backend.models import Employee, Department, Salary, User
 from sqlalchemy import select
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from flask_jwt_extended import get_jwt
@@ -26,7 +26,7 @@ api = Blueprint('api', __name__)
 CORS(api)
 
 
-@api.route('/employees', methods=['GET'])
+@api.route('/worker', methods=['GET'])
 def get_employees():
     try:
         data = db.session.scalars(select(Employee)).all()
@@ -48,7 +48,7 @@ def add_worker():
         data = request.form  # Usamos request.form en lugar de request.get_json()
         file = request.files.get('profile_image_url')  # Obtener el archivo de imagen
 
-        if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id', 'role_id']):
+        if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id']):
             return jsonify({"message": "Missing required fields"}), 400
 
         image_url = None 
@@ -76,7 +76,6 @@ def add_worker():
             birthdate=data['birthdate'],
             department_id=data['department_id'],
             salary_id=data['salary_id'],
-            role_id=data['role_id'],
             profile_image_url=image_url  # Guardar la URL de la imagen
         )
          
@@ -97,7 +96,7 @@ def edit_worker():
     file = request.files.get('profile_image')  # Recibir la imagen correctamente
     
     # Validar datos obligatorios
-    required_fields = ['id', 'name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id', 'role_id']
+    required_fields = ['id', 'name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id']
     if not all(key in data for key in required_fields):
         return jsonify({"message": "Missing required fields"}), 400
 
@@ -123,7 +122,6 @@ def edit_worker():
         worker.birthdate = data["birthdate"]
         worker.department_id = int(data["department_id"])
         worker.salary_id = int(data["salary_id"])
-        worker.role_id = int(data["role_id"])
         worker.set_password(data['password'])
 
         # Solo actualizar la imagen si se subió una nueva
@@ -195,14 +193,14 @@ def login():
 
         if user and user.check_password(password):
             access_token = create_access_token(identity=email, additional_claims={
-                "name": user.name,
+                "name": user.employee.name if user.employee else None,
                 "email": user.email,
                 "department": user.department.name if user.department else None
             },expires_delta=timedelta(hours = 1))
             return jsonify(access_token=access_token)
         
 
-        return jsonify({"msg": "Bad email or password"}), 401
+        return jsonify({"msg": "Bad email or password (routes)"}), 401
 
     except Exception as err:
         print(err)
@@ -229,11 +227,6 @@ def get_salaries():
     salaries = Salary.query.all()
     return jsonify([salary.serialize() for salary in salaries]), 200
 
-@api.route('/roles', methods=['GET'])
-def get_roles():
-    roles = Role.query.all()
-    return jsonify([role.serialize() for role in roles]), 200
-
 
 @api.route("/reset-password/<token>", methods=["POST"])
 @jwt_required()
@@ -246,7 +239,7 @@ def reset_password(token):
         if not email:
             return jsonify({"msg": "Invalid token."}), 400
 
-        user = Worker.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email).first()
         if not user:
             return jsonify({"msg": "User not found"}), 404
 

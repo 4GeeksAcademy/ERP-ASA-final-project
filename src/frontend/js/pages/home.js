@@ -44,7 +44,7 @@ export const Home = () => {
 					<div className="col-md-4 text-center p-4 reason">
 						<i className="bi bi-people-fill feat strong-background"></i>
 						<h4 className="darkblue-text">Employee management</h4>
-						<p className="darkblue-text">Manage employee profiles, roles and permissions easily.</p>
+						<p className="darkblue-text">Manage employee profiles and permissions easily.</p>
 					</div>
 					<div className="col-md-4 text-center p-4 reason">
 						<i className="bi bi-clock-history feat strong-background"></i>

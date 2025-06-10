@@ -12,7 +12,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			workerData: {},
 			departments: [],
 			salaries: [],
-			roles: [],
 			offers: [],
 
 		},
@@ -82,16 +81,22 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 
 				try {
-					const response = await fetch(process.env.BACKEND_URL + "/api/login", requestOptions);
+					console.log(process.env.BACKEND_URL + "/login")
+					const response = await fetch(process.env.BACKEND_URL + "login", requestOptions);
 					const result = await response.json();
+
+					console.log("Resultado del login:", result);
 
 					if (response.status === 200) {
 						localStorage.setItem("token", result.access_token);
-
+						console.log("Token guardado:", result.access_token);
 						return true;
+					} else {
+						console.warn("Login fallido. Código:", response.status, "Mensaje:", result.msg);
+						return false; // 🔸 retorno explícito si no es 200
 					}
 				} catch (error) {
-					console.error("Error en login:", error);
+					console.error("Error en login (flux):", error);
 					return false;
 				}
 			},
@@ -139,7 +144,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ workerData: {} })
 				return true
 			},
-			addWorker: async (name, last_name, dni, address, email, password, birthdate, department_id, salary_id, role_id, file) => {
+			addWorker: async (name, last_name, dni, address, email, password, birthdate, department_id, salary_id, file) => {
 				let token = localStorage.getItem("token");
 				try {
 					let formData = new FormData();
@@ -152,7 +157,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					formData.append("birthdate", birthdate);
 					formData.append("department_id", parseInt(department_id));
 					formData.append("salary_id", parseInt(salary_id));
-					formData.append("role_id", parseInt(role_id));
 
 					if (file) {
 						formData.append("profile_image_url", file);
@@ -179,7 +183,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
-			editWorker: async (id, name, last_name, dni, address, email, password, birthdate, department_id, salary_id, role_id, file) => {
+			editWorker: async (id, name, last_name, dni, address, email, password, birthdate, department_id, salary_id, file) => {
 				let token = localStorage.getItem("token");
 
 				try {
@@ -195,7 +199,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					formData.append("birthdate", birthdate);
 					formData.append("department_id", String(department_id));
 					formData.append("salary_id", String(salary_id));
-					formData.append("role_id", String(role_id));
 
 					// Solo agregar la imagen si se proporciona
 					if (file) {
@@ -274,16 +277,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const deptResponse = await fetch(process.env.BACKEND_URL + "/api/departments");
 					const salaryResponse = await fetch(process.env.BACKEND_URL + "/api/salaries");
-					const roleResponse = await fetch(process.env.BACKEND_URL + "/api/roles");
 
 					const deptData = await deptResponse.json();
 					const salaryData = await salaryResponse.json();
-					const roleData = await roleResponse.json();
 
 					setStore({
 						departments: deptData,
 						salaries: salaryData,
-						roles: roleData
 					});
 				} catch (error) {
 					console.error("Error fetching data:", error);
