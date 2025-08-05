@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { TableList } from "./tableList";
+import { EmployeeTable } from "./employeeTable";
 import { Link, useNavigate } from "react-router-dom";
 
-export const EmployeesList = () => {
+export const EmployeeList = () => {
 
 	const { store, actions } = useContext(Context);
 	const [isHR, setIsHR] = useState(false);
@@ -13,7 +13,7 @@ export const EmployeesList = () => {
 	useEffect(() => {
 		actions.resetSelected()
 		if (!store.auth) navigate("/")
-		if (store.auth && store.user.department === "RRHH") {
+		if (store.auth && store.personalData.department === "RRHH") {
 			setIsHR(true);
 		}
 	}, [])
@@ -21,7 +21,7 @@ export const EmployeesList = () => {
 	const handleDelete = async () => {
 		let logout = store.selected.find((id) => id === store.personalData.id)
 		const promise = await actions.deleteWorker(store.selected)
-		actions.getEmployeesList()
+		actions.getEmployeeList()
 		navigate("/employees")
 		if (logout && promise) {
 			actions.logout()
@@ -39,7 +39,7 @@ export const EmployeesList = () => {
 							<Link className="col-3 fs-5" to="/signup">
 								<button type="button" className="button w-100">Create</button>
 							</Link>
-							<Link className="col-3" to={"/signup"} onClick={() => actions.getWorkerData(store.selected[0])}>
+							<Link className="col-3" to={"/signup"} onClick={() => actions.getEmployeeData(store.selected[0])}>
 								<button type="button" className="button w-100" disabled={store.selected.length === 1 ? false : true}>Edit</button>
 							</Link>
 							<button type="button" className="button col-3" data-bs-toggle="modal" data-bs-target="#exampleModal" disabled={store.selected.length > 0 ? false : true}>Delete</button>
@@ -71,7 +71,7 @@ export const EmployeesList = () => {
 						</div>
 					</div>
 					<div className="container col-11">
-						<TableList />
+						<EmployeeTable />
 					</div>
 				</div>
 				:

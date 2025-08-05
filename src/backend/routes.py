@@ -1,325 +1,325 @@
-"""
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
-"""
-from flask import Flask, request, jsonify, url_for, Blueprint, current_app
-from backend.models import db
-from backend.utils import generate_sitemap, APIException
-from flask_cors import CORS
-from backend.models import Employee, Department, Salary, User
-from sqlalchemy import select
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from flask_jwt_extended import get_jwt
-from flask_admin import Admin
-from datetime import datetime, timedelta
+# """
+# This module takes care of starting the API Server, Loading the DB and Adding the endpoints
+# """
+# from flask import Flask, request, jsonify, url_for, Blueprint, current_app
+# from backend.models import db
+# from backend.utils import generate_sitemap, APIException
+# from flask_cors import CORS
+# from backend.models import Employee, Department, Salary, User
+# from sqlalchemy import select
+# from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+# from flask_jwt_extended import get_jwt
+# from flask_admin import Admin
+# from datetime import datetime, timedelta
 
-from itsdangerous import URLSafeTimedSerializer
-from flask_mail import Message
-from mail_config import mail
-import jwt
+# from itsdangerous import URLSafeTimedSerializer
+# from flask_mail import Message
+# from mail_config import mail
+# import jwt
 
-import cloudinary.uploader
-
-
-api = Blueprint('api', __name__)
-
-# Allow CORS requests to this API
-CORS(api)
+# import cloudinary.uploader
 
 
-@api.route('/worker', methods=['GET'])
-def get_employees():
-    try:
-        data = db.session.scalars(select(Employee)).all()
-        results = list(map(lambda item: item.serialize(), data))
+# api = Blueprint('api', __name__)
+
+# # Allow CORS requests to this API
+# CORS(api)
+
+
+# @api.route('/worker', methods=['GET'])
+# def get_employees():
+#     try:
+#         data = db.session.scalars(select(Employee)).all()
+#         results = list(map(lambda item: item.serialize(), data))
         
-        response_body = {
-            "results": results
-        }
+#         response_body = {
+#             "results": results
+#         }
 
-        return jsonify(response_body), 200
+#         return jsonify(response_body), 200
     
-    except Exception  as err:
-        print(err)
-        return "An error has occurred", 400
+#     except Exception  as err:
+#         print(err)
+#         return "An error has occurred", 400
 
-@api.route('/worker', methods=['POST'])
-def add_worker():
-    try:
-        data = request.form  # Usamos request.form en lugar de request.get_json()
-        file = request.files.get('profile_image_url')  # Obtener el archivo de imagen
+# @api.route('/worker', methods=['POST'])
+# def add_worker():
+#     try:
+#         data = request.form  # Usamos request.form en lugar de request.get_json()
+#         file = request.files.get('profile_image_url')  # Obtener el archivo de imagen
 
-        if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id']):
-            return jsonify({"message": "Missing required fields"}), 400
+#         if not all(key in data for key in ['name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id']):
+#             return jsonify({"message": "Missing required fields"}), 400
 
-        image_url = None 
+#         image_url = None 
         
-        # Subir imagen a Cloudinary si se proporciona
-        if file:
-            print(file)
-            try:
-                upload_result = cloudinary.uploader.upload(file)
-                print("Cloudinary response:", upload_result)
-                image_url = upload_result.get("secure_url")
-            except Exception as e:
-                print("Cloudinary upload error:", str(e))
-                return jsonify({"msg": "Error uploading image", "error": str(e)}), 500
-        else:
-            print("no file")
-            image_url = None
-        print("Final image_url before saving:", image_url) 
-        new_worker = Employee(
-            name=data['name'],
-            last_name=data['last_name'],
-            dni=data['dni'],
-            address=data['address'],
-            email=data['email'],
-            birthdate=data['birthdate'],
-            department_id=data['department_id'],
-            salary_id=data['salary_id'],
-            profile_image_url=image_url  # Guardar la URL de la imagen
-        )
+#         # Subir imagen a Cloudinary si se proporciona
+#         if file:
+#             print(file)
+#             try:
+#                 upload_result = cloudinary.uploader.upload(file)
+#                 print("Cloudinary response:", upload_result)
+#                 image_url = upload_result.get("secure_url")
+#             except Exception as e:
+#                 print("Cloudinary upload error:", str(e))
+#                 return jsonify({"msg": "Error uploading image", "error": str(e)}), 500
+#         else:
+#             print("no file")
+#             image_url = None
+#         print("Final image_url before saving:", image_url) 
+#         new_worker = Employee(
+#             name=data['name'],
+#             last_name=data['last_name'],
+#             dni=data['dni'],
+#             address=data['address'],
+#             email=data['email'],
+#             birthdate=data['birthdate'],
+#             department_id=data['department_id'],
+#             salary_id=data['salary_id'],
+#             profile_image_url=image_url  # Guardar la URL de la imagen
+#         )
          
-        new_worker.set_password(data['password'])
-        db.session.add(new_worker)
-        db.session.commit()
+#         new_worker.set_password(data['password'])
+#         db.session.add(new_worker)
+#         db.session.commit()
 
-        return jsonify({"msg": "Worker added successfully", "worker": new_worker.serialize()}), 201
+#         return jsonify({"msg": "Worker added successfully", "worker": new_worker.serialize()}), 201
 
-    except Exception as err:
-        db.session.rollback()
-        print("Error adding worker:", str(err))  # Agrega este print para ver el error
-        return jsonify({"msg": "Error adding worker", "error": str(err)}), 500
+#     except Exception as err:
+#         db.session.rollback()
+#         print("Error adding worker:", str(err))  # Agrega este print para ver el error
+#         return jsonify({"msg": "Error adding worker", "error": str(err)}), 500
 
-@api.route('/worker', methods=['PUT'])
-def edit_worker():
-    data = request.form  # Recibir datos del formulario
-    file = request.files.get('profile_image')  # Recibir la imagen correctamente
+# @api.route('/worker', methods=['PUT'])
+# def edit_worker():
+#     data = request.form  # Recibir datos del formulario
+#     file = request.files.get('profile_image')  # Recibir la imagen correctamente
     
-    # Validar datos obligatorios
-    required_fields = ['id', 'name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id']
-    if not all(key in data for key in required_fields):
-        return jsonify({"message": "Missing required fields"}), 400
+#     # Validar datos obligatorios
+#     required_fields = ['id', 'name', 'last_name', 'dni', 'address', 'email', 'password', 'birthdate', 'department_id', 'salary_id']
+#     if not all(key in data for key in required_fields):
+#         return jsonify({"message": "Missing required fields"}), 400
 
-    # Subir imagen a Cloudinary si se proporciona
-    image_url = None
-    if file:
-        try:
-            upload_result = cloudinary.uploader.upload(file)
-            image_url = upload_result.get("secure_url")
-        except Exception as e:
-            print("Cloudinary upload error:", str(e))
-            return jsonify({"msg": "Error uploading image", "error": str(e)}), 500
+#     # Subir imagen a Cloudinary si se proporciona
+#     image_url = None
+#     if file:
+#         try:
+#             upload_result = cloudinary.uploader.upload(file)
+#             image_url = upload_result.get("secure_url")
+#         except Exception as e:
+#             print("Cloudinary upload error:", str(e))
+#             return jsonify({"msg": "Error uploading image", "error": str(e)}), 500
 
-    try:
-        # Buscar el trabajador por ID
-        worker = db.session.execute(select(Employee).filter_by(id=int(data['id']))).scalar_one()
+#     try:
+#         # Buscar el trabajador por ID
+#         worker = db.session.execute(select(Employee).filter_by(id=int(data['id']))).scalar_one()
         
-        worker.name = data["name"]
-        worker.last_name = data["last_name"]
-        worker.dni = data["dni"]
-        worker.address = data["address"]
-        worker.email = data["email"]
-        worker.birthdate = data["birthdate"]
-        worker.department_id = int(data["department_id"])
-        worker.salary_id = int(data["salary_id"])
-        worker.set_password(data['password'])
+#         worker.name = data["name"]
+#         worker.last_name = data["last_name"]
+#         worker.dni = data["dni"]
+#         worker.address = data["address"]
+#         worker.email = data["email"]
+#         worker.birthdate = data["birthdate"]
+#         worker.department_id = int(data["department_id"])
+#         worker.salary_id = int(data["salary_id"])
+#         worker.set_password(data['password'])
 
-        # Solo actualizar la imagen si se subió una nueva
-        if image_url:
-            worker.profile_image_url = image_url
+#         # Solo actualizar la imagen si se subió una nueva
+#         if image_url:
+#             worker.profile_image_url = image_url
 
-        db.session.commit()
+#         db.session.commit()
 
-        return jsonify({"msg": "Worker edited successfully", "worker": worker.serialize()}), 200
+#         return jsonify({"msg": "Worker edited successfully", "worker": worker.serialize()}), 200
     
-    except Exception as err:
-        print("Error updating worker:", err)
-        db.session.rollback()
-        return jsonify({"msg": "Error updating worker"}), 500
+#     except Exception as err:
+#         print("Error updating worker:", err)
+#         db.session.rollback()
+#         return jsonify({"msg": "Error updating worker"}), 500
 
 
-@api.route('/employees/<int:id>', methods=['DELETE'])
-def delete_worker(id):
-    try:
-        worker = db.session.execute(select(Worker).filter_by(id=id)).scalar_one()
+# @api.route('/employees/<int:id>', methods=['DELETE'])
+# def delete_worker(id):
+#     try:
+#         worker = db.session.execute(select(Worker).filter_by(id=id)).scalar_one()
 
-        db.session.delete(worker)
-        db.session.commit()
+#         db.session.delete(worker)
+#         db.session.commit()
 
-        data = db.session.scalars(select(Worker)).all()
-        results = list(map(lambda item: item.serialize(), data))
-        print(results)
+#         data = db.session.scalars(select(Worker)).all()
+#         results = list(map(lambda item: item.serialize(), data))
+#         print(results)
         
-        response_body = {
-            "msg": "Worker deleted",
-            "results": results
-        }
+#         response_body = {
+#             "msg": "Worker deleted",
+#             "results": results
+#         }
 
-        return jsonify(response_body), 200
+#         return jsonify(response_body), 200
     
-    except Exception as err:
-        print(err)
-        return "An error has occurred", 400
+#     except Exception as err:
+#         print(err)
+#         return "An error has occurred", 400
 
     
-@api.route('/offer', methods=['POST'])
-def add_offer():
-    data = request.get_json()
-    if not all(key in data for key in ['title', 'description', 'requirements']):
-        return jsonify({"message": "Missing required fields"}), 400
-    try:
-        new_offer = Offer(
-            title = data['title'],
-            description = data['description'],
-            requirements = data['requirements']
-        )
+# @api.route('/offer', methods=['POST'])
+# def add_offer():
+#     data = request.get_json()
+#     if not all(key in data for key in ['title', 'description', 'requirements']):
+#         return jsonify({"message": "Missing required fields"}), 400
+#     try:
+#         new_offer = Offer(
+#             title = data['title'],
+#             description = data['description'],
+#             requirements = data['requirements']
+#         )
 
-        db.session.add(new_offer)
-        db.session.commit()
+#         db.session.add(new_offer)
+#         db.session.commit()
 
-        return jsonify({"msg": "Offer added successfully", "offer": new_offer.serialize()}), 201
+#         return jsonify({"msg": "Offer added successfully", "offer": new_offer.serialize()}), 201
     
-    except Exception:
-        db.session.rollback()
-        return jsonify({"msg": "Error adding offer"}), 500
+#     except Exception:
+#         db.session.rollback()
+#         return jsonify({"msg": "Error adding offer"}), 500
     
 
-@api.route("/login", methods=["POST"])
-def login():
-    try:
-        email = request.json.get("email", None)
-        password = request.json.get("password", None)
-        user = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one()
+# @api.route("/login", methods=["POST"])
+# def login():
+#     try:
+#         email = request.json.get("email", None)
+#         password = request.json.get("password", None)
+#         user = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one()
 
-        if user and user.check_password(password):
-            access_token = create_access_token(identity=email, additional_claims={
-                "name": user.employee.name if user.employee else None,
-                "email": user.email,
-                "department": user.department.name if user.department else None
-            },expires_delta=timedelta(hours = 1))
-            return jsonify(access_token=access_token)
+#         if user and user.check_password(password):
+#             access_token = create_access_token(identity=email, additional_claims={
+#                 "name": user.employee.name if user.employee else None,
+#                 "email": user.email,
+#                 "department": user.department.name if user.department else None
+#             },expires_delta=timedelta(hours = 1))
+#             return jsonify(access_token=access_token)
         
 
-        return jsonify({"msg": "Bad email or password (routes)"}), 401
+#         return jsonify({"msg": "Bad email or password (routes)"}), 401
 
-    except Exception as err:
-        print(err)
-        return jsonify({"msg": "You should sign up"}), 401
+#     except Exception as err:
+#         print(err)
+#         return jsonify({"msg": "You should sign up"}), 401
     
 
-# Protect a route with jwt_required, which will kick out requests
-# without a valid JWT present.
-@api.route("/profile", methods=["GET"])
-@jwt_required()
-def get_profile():
-    # Access the identity of the current user with get_jwt_identity
-    email = get_jwt_identity()
-    profile = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one().serialize()
-    return jsonify(profile), 200
+# # Protect a route with jwt_required, which will kick out requests
+# # without a valid JWT present.
+# @api.route("/profile", methods=["GET"])
+# @jwt_required()
+# def get_profile():
+#     # Access the identity of the current user with get_jwt_identity
+#     email = get_jwt_identity()
+#     profile = db.session.execute(db.select(Worker).filter_by(email=email)).scalar_one().serialize()
+#     return jsonify(profile), 200
 
-@api.route('/departments', methods=['GET'])
-def get_departments():
-    departments = Department.query.all()
-    return jsonify([dept.serialize() for dept in departments]), 200
+# @api.route('/departments', methods=['GET'])
+# def get_departments():
+#     departments = Department.query.all()
+#     return jsonify([dept.serialize() for dept in departments]), 200
 
-@api.route('/salaries', methods=['GET'])
-def get_salaries():
-    salaries = Salary.query.all()
-    return jsonify([salary.serialize() for salary in salaries]), 200
+# @api.route('/salaries', methods=['GET'])
+# def get_salaries():
+#     salaries = Salary.query.all()
+#     return jsonify([salary.serialize() for salary in salaries]), 200
 
 
-@api.route("/reset-password/<token>", methods=["POST"])
-@jwt_required()
-def reset_password(token):
-    try:
-        print(token)
-        email = get_jwt_identity()  
-        print(email)
+# @api.route("/reset-password/<token>", methods=["POST"])
+# @jwt_required()
+# def reset_password(token):
+#     try:
+#         print(token)
+#         email = get_jwt_identity()  
+#         print(email)
 
-        if not email:
-            return jsonify({"msg": "Invalid token."}), 400
+#         if not email:
+#             return jsonify({"msg": "Invalid token."}), 400
 
-        user = User.query.filter_by(email=email).first()
-        if not user:
-            return jsonify({"msg": "User not found"}), 404
+#         user = User.query.filter_by(email=email).first()
+#         if not user:
+#             return jsonify({"msg": "User not found"}), 404
 
-        new_password = request.json.get('password')
-        if not new_password:
-            return jsonify({"msg": "Password is required"}), 400
+#         new_password = request.json.get('password')
+#         if not new_password:
+#             return jsonify({"msg": "Password is required"}), 400
         
-        user.set_password(new_password)
-        db.session.commit()
+#         user.set_password(new_password)
+#         db.session.commit()
 
-        return jsonify({"msg": "Password has been reset successfully"}), 200
+#         return jsonify({"msg": "Password has been reset successfully"}), 200
 
-    except Exception as e:
-        return jsonify({"msg": "An error occurred", "error": str(e)}), 500
+#     except Exception as e:
+#         return jsonify({"msg": "An error occurred", "error": str(e)}), 500
 
 
-def send_reset_email(user, url):
-    try:
-        token = user.get_reset_token()
+# def send_reset_email(user, url):
+#     try:
+#         token = user.get_reset_token()
 
-        reset_url = url_for('api.reset_password', token=token, _external=False)
+#         reset_url = url_for('api.reset_password', token=token, _external=False)
 
-        url_formatted = reset_url.replace(".", "-")
+#         url_formatted = reset_url.replace(".", "-")
 
-        msg = Message(
-            'Recuperación de contraseña',  
-            recipients=[user.email],  
-            charset='utf-8'  
-        )
+#         msg = Message(
+#             'Recuperación de contraseña',  
+#             recipients=[user.email],  
+#             charset='utf-8'  
+#         )
         
-        msg.body = f'Para restablecer tu contraseña, sigue este enlace: {url}{url_formatted}'
+#         msg.body = f'Para restablecer tu contraseña, sigue este enlace: {url}{url_formatted}'
         
-        msg.body = msg.body.encode('utf-8').decode('utf-8')
+#         msg.body = msg.body.encode('utf-8').decode('utf-8')
         
-        mail.send(msg)
-        print("Correo enviado correctamente")
+#         mail.send(msg)
+#         print("Correo enviado correctamente")
     
-    except Exception as e:
-        print(f"Error al enviar el correo: {e}")
+#     except Exception as e:
+#         print(f"Error al enviar el correo: {e}")
 
 
 
 
-@api.route('/reset-password-request', methods=['POST'])
-def reset_password_request():
-    email = request.json.get('email')
-    url = request.json.get('url')
+# @api.route('/reset-password-request', methods=['POST'])
+# def reset_password_request():
+#     email = request.json.get('email')
+#     url = request.json.get('url')
     
-    user = Worker.query.filter_by(email=email).first()
+#     user = Worker.query.filter_by(email=email).first()
     
-    if not user:
-        return jsonify({"message": "El correo no está registrado"}), 404
+#     if not user:
+#         return jsonify({"message": "El correo no está registrado"}), 404
 
-    reset_token = create_access_token(
-        identity=email,
-        expires_delta=timedelta(hours=1)
-    )
+#     reset_token = create_access_token(
+#         identity=email,
+#         expires_delta=timedelta(hours=1)
+#     )
 
-    send_reset_email(user, url)
+#     send_reset_email(user, url)
     
-    print(f"Token generado: {reset_token}")
-    return jsonify({"message": "Se ha enviado el correo de restablecimiento de contraseña"}), 200
+#     print(f"Token generado: {reset_token}")
+#     return jsonify({"message": "Se ha enviado el correo de restablecimiento de contraseña"}), 200
 
 
-@api.route('/upload_image', methods=['POST'])
-def upload_image():
-    user_id = get_jwt_identity()
-    worker = Worker.query.get(user_id)
+# @api.route('/upload_image', methods=['POST'])
+# def upload_image():
+#     user_id = get_jwt_identity()
+#     employee = Employee.query.get(user_id)
 
-    if not worker:
-        return jsonify({"error": "Worker not found"}), 404
+#     if not employee:
+#         return jsonify({"error": "Worker not found"}), 404
 
-    if 'file' not in request.files:
-        return jsonify({"error": "No file provided"}), 400
+#     if 'file' not in request.files:
+#         return jsonify({"error": "No file provided"}), 400
 
-    file = request.files['file']
-    result = cloudinary.uploader.upload(file)
+#     file = request.files['file']
+#     result = cloudinary.uploader.upload(file)
 
-    worker.profile_image_url = result['secure_url']
-    db.session.commit()
+#     employee.profile_image_url = result['secure_url']
+#     db.session.commit()
 
-    return jsonify({"message": "Image uploaded successfully", "image_url": worker.profile_image_url})
+#     return jsonify({"message": "Image uploaded successfully", "image_url": Employee.profile_image_url})
 

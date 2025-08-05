@@ -6,13 +6,13 @@ import { LoginForm } from "../component/loginform";
 export const Login = () => {
 	const { store, actions } = useContext(Context);
 
-	useEffect(()=>{
-		actions.resetWorkerData()
+	useEffect(() => {
+		actions.resetEmployeeData()
 	}, [])
 
 	return (
 		<div className="form-style pb-5">
-			<LoginForm/>
+			<LoginForm />
 		</div>
 	);
 };

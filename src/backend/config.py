@@ -16,5 +16,6 @@ class Config:
     MAIL_PASSWORD = 'alwd slbu hkcz ixwf'
     MAIL_DEFAULT_SENDER = 'tucorreo@gmail.com'
 
+
     SECRET_KEY = 'ERP-ASA'
     SECURITY_PASSWORD_SALT = 'ERP-ASA'

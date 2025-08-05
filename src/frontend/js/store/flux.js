@@ -3,32 +3,57 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			message: "hola",
-			employeesList: [],
-			employeesListFilter: [],
+			employeeList: [],
+			employeeListFilter: [],
 			selected: [],
+			selectedEmployee: {},
 			auth: false,
 			recoveryPassword: false,
 			personalData: {},
-			workerData: {},
+			employeeData: {},
 			departments: [],
 			salaries: [],
 			offers: [],
 
 		},
 		actions: {
-			getEmployeesList: async () => {
+			getEmployeeList: async () => {
 				try {
-					const resp = await fetch(process.env.BACKEND_URL + "/api/employees")
-					const data = await resp.json()
+					const token = localStorage.getItem("token");
+					const resp = await fetch(process.env.BACKEND_URL + "api/employee/", {
+						method: "GET",
+						headers: {
+							"Authorization": `Bearer ${token}`,
+							"Content-Type": "application/json"
+						}
+					});
 
-					setStore({ employeesList: data.results })
-					setStore({ employeesListFilter: data.results })
-					console.log(data.results);
-
-					return true;
+					const data = await resp.json();
+					setStore({ employeeList: data });
+					console.log(getStore().employeeList);
 				} catch (error) {
-					console.log("Error loading message from backend", error)
-					return false;
+					console.error("Error cargando empleados", error);
+				}
+			},
+			getEmployeeById: async (id) => {
+				try {
+					const token = localStorage.getItem("token");
+
+					const resp = await fetch(`${process.env.BACKEND_URL}api/employee/${id}`, {
+						method: "GET",
+						headers: {
+							"Authorization": `Bearer ${token}`,
+							"Content-Type": "application/json"
+						}
+					});
+					const data = await resp.json();
+					if (resp.ok) {
+						setStore({ selectedEmployee: data });
+					} else {
+						console.warn("Empleado no encontrado:", data);
+					}
+				} catch (error) {
+					console.error("Error obteniendo empleado", error);
 				}
 			},
 			deleteWorker: async (ids) => {
@@ -40,7 +65,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					resp.map(async (response) => {
 						const dato = await response.json()
-						setStore({ employeesList: dato.results })
+						setStore({ employeeList: dato.results })
 						return true
 					})
 
@@ -81,15 +106,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 
 				try {
-					console.log(process.env.BACKEND_URL + "/login")
-					const response = await fetch(process.env.BACKEND_URL + "login", requestOptions);
+					const response = await fetch(process.env.BACKEND_URL + "api/auth/login", requestOptions);
 					const result = await response.json();
 
 					console.log("Resultado del login:", result);
 
 					if (response.status === 200) {
 						localStorage.setItem("token", result.access_token);
-						console.log("Token guardado:", result.access_token);
+						setStore({
+							auth: true,
+							// user: {
+							// 	name: decoded.name,
+							// 	email: decoded.email,
+							// 	department: decoded.department || "No asignado"
+							// },
+							personalData: result.employee
+						});
+						console.log("Token guardado:", result.access_token,);
 						return true;
 					} else {
 						console.warn("Login fallido. Código:", response.status, "Mensaje:", result.msg);
@@ -100,10 +133,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
-			getProfile: async () => {
+			getProfile: async (id) => {
 				let token = localStorage.getItem("token")
 				try {
-					const response = await fetch(process.env.BACKEND_URL + "/api/profile", {
+					const response = await fetch(process.env.BACKEND_URL + `api/profile/${id}`, {
 						method: "GET",
 						headers: {
 							"Authorization": `Bearer ${token}`
@@ -135,16 +168,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false
 				};
 			},
-			getWorkerData: (id) => {
-				const result = getStore().employeesList.filter((worker) => worker.id == id)[0]
-				setStore({ workerData: result })
+			getEmployeeData: (id) => {
+				const result = getStore().employeeList.filter((worker) => worker.id == id)[0]
+				setStore({ employeeData: result })
 				return true
 			},
-			resetWorkerData: () => {
-				setStore({ workerData: {} })
+			resetEmployeeData: () => {
+				setStore({ employeeData: {} })
 				return true
 			},
-			addWorker: async (name, last_name, dni, address, email, password, birthdate, department_id, salary_id, file) => {
+			addEmployee: async (name, last_name, dni, address, email, birthdate, department_id, salary_id, file) => {
 				let token = localStorage.getItem("token");
 				try {
 					let formData = new FormData();
@@ -153,16 +186,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 					formData.append("dni", dni);
 					formData.append("address", address);
 					formData.append("email", email);
-					formData.append("password", password);
 					formData.append("birthdate", birthdate);
 					formData.append("department_id", parseInt(department_id));
 					formData.append("salary_id", parseInt(salary_id));
 
-					if (file) {
+					if (file != null) {
 						formData.append("profile_image_url", file);
 					}
+					else{
+						console.log("ME CAGO EN DIOS NO HAY ARCHIVO EN FLUX")
+					}
 
-					const response = await fetch(process.env.BACKEND_URL + "/api/worker", {
+					const response = await fetch(process.env.BACKEND_URL + "api/employee/", {
 						method: "POST",
 						headers: {
 							"Authorization": `Bearer ${token}`
@@ -275,8 +310,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			fetchData: async () => {
 				try {
-					const deptResponse = await fetch(process.env.BACKEND_URL + "/api/departments");
-					const salaryResponse = await fetch(process.env.BACKEND_URL + "/api/salaries");
+					const deptResponse = await fetch(process.env.BACKEND_URL + "api/employee/department");
+					const salaryResponse = await fetch(process.env.BACKEND_URL + "api/employee/salary");
 
 					const deptData = await deptResponse.json();
 					const salaryData = await salaryResponse.json();
@@ -290,8 +325,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			filterList: (text) => {
-				const result = getStore().employeesListFilter.filter((worker) => worker.name.toLowerCase() == text.toLowerCase())
-				result.length > 0 ? setStore({ employeesListFilter: result }) : setStore({ employeesListFilter: getStore().employeesList })
+				const result = getStore().employeeListFilter.filter((employee) => employee.name.toLowerCase() == text.toLowerCase())
+				result.length > 0 ? setStore({ employeeListFilter: result }) : setStore({ employeeListFilter: getStore().employeeList })
 			},
 			uploadImage: async (file) => {
 				const formData = new FormData();
@@ -299,7 +334,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				try {
 					const token = localStorage.getItem("token");
-					const resp = await fetch(process.env.BACKEND_URL + "/api/upload_image", {
+					const resp = await fetch(process.env.BACKEND_URL + "api/aux/upload_employee_image", {
 						method: "POST",
 						headers: {
 							Authorization: `Bearer ${token}`,
@@ -323,19 +358,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"Content-Type": "application/json",
 							// "Authorization": `Bearer ${token}`
 						},
-						body: JSON.stringify({ email: email, url: process.env.FRONTEND_URL + ""})
+						body: JSON.stringify({ email: email, url: process.env.FRONTEND_URL + "" })
 					});
-			
+
 					if (response.ok) {
 						console.log("Password reset email sent");
 						return true;
 					} else {
 						console.error("Error sending reset email", response.status);
-						return false; 
+						return false;
 					}
 				} catch (error) {
 					console.error("Error in recoveryPassword:", error);
-					return false; 
+					return false;
 				}
 			},
 			recoveryPassword: async (token, password) => {
@@ -346,19 +381,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"Content-Type": "application/json",
 							"Authorization": `Bearer ${token}`
 						},
-						body: JSON.stringify({ password: password})
+						body: JSON.stringify({ password: password })
 					});
-			
+
 					if (response.ok) {
 						console.log("Password reset correctly");
 						return true;
 					} else {
 						console.error("Error resetting password", response.status);
-						return false; 
+						return false;
 					}
 				} catch (error) {
 					console.error("Error in recoveryPassword:", error);
-					return false; 
+					return false;
 				}
 			},
 		}

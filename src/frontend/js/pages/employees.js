@@ -1,18 +1,18 @@
 import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/employees.css";
-import { EmployeesList } from "../component/employeesList";
+import { EmployeeList } from "../component/employeeList";
 
 export const Employees = () => {
 	const { store, actions } = useContext(Context);
 
-	useEffect(()=>{
-		actions.resetWorkerData()
+	useEffect(() => {
+		actions.resetEmployeeData()
 	}, [])
 
 	return (
 		<div className="form-style pb-5">
-			<EmployeesList/>
+			<EmployeeList />
 		</div>
 	);
 };

@@ -14,7 +14,6 @@ class Employee(db.Model):
     profile_image_url = db.Column(db.String(255), nullable=True)
     birthdate = db.Column(db.String(20), nullable=False)
 
-    user_id = mapped_column(db.Integer, ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
     user = relationship("User", back_populates="employee", uselist=False)
 
     department_id = mapped_column(db.Integer, ForeignKey('departments.id'), nullable=False)
@@ -50,9 +49,10 @@ class Employee(db.Model):
             "address": self.address,
             "email": self.email,
             "birthdate": self.birthdate,
-            "department": self.department_name,
-            "salary": self.gross_salary,
-            "user": self.user_email
+            "department": self.department.serialize(),
+            "salary": self.salary.serialize(),
+            "user": self.user_email,
+            "profile_image_url": self.profile_image_url
 
             # do not serialize the password, its a security breach
         }

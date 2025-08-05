@@ -19,7 +19,7 @@ export const SignupForm = () => {
 	useEffect(() => {
 		if (!store.auth) navigate("/")
 		actions.fetchData();
-	}, [store.workerData])
+	}, [store.employeeData])
 
 	const validationSchema = Yup.object({
 		name: Yup.string().required("Name is required"),
@@ -33,16 +33,12 @@ export const SignupForm = () => {
 			.required("Email is required"),
 		departmentId: Yup.string().required("Department is required"),
 		salaryId: Yup.string().required("Salary is required"),
-		roleId: Yup.string().required("Role is required"),
 		birthDate: Yup.string()
 			.matches(
 				/^\d{2}\/\d{2}\/\d{4}$/,
 				"Birth date must be in the format DD/MM/YYYY"
 			)
-			.required("Birth date is required"),
-		password: Yup.string()
-			.min(8, "Password must be at least 8 characters")
-			.required("Password is required"),
+			.required("Birth date is required")
 	});
 
 	return (
@@ -50,17 +46,16 @@ export const SignupForm = () => {
 			<div className="form-container-2 container d-flex flex-column align-items-center">
 				<Formik
 					initialValues={
-						store.workerData.name ? {
-							name: store.workerData.name,
-							lastname: store.workerData.last_name,
-							dni: store.workerData.dni,
-							address: store.workerData.address,
-							birthDate: store.workerData.birthdate,
-							email: store.workerData.email,
+						store.employeeData.name ? {
+							name: store.employeeData.name,
+							lastname: store.employeeData.last_name,
+							dni: store.employeeData.dni,
+							address: store.employeeData.address,
+							birthDate: store.employeeData.birthdate,
+							email: store.employeeData.email,
 							departmentId: "",
 							salaryId: "",
 							roleId: "",
-							password: ""
 						} :
 							{
 								name: "",
@@ -72,17 +67,20 @@ export const SignupForm = () => {
 								departmentId: "",
 								salaryId: "",
 								roleId: "",
-								password: ""
 							}}
 					validationSchema={validationSchema}
-					onSubmit={(values) => {
-						let success;
-						if (store.workerData.id) {
-							success = actions.editWorker(store.workerData.id, values.name, values.lastname, values.dni, values.address, values.email, values.password, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), parseInt(values.roleId), file)
-						} else {
-							success = actions.addWorker(values.name, values.lastname, values.dni, values.address, values.email, values.password, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), parseInt(values.roleId), file)
-						}
-						console.log(success);
+					onSubmit={async (values) => {
+						if (values.name) console.log("name ok")
+						if (values.lastname) console.log("lastname ok")
+						if (values.dni) console.log("dni ok")
+						if (values.address) console.log("adress ok")
+						if (values.email) console.log("email ok")
+						if (values.birthDate) console.log("birthdate ok")
+						if (values.departmentId) console.log("department ok")
+						if (values.salaryId) console.log("salary ok")
+						if (file) console.log("file: " + file.name)
+						const success = await actions.addEmployee(values.name, values.lastname, values.dni, values.address, values.email, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), file)
+						
 
 						if (success) {
 							navigate("/profile")
@@ -143,18 +141,6 @@ export const SignupForm = () => {
 							</div>
 						</div>
 						<div className="input-container-2 col-md-5">
-							<h5 className="strong-background">Role</h5>
-							<Field as="select" name="roleId">
-								<option value="">Select Role</option>
-								{store.roles.map((role) => (
-									<option key={role.id} value={role.id}>{role.name}</option>
-								))}
-							</Field>
-							<div>
-								<ErrorMessage name="roleId" component="p" className="error text-danger" />
-							</div>
-						</div>
-						<div className="input-container-2 col-md-5">
 							<h5 className="strong-background">Department</h5>
 							<Field as="select" name="departmentId">
 								<option value="">Select Department</option>
@@ -171,13 +157,6 @@ export const SignupForm = () => {
 							<Field placeholder="Email" name="email" type="email" />
 							<div>
 								<ErrorMessage name="email" component="p" className="error text-danger" />
-							</div>
-						</div>
-						<div className="input-container-2 col-md-5">
-							<h5 className="strong-background">Password</h5>
-							<Field placeholder="Password" name="password" type="password" />
-							<div>
-								<ErrorMessage name="password" component="p" className="error text-danger" />
 							</div>
 						</div>
 						<div className="input-container-2 col-md-5">

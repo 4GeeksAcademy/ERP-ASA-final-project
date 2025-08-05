@@ -2,23 +2,23 @@ import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
 import { Link, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
-import { WorkerDataForm } from "../component/workerDataForm";
+import { EmployeeDataFrame } from "../component/EmployeeDataFrame";
 
-export const WorkerData = props => {
+export const EmployeeData = props => {
 	const { store, actions } = useContext(Context);
 	const params = useParams();
 	
 	useEffect(()=>{
-		actions.resetWorkerData()
+		actions.resetEmployeeData()
 	}, [])
 
 	return (
 		<div className="form-style pb-5">
-			<WorkerDataForm id={params.id}/>
+			<EmployeeDataFrame id={params.id}/>
 		</div>
 	);
 };
 
-WorkerData.propTypes = {
+EmployeeData.propTypes = {
 	match: PropTypes.object
 };

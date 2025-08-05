@@ -4,7 +4,12 @@ from .models.database import db
 from flask_admin import Admin
 from .models import Employee, Department, Salary, Offer, User
 from flask_admin.contrib.sqla import ModelView
-from werkzeug.security import generate_password_hash
+from flask_admin.form import FileUploadField
+from flask import request
+from flask_wtf.file import FileAllowed, FileRequired
+from wtforms import Form, FileField
+import cloudinary.uploader
+
 from wtforms.fields import PasswordField
 
 
@@ -17,6 +22,8 @@ class UserView(ModelView):
     form_extra_fields = {
         "password": PasswordField("Password")
     }
+    
+    form_excluded_columns = ('password_hash',)
 
     def on_model_change(self, form, model, is_created):
         if form.password.data:
@@ -36,14 +43,24 @@ class UserView(ModelView):
 class EmployeeView(ModelView):
     column_list = (
         'id', 'name', 'last_name','email', 'dni', 'address', 'birthdate', 
-        'department_name', 'gross_salary','user_email', 'image_url'
+        'department_name', 'gross_salary','user_email', 'profile_image_url'
     )
     # column_formatters = {
     #     'department_name': lambda m: m.department.name if m.department else 'N/A',
     #     'gross_salary': lambda m: m.salary.gross_salary if m.salary else 'N/A',
     # }
-    column_sortable_list = ('id', 'name', 'last_name', 'email', 'dni', 'address', 'birthdate', 'user_email', ('department_name', 'department.name'), 
+    column_sortable_list = ('id', 'name', 'last_name', 'email', 'dni', 'address', 'birthdate', 'user_email', 
+                            ('department_name', 'department.name'), 
                            ('gross_salary', 'salary.gross_salary'))
+
+    form_extra_fields = {
+            'image_upload': FileField(
+                'Upload Profile Image',
+                validators=[
+                    FileAllowed(['jpg', 'png', 'jpeg'], 'Only image files are allowed!')
+                ]
+            )
+        }
 
     form_args = {
         'department': {
@@ -62,6 +79,19 @@ class EmployeeView(ModelView):
             'page_size': 10
         }
     }
+    def on_model_change(self, form, model, is_created):
+        """
+        Se ejecuta cuando se crea o edita un empleado.
+        """
+        file = request.files.get(form.image_upload.name)
+
+        if file:
+            # Subir imagen a Cloudinary
+            result = cloudinary.uploader.upload(file)
+            secure_url = result.get("secure_url")
+
+            if secure_url:
+                model.profile_image_url = secure_url
 
 def setup_admin(app):
     app.secret_key = os.environ.get('FLASK_APP_KEY', 'sample key')

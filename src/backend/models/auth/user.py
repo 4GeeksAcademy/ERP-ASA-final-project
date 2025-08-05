@@ -11,9 +11,10 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), unique=False, nullable=False)
+    password_hash = db.Column(db.String(255), unique=False, nullable=True)
     profile_image_url = db.Column(db.String(255), nullable=True)
 
+    employee_id = db.Column(db.Integer, db.ForeignKey('employees.id'), nullable=False, unique=True)
     employee = relationship("Employee", back_populates="user", uselist=False)
 
     def get_reset_token(self):
@@ -37,23 +38,6 @@ class User(db.Model):
         if not re.match(email_regex, email):
             raise ValueError('Email format is not valid')
         return email
-
-    @validates('dni')
-    def validate_dni(self, key, dni):
-        if not dni.isdigit() or len(dni) != 8:
-            raise ValueError('Dni must have at least 8 digits')
-        return dni
-
-    @validates('birthdate')
-    def validate_birthdate(self, key, birthdate):
-        date_pattern = r'^\d{2}/\d{2}/\d{4}$'
-        if not re.match(date_pattern, birthdate):
-            raise ValueError('Birthdate format must be DD/MM/YYYY')
-        try:
-            datetime.strptime(birthdate, "%d/%m/%Y")
-        except ValueError:
-            raise ValueError('Birthdate is not valid')
-        return birthdate
 
     @property
     def password(self):

@@ -8,8 +8,8 @@ export const Signup = () => {
 
 	return (
 		<div className="form-style flex-column pb-5">
-			<p className="form-title-2 mt-4 px-3">{store.workerData.id ? "Update the data" : "Add a new worker"}</p>
-			<SignupForm/>
+			<p className="form-title-2 mt-4 px-3">{store.employeeData.id ? "Update the data" : "Add a new worker"}</p>
+			<SignupForm />
 		</div>
 	);
 };

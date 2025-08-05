@@ -7,8 +7,8 @@ export const Home = () => {
 	const { store, actions } = useContext(Context);
 
 	useEffect(() => {
-		actions.resetWorkerData();
-		
+		actions.resetEmployeeData();
+
 	}, [])
 
 	return (

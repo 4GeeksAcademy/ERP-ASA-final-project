@@ -10,7 +10,7 @@ export const ResetPassword = (props) => {
 	const { store, actions } = useContext(Context);
 	const params = useParams();
 	useEffect(() => {
-		actions.resetWorkerData();
+		actions.resetEmployeeData();
 	}, [])
 
 	return (

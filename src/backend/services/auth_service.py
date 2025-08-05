@@ -36,13 +36,29 @@ def authenticate_user(email, password):
             access_token = create_access_token(
                 identity=email,
                 additional_claims={
+                    "employee_id": user.employee.id,
                     "name": user.employee.name,
                     "email": user.email,
                     "department": user.employee.department.name if user.employee.department else None
                 },
                 expires_delta=timedelta(hours=1)
             )
-            return jsonify(access_token=access_token), 200
+            employee_data = user.employee.serialize()
+            # employee_data = {
+            #     "id": user.employee.id,
+            #     "name": user.employee.name,
+            #     "last_name": user.employee.last_name,
+            #     "dni": user.employee.dni,
+            #     "address": user.employee.address,
+            #     "email": user.employee.email,
+            #     "birthdate": user.employee.birthdate,
+            #     "salary": user.employee.salary,
+            #     "department": user.employee.department.name if user.employee.department else None
+            # }
+            return jsonify({
+                "access_token": access_token,
+                "employee": employee_data
+            }), 200
         else:
             print("[DEBUG] Contraseña inválida")
     else:

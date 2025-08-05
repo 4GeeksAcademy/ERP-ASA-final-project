@@ -26,6 +26,7 @@ sendgrid = "*"
 flask-mail = "*"
 requests = "*"
 itsdangerous = "*"
+flask-wtf = "*"
 
 [requires]
 python_version = "3.10"

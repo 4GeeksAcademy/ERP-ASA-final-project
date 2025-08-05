@@ -8,7 +8,7 @@ export const Navbar = () => {
 	const { actions, store } = useContext(Context);
 
 	useEffect(()=> {
-		!store.auth && localStorage.getItem("token") ? actions.getProfile() : null;
+		// !store.auth && localStorage.getItem("token") ? actions.getProfile() : null;
 		
 		// !store.auth && localStorage.getItem(token) ? 
 	}, [])

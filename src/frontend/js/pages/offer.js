@@ -5,12 +5,12 @@ import "../../styles/login.css"
 
 export const OfferView = () => {
     const { store, actions } = useContext(Context)
-    
+
     useEffect(() => {
-        actions.resetWorkerData()
-        console.log(store.workerData);
+        actions.resetEmployeeData()
+        console.log(store.employeeData);
     }, [])
-    
+
     return (
         <div className="pb-5">
             <Offer />

@@ -1,8 +1,9 @@
-import React, { useContext, useEffect,useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { decodeJWT } from "../utils/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 
-export const MyProfile = () => {
+export const ProfileFrame = () => {
 
 	const { store, actions } = useContext(Context);
 	const [isHR, setIsHR] = useState(false);
@@ -10,9 +11,27 @@ export const MyProfile = () => {
 	let navigate = useNavigate();
 
 	useEffect(() => {
-		if (!store.auth) navigate("/")
-		actions.getProfile()
-	}, [store.auth])
+		if (!store.auth) {
+			navigate("/");
+			return;
+		}
+
+		const token = localStorage.getItem("token");
+		if (token) {
+			const decoded = decodeJWT(token);
+			const userId = decoded.employee_id; 
+
+			if (userId) {
+				actions.getEmployeeById(userId);
+			}
+		}
+	}, [store.auth]);
+
+	// useEffect(() => {
+	// 	if (!store.auth) navigate("/")
+	// 	// actions.getProfile()
+	// 	actions.getEmployeeById()
+	// }, [store.auth])
 
 	return (
 		<>
@@ -38,7 +57,6 @@ export const MyProfile = () => {
 									<li className="list-group-item"><strong>Birthdate:</strong> {store.personalData.birthdate}</li>
 									<li className="list-group-item"><strong>Salary:</strong> {store.personalData.salary?.gross_salary}</li>
 									<li className="list-group-item"><strong>Department:</strong> {store.personalData.department?.name}</li>
-									<li className="list-group-item"><strong>Role:</strong> {store.personalData.role?.name}</li>
 								</ul>
 							</div>
 						</>

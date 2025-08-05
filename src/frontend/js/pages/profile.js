@@ -1,18 +1,18 @@
 import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/profile.css";
-import { MyProfile } from "../component/myprofile";
+import { ProfileFrame } from "../component/profileFrame";
 
 export const Profile = () => {
 	const { store, actions } = useContext(Context);
 
-	useEffect(()=>{
-		actions.resetWorkerData()
+	useEffect(() => {
+		actions.resetEmployeeData()
 	}, [])
 
 	return (
 		<div className="form-style pb-5">
-			<MyProfile/>
+			<ProfileFrame />
 		</div>
 	);
 };

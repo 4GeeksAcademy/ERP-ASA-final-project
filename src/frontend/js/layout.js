@@ -9,7 +9,7 @@ import { Signup } from "./pages/signup";
 import { OfferView } from "./pages/offer";
 import { Employees } from "./pages/employees";
 import { Profile } from "./pages/profile";
-import { WorkerData } from "./pages/workerData";
+import { EmployeeData } from "./pages/EmployeeData";
 import { ResetPassword } from "./pages/resetPassword";
 import injectContext from "./store/appContext";
 
@@ -38,7 +38,7 @@ const Layout = () => {
                         <Route element={<Employees />} path="/employees" />
                         <Route element={<OfferView />} path="/offers" />
                         <Route element={<Profile />} path="/profile" />
-                        <Route element={<WorkerData />} path="/worker/:id" />
+                        <Route element={<EmployeeData />} path="/employee/:id" />
                         <Route element={<ResetPassword />} path="/api/reset-password/:token" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
