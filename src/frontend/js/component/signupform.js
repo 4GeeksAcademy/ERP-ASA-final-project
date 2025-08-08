@@ -21,6 +21,13 @@ export const SignupForm = () => {
 		actions.fetchData();
 	}, [store.employeeData])
 
+	const handleSubmit = async () => {
+		if (store.opcion == "editar"){
+			const success = await actions.updateEmployee(values.name, values.lastname, values.dni, values.address, values.email, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), file)
+		}else if (store.opcion == "crear"){
+			const success = await actions.addEmployee(values.name, values.lastname, values.dni, values.address, values.email, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), file)
+		}
+	}
 	const validationSchema = Yup.object({
 		name: Yup.string().required("Name is required"),
 		lastname: Yup.string().required("Last name is required"),

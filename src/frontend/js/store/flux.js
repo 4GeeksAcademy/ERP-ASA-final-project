@@ -218,7 +218,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
-			editWorker: async (id, name, last_name, dni, address, email, password, birthdate, department_id, salary_id, file) => {
+			updateEmployee: async (id, name, last_name, dni, address, email, password, birthdate, department_id, salary_id, file) => {
 				let token = localStorage.getItem("token");
 
 				try {
@@ -235,12 +235,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 					formData.append("department_id", String(department_id));
 					formData.append("salary_id", String(salary_id));
 
-					// Solo agregar la imagen si se proporciona
 					if (file) {
-						formData.append("profile_image", file);
+						formData.append("profile_image_url", file);
 					}
-
-					const response = await fetch(process.env.BACKEND_URL + "/api/worker", {
+												
+					const response = await fetch(`${process.env.BACKEND_URL}api/employee/${id}`, {
 						method: "PUT",
 						headers: {
 							"Authorization": `Bearer ${token}` // No agregamos "Content-Type", FormData lo maneja

@@ -37,20 +37,20 @@ export const LoginForm = () => {
                 <p className="form-title w-100">Welcome</p>
                 <form className="form w-100" onSubmit={handleSubmit} autoComplete="off">
                     <div className="input-container">
-                        <input 
-                            autoComplete="off" 
-                            placeholder="Enter email" 
-                            type="email" 
-                            onChange={(e) => setEmail(e.target.value)} 
+                        <input
+                            autoComplete="off"
+                            placeholder="Enter email"
+                            type="email"
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
                     {!store.recoveryPassword ? (
                         <div className="input-container">
-                            <input 
-                                placeholder="Enter password" 
-                                type="password" 
-                                value={password} 
-                                onChange={(e) => setPassword(e.target.value)} 
+                            <input
+                                placeholder="Enter password"
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
                     ) : null}
@@ -75,7 +75,7 @@ export const LoginForm = () => {
                     </div>
                 )}
 
-                
+
             </div>
         </>
     );

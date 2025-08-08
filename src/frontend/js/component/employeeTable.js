@@ -15,7 +15,7 @@ export const EmployeeTable = () => {
 		setTimeout(function(){
 			if (store.personalData.department.name === "RRHH") {
 			setIsHR(true);
-		}
+			}
 		}, 1000);
 		// if (store.personalData.department.name === "RRHH") {
 		// 	setIsHR(true);

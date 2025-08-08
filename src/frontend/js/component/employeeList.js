@@ -13,9 +13,12 @@ export const EmployeeList = () => {
 	useEffect(() => {
 		actions.resetSelected()
 		if (!store.auth) navigate("/")
-		if (store.auth && store.personalData.department === "RRHH") {
+		setTimeout(function(){
+			if (store.personalData.department.name === "RRHH") {
 			setIsHR(true);
-		}
+			}
+		}, 1000);
+
 	}, [])
 
 	const handleDelete = async () => {
@@ -27,6 +30,10 @@ export const EmployeeList = () => {
 			actions.logout()
 			navigate("/")
 		}
+	}
+
+	const handleEdit = async () => {
+		
 	}
 
 

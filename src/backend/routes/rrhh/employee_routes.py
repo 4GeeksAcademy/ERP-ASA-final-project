@@ -33,6 +33,11 @@ def get_all_departments():
 def get_all_salaries():
     return EmployeeController.get_all_salaries()
 
+@employee_api.route("/<int:employee_id>", methods=["PUT"])
+@jwt_required()
+def update_employee(id):
+    return EmployeeController.update_employee_controller(id, request)
+
 # # @employee_api.route('employees', methods=['GET'])
 # # def get_employees():
 # #     try:

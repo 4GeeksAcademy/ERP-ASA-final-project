@@ -41,3 +41,8 @@ class EmployeeRepository:
     @staticmethod
     def get_all_salaries():
         return Salary.query.all()
+    
+    @staticmethod
+    def save_employee(employee):
+        db.session.add(employee)
+        db.session.commit()
