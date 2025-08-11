@@ -21,11 +21,27 @@ export const SignupForm = () => {
 		actions.fetchData();
 	}, [store.employeeData])
 
-	const handleSubmit = async () => {
-		if (store.opcion == "editar"){
-			const success = await actions.updateEmployee(values.name, values.lastname, values.dni, values.address, values.email, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), file)
-		}else if (store.opcion == "crear"){
+	const handleSubmit = async (values) => {
+		console.log(store.opcion)
+		if (store.opcion == "editar") {
+			console.log("Valores enviados:", values);
+			const success = await actions.updateEmployee(store.selected[0], values.name, values.lastname, values.dni, values.address, values.email, values.birthDate, values.departmentId, values.salaryId, file)
+			if (success) {
+				navigate("/employees")
+			} else {
+				alert("Error editing worker")
+				navigate("/employees")
+			}
+			return true
+		} else if (store.opcion == "crear") {
 			const success = await actions.addEmployee(values.name, values.lastname, values.dni, values.address, values.email, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), file)
+			if (success) {
+				navigate("/employees")
+			} else {
+				alert("Error adding worker")
+				navigate("/employees")
+			}
+			return true
 		}
 	}
 	const validationSchema = Yup.object({
@@ -62,7 +78,6 @@ export const SignupForm = () => {
 							email: store.employeeData.email,
 							departmentId: "",
 							salaryId: "",
-							roleId: "",
 						} :
 							{
 								name: "",
@@ -73,30 +88,10 @@ export const SignupForm = () => {
 								email: "",
 								departmentId: "",
 								salaryId: "",
-								roleId: "",
 							}}
 					validationSchema={validationSchema}
 					onSubmit={async (values) => {
-						if (values.name) console.log("name ok")
-						if (values.lastname) console.log("lastname ok")
-						if (values.dni) console.log("dni ok")
-						if (values.address) console.log("adress ok")
-						if (values.email) console.log("email ok")
-						if (values.birthDate) console.log("birthdate ok")
-						if (values.departmentId) console.log("department ok")
-						if (values.salaryId) console.log("salary ok")
-						if (file) console.log("file: " + file.name)
-						const success = await actions.addEmployee(values.name, values.lastname, values.dni, values.address, values.email, values.birthDate, parseInt(values.departmentId), parseInt(values.salaryId), file)
-						
-
-						if (success) {
-							navigate("/profile")
-						}
-						else {
-							alert("Error adding worker")
-							navigate("/")
-						}
-						return true
+						handleSubmit(values);
 					}}
 				>
 					<Form className="row d-flex justify-content-around form-2 m-0 w-100">

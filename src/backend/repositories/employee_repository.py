@@ -7,11 +7,11 @@ from backend.models import db
 class EmployeeRepository:
     @staticmethod
     def get_all():
-        print("se llegó al repository ")
         return Employee.query.all()
 
     @staticmethod
     def get_by_id(employee_id):
+        print("Se llegó al repository (get_by id)")
         return Employee.query.get(employee_id)
     
     @staticmethod
@@ -44,5 +44,6 @@ class EmployeeRepository:
     
     @staticmethod
     def save_employee(employee):
+        print("se llegó alrepository")
         db.session.add(employee)
         db.session.commit()

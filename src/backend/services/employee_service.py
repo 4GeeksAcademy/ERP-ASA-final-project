@@ -6,7 +6,6 @@ from flask_jwt_extended import get_jwt_identity, get_jwt
 class EmployeeService:
     @staticmethod
     def get_all_employees():
-        print("se llegó al service")
         employees = EmployeeRepository.get_all()
         return [e.serialize() for e in employees]
 
@@ -75,25 +74,32 @@ class EmployeeService:
     
     @staticmethod
     def update_employee_service(employee_id, data, file):
+        print("se llegó al servicio")
         employee = EmployeeRepository.get_by_id(employee_id)
+        print("ESTE ES EL EMPLEADO (DESDE SERVICE)" + employee.name)
         if not employee:
             raise Exception("Empleado no encontrado")
+        
+        print(f"Datos recibidos: {data}")
+        print(f"Archivo recibido: {file.filename if file else 'Sin archivo'}")
 
-        # Actualizar campos
-        employee.name = data.get("name", employee.name)
-        employee.last_name = data.get("last_name", employee.last_name)
-        employee.dni = data.get("dni", employee.dni)
-        employee.address = data.get("address", employee.address)
-        employee.email = data.get("email", employee.email)
-        employee.birthdate = data.get("birthdate", employee.birthdate)
-        employee.department_id = int(data.get("department_id", employee.department_id))
-        employee.salary_id = int(data.get("salary_id", employee.salary_id))
+        try:
+            employee.name = data.get("name", employee.name)
+            employee.last_name = data.get("last_name", employee.last_name)
+            employee.dni = data.get("dni", employee.dni)
+            employee.address = data.get("address", employee.address)
+            employee.email = data.get("email", employee.email)
+            employee.birthdate = data.get("birthdate", employee.birthdate)
+            employee.department_id = int(data.get("department_id", employee.department_id))
+            employee.salary_id = int(data.get("salary_id", employee.salary_id))
 
-        # Imagen
-        if file:
-            image_url = AuxService.upload_to_cloudinary(file)
-            employee.profile_image_url = image_url
+            # Imagen
+            if file:
+                image_url = AuxService.upload_to_cloudinary(file)
+                employee.profile_image_url = image_url
+            EmployeeRepository.save_employee(employee)
 
-        EmployeeRepository.save_employee(employee)
-
-        return {"msg": "Empleado actualizado", "employee_id": employee.id}
+            return {"msg": "Empleado actualizado", "employee_id": employee.id}
+        except Exception as e:
+            print("❌ Error en update_employee_service:", str(e))
+            raise

@@ -32,8 +32,12 @@ export const EmployeeList = () => {
 		}
 	}
 
+	const handleCreate = async () => {
+		store.opcion = "crear";
+	}
 	const handleEdit = async () => {
-		
+		actions.getEmployeeData(store.selected[0])
+		store.opcion = "editar";
 	}
 
 
@@ -43,10 +47,10 @@ export const EmployeeList = () => {
 				<div className="container mt-3" action="#" id="employeesForm" method="POST">
 					<div className="row d-flex justify-content-center align-items-center">
 						{isHR && <div className="col-12 col-lg-6 d-flex justify-content-center gap-4 my-3" aria-label="Edit buttons">
-							<Link className="col-3 fs-5" to="/signup">
+							<Link className="col-3 fs-5" to="/signup" onClick={handleCreate}>
 								<button type="button" className="button w-100">Create</button>
 							</Link>
-							<Link className="col-3" to={"/signup"} onClick={() => actions.getEmployeeData(store.selected[0])}>
+							<Link className="col-3" to={"/signup"} onClick={handleEdit}>
 								<button type="button" className="button w-100" disabled={store.selected.length === 1 ? false : true}>Edit</button>
 							</Link>
 							<button type="button" className="button col-3" data-bs-toggle="modal" data-bs-target="#exampleModal" disabled={store.selected.length > 0 ? false : true}>Delete</button>

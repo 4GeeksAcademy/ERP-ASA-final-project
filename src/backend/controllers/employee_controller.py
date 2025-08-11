@@ -6,7 +6,6 @@ class EmployeeController:
     @staticmethod
     def get_all():
         try:
-            print("se llegó al controller.")
             data = EmployeeService.get_all_employees()
             return jsonify(data), 200
         except PermissionError as e:
@@ -50,11 +49,12 @@ class EmployeeController:
             return jsonify({"msg": str(e)}), 403
     @staticmethod
     def update_employee_controller(employee_id, request):
+        print("se llego al controller")
         try:
             data = request.form
             file = request.files.get("profile_image_url")  # imagen (si viene)
 
-            result = update_employee_service(employee_id, data, file)
+            result = EmployeeService.update_employee_service(employee_id, data, file)
             return jsonify(result), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500

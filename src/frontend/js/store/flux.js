@@ -3,6 +3,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			message: "hola",
+			opcion: "crear",
 			employeeList: [],
 			employeeListFilter: [],
 			selected: [],
@@ -178,6 +179,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				return true
 			},
 			addEmployee: async (name, last_name, dni, address, email, birthdate, department_id, salary_id, file) => {
+				console.log("SALARIO EN FLUX:" + salary_id + "deparment: " + department_id)
 				let token = localStorage.getItem("token");
 				try {
 					let formData = new FormData();
@@ -218,28 +220,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
-			updateEmployee: async (id, name, last_name, dni, address, email, password, birthdate, department_id, salary_id, file) => {
+			updateEmployee: async (employee_id, name, last_name, dni, address, email, birthdate, department_id, salary_id, file) => {
 				let token = localStorage.getItem("token");
+				console.log("SALARIO EN FLUX:" + salary_id + "deparment: " + department_id)
 
 				try {
 					// Usamos FormData para enviar datos y archivos correctamente
 					let formData = new FormData();
-					formData.append("id", id);
+					formData.append("id", employee_id);
 					formData.append("name", name);
 					formData.append("last_name", last_name);
 					formData.append("dni", dni);
 					formData.append("address", address);
 					formData.append("email", email);
-					formData.append("password", password);
 					formData.append("birthdate", birthdate);
-					formData.append("department_id", String(department_id));
-					formData.append("salary_id", String(salary_id));
+					formData.append("department_id", parseInt(department_id));
+					formData.append("salary_id", parseInt(salary_id));
 
 					if (file) {
 						formData.append("profile_image_url", file);
 					}
 												
-					const response = await fetch(`${process.env.BACKEND_URL}api/employee/${id}`, {
+					const response = await fetch(`${process.env.BACKEND_URL}api/employee/${employee_id}`, {
 						method: "PUT",
 						headers: {
 							"Authorization": `Bearer ${token}` // No agregamos "Content-Type", FormData lo maneja
