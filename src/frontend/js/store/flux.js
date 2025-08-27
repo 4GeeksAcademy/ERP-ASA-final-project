@@ -57,24 +57,49 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("Error obteniendo empleado", error);
 				}
 			},
-			deleteWorker: async (ids) => {
+			deleteEmployee: async (ids) => {
 				try {
-					const resp = await Promise.all(ids.map(async (id) => {
-						const resp = fetch(process.env.BACKEND_URL + "/api/employees/" + id, { method: "DELETE" })
-						return resp
-					}))
+					const token = localStorage.getItem("token");
 
-					resp.map(async (response) => {
-						const dato = await response.json()
-						setStore({ employeeList: dato.results })
-						return true
-					})
+					// Hacemos todas las peticiones DELETE en paralelo
+					const responses = await Promise.allSettled(
+						ids.map(id =>
+							fetch(process.env.BACKEND_URL + "api/employee/" + id, {
+								method: "DELETE",
+								headers: {
+									"Authorization": `Bearer ${token}`,
+									"Content-Type": "application/json"
+								}
+							})
+						)
+					);
 
-					setStore({ selected: [] })
+					// Verificamos todas las respuestas
+					for (const res of responses) {
+						if (!res.ok) {
+							const errorMsg = await res.text().catch(() => "Error desconocido");
+							console.error("Error al eliminar empleado:", errorMsg);
+							return false;
+						}
+					}
+
+					// Recargamos la lista de empleados desde el backend
+					const updatedListResp = await fetch(process.env.BACKEND_URL + "api/employee", 
+						{ method: "GET" ,
+							headers: {
+								"Authorization": `Bearer ${token}`,
+								"Content-Type": "application/json"
+							}});
+					const updatedListData = await updatedListResp.json();
+
+					setStore({
+						employeeList: updatedListData.results,
+						selected: []
+					});
 
 					return true;
 				} catch (error) {
-					console.log("Error loading message from backend", error)
+					console.error("Error eliminando empleados", error);
 					return false;
 				}
 			},
@@ -374,29 +399,32 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
-			recoveryPassword: async (token, password) => {
+			forgotPassword: async (email) => {
 				try {
-					const response = await fetch(process.env.BACKEND_URL + "/api/reset-password/" + token, {
+					const response = await fetch(process.env.BACKEND_URL + "api/auth/forgot_password", {
 						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							"Authorization": `Bearer ${token}`
-						},
-						body: JSON.stringify({ password: password })
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ email })
 					});
-
-					if (response.ok) {
-						console.log("Password reset correctly");
-						return true;
-					} else {
-						console.error("Error resetting password", response.status);
-						return false;
-					}
+					const data = await response.json();
+					alert(data.message);
 				} catch (error) {
-					console.error("Error in recoveryPassword:", error);
-					return false;
+					console.error("Error in forgotPassword:", error);
 				}
 			},
+			resetPassword: async (token, newPassword) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "api/auth/reset_password", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ token, new_password: newPassword })
+					});
+					const data = await response.json();
+					alert(data.message);
+				} catch (error) {
+					console.error("Error in resetPassword:", error);
+				}
+			}
 		}
 	};
 };

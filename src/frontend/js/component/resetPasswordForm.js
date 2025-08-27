@@ -20,7 +20,7 @@ export const ResetPasswordForm = (token) => {
         console.log(tokenFormatted)
         console.log(password);
         
-        actions.recoveryPassword(tokenFormatted, password)
+        actions.resetPassword(token.token, password)
         // navigate("/login")
     };
 

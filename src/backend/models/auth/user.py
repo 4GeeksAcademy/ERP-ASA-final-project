@@ -14,7 +14,7 @@ class User(db.Model):
     password_hash = db.Column(db.String(255), unique=False, nullable=True)
     profile_image_url = db.Column(db.String(255), nullable=True)
 
-    employee_id = db.Column(db.Integer, db.ForeignKey('employees.id'), nullable=False, unique=True)
+    employee_id = db.Column(db.Integer, db.ForeignKey('employees.id', ondelete="CASCADE"), nullable=False, unique=True)
     employee = relationship("Employee", back_populates="user", uselist=False)
 
     def get_reset_token(self):

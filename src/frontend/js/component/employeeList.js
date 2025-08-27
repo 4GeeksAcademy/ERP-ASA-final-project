@@ -17,13 +17,13 @@ export const EmployeeList = () => {
 			if (store.personalData.department.name === "RRHH") {
 			setIsHR(true);
 			}
-		}, 1000);
+		}, 1500);
 
 	}, [])
 
 	const handleDelete = async () => {
 		let logout = store.selected.find((id) => id === store.personalData.id)
-		const promise = await actions.deleteWorker(store.selected)
+		const promise = await actions.deleteEmployee(store.selected)
 		actions.getEmployeeList()
 		navigate("/employees")
 		if (logout && promise) {

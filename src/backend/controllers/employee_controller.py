@@ -58,3 +58,7 @@ class EmployeeController:
             return jsonify(result), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
+
+    @staticmethod
+    def delete_employee_controller(employee_id):
+        return EmployeeService.delete_employee_service(employee_id)

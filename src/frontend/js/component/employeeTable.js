@@ -17,9 +17,6 @@ export const EmployeeTable = () => {
 			setIsHR(true);
 			}
 		}, 1000);
-		// if (store.personalData.department.name === "RRHH") {
-		// 	setIsHR(true);
-		// }
 	}, [])
 
 	const handleAllEmployees = () => {

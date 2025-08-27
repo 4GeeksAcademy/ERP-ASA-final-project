@@ -14,7 +14,7 @@ export const LoginForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (store.recoveryPassword) {
-            const success = await actions.sendEmail(email);
+            const success = await actions.forgotPassword(email);
             if (success) {
                 setSuccessMessage("Check your email to reset your password.");
             } else {

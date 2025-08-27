@@ -14,7 +14,7 @@ class Employee(db.Model):
     profile_image_url = db.Column(db.String(255), nullable=True)
     birthdate = db.Column(db.String(20), nullable=False)
 
-    user = relationship("User", back_populates="employee", uselist=False)
+    user = relationship("User", back_populates="employee", uselist=False, cascade="all, delete-orphan", passive_deletes=True)
 
     department_id = mapped_column(db.Integer, ForeignKey('departments.id'), nullable=False)
     department = relationship("Department", back_populates="employees", uselist=False)

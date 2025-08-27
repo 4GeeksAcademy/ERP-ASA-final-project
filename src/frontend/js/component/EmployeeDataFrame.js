@@ -21,7 +21,7 @@ export const EmployeeDataFrame = (id) => {
 
 
 	const handleDelete = async () => {
-		const promise = await actions.deleteWorker([store.employeeData.id])
+		const promise = await actions.deleteEmployee([store.employeeData.id])
 		actions.getEmployeeList()
 		if (store.employeeData.id === store.personalData.id && promise) {
 			actions.logout()

@@ -103,3 +103,12 @@ class EmployeeService:
         except Exception as e:
             print("❌ Error en update_employee_service:", str(e))
             raise
+    
+    @staticmethod
+    def delete_employee_service(employee_id):
+        deleted = EmployeeRepository.delete_employee_repository(employee_id)
+        if not deleted:
+            raise ValueError("Empleado no encontrado")
+        
+        # Devolvemos la lista actualizada
+        return EmployeeRepository.get_all_employees()

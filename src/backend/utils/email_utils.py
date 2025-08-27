@@ -13,7 +13,7 @@ def send_reset_email(user, base_url):
             recipients=[user.email],
             charset='utf-8'
         )
-        msg.body = f'Para restablecer tu contraseña, sigue este enlace: {base_url}{url_formatted}'
+        msg.body = f'Para restablecer tu contraseña, sigue este enlace: {base_url}'
         msg.body = msg.body.encode('utf-8').decode('utf-8')
         mail.send(msg)
         print("Correo enviado correctamente")
