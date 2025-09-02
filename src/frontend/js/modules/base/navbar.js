@@ -1,15 +1,15 @@
 import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "../../styles/navbar.css";
-import { Context } from "../store/appContext";
-import "../../styles/navbar.css"
+import "../../../styles/navbar.css";
+import { Context } from "../../store/appContext";
+
 
 export const Navbar = () => {
 	const { actions, store } = useContext(Context);
 
-	useEffect(()=> {
+	useEffect(() => {
 		// !store.auth && localStorage.getItem("token") ? actions.getProfile() : null;
-		
+
 		// !store.auth && localStorage.getItem(token) ? 
 	}, [])
 

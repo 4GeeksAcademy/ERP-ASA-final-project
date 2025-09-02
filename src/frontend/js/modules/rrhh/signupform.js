@@ -2,7 +2,7 @@ import React from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from 'yup';
 import { useContext, useEffect, useState } from "react";
-import { Context } from "../store/appContext";
+import { Context } from "../../store/appContext";
 import { useNavigate, Link } from "react-router-dom";
 
 

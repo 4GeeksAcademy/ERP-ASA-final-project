@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Context } from "../store/appContext";
+import { Context } from "../../store/appContext";
 import { EmployeeTable } from "./employeeTable";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -13,9 +13,9 @@ export const EmployeeList = () => {
 	useEffect(() => {
 		actions.resetSelected()
 		if (!store.auth) navigate("/")
-		setTimeout(function(){
+		setTimeout(function () {
 			if (store.personalData.department.name === "RRHH") {
-			setIsHR(true);
+				setIsHR(true);
 			}
 		}, 1500);
 

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Context } from "../store/appContext";
+import { Context } from "../../store/appContext";
 import { useNavigate, Link } from "react-router-dom";
 
 export const EmployeeTable = () => {
@@ -12,9 +12,9 @@ export const EmployeeTable = () => {
 	useEffect(() => {
 		actions.getEmployeeList()
 		console.log(store.personalData.department.name);
-		setTimeout(function(){
+		setTimeout(function () {
 			if (store.personalData.department.name === "RRHH") {
-			setIsHR(true);
+				setIsHR(true);
 			}
 		}, 1000);
 	}, [])
@@ -67,7 +67,7 @@ export const EmployeeTable = () => {
 										<td>{item.last_name}</td>
 										{isHR && <td>{item.email}</td>}
 										<td>{item.department ? item.department.name : "No Department"}</td>
-										{isHR && <td>{item.salary ? item.salary.gross_salary : "No Data"}</td>} 
+										{isHR && <td>{item.salary ? item.salary.gross_salary : "No Data"}</td>}
 									</tr>
 
 								)

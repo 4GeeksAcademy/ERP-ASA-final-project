@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from "react";
-import { Context } from "../store/appContext";
+import { Context } from "../../store/appContext";
 import { useNavigate } from "react-router-dom";
-import "../../styles/offer.css"
+import "../../../styles/offer.css"
 import { useState } from "react";
 
 

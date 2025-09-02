@@ -1,9 +1,9 @@
 import React, { useContext, useEffect } from "react";
-import { Context } from "../store/appContext";
-import "../../styles/profile.css";
-import { ProfileFrame } from "../component/profileFrame";
+import { Context } from "../../store/appContext";
+import "../../../styles/home.css";
+import { LoginForm } from "./loginform";
 
-export const Profile = () => {
+export const Login = () => {
 	const { store, actions } = useContext(Context);
 
 	useEffect(() => {
@@ -12,7 +12,7 @@ export const Profile = () => {
 
 	return (
 		<div className="form-style pb-5">
-			<ProfileFrame />
+			<LoginForm />
 		</div>
 	);
 };

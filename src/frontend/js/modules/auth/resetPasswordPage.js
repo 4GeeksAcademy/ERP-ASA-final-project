@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
-import { Context } from "../store/appContext";
-import "../../styles/home.css";
-import { ResetPasswordForm } from "../component/resetPasswordForm";
+import { Context } from "../../store/appContext";
+import "../../../styles/home.css";
+import { ResetPasswordForm } from "./resetPasswordForm";
 import { useParams } from "react-router-dom";
 import PropTypes from "prop-types";
 

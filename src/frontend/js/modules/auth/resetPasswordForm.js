@@ -1,4 +1,4 @@
-import { Context } from "../store/appContext";
+import { Context } from "../../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useState, useContext, useEffect } from "react";
 
@@ -14,12 +14,12 @@ export const ResetPasswordForm = (token) => {
     useEffect(() => {
         console.log(tokenFormatted)
     }, []);
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log(tokenFormatted)
         console.log(password);
-        
+
         actions.resetPassword(token.token, password)
         // navigate("/login")
     };

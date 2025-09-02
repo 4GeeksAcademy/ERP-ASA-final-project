@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
-import { Context } from "../store/appContext";
-import "../../styles/employees.css";
-import { EmployeeList } from "../component/employeeList";
+import { Context } from "../../store/appContext";
+import "../../../styles/employees.css";
+import { EmployeeList } from "./employeeList";
 
 export const Employees = () => {
 	const { store, actions } = useContext(Context);

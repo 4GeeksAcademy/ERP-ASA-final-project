@@ -39,29 +39,6 @@ def authenticate_user(email, password):
     # return jsonify({"msg": "Bad email or password (service)"}), 401
     return True
 
-
-# def reset_user_password(email, new_password):
-#     if not new_password:
-#         return jsonify({"msg": "Password is required"}), 400
-
-#     user = get_user_by_email(email)
-#     if not user:
-#         return jsonify({"msg": "User not found"}), 404
-
-#     user.set_password(new_password)
-#     db.session.commit()
-
-#     return jsonify({"msg": "Password has been reset successfully"}), 200
-
-# def process_password_reset_request(email, url):
-#     user = get_user_by_email(email)
-#     if not user:
-#         return jsonify({"message": "El correo no está registrado"}), 404
-
-#     token = create_access_token(identity=email, expires_delta=timedelta(hours=1))
-#     send_reset_email(user, url)
-#     return jsonify({"message": "Se ha enviado el correo de restablecimiento de contraseña"}), 200
-
 def request_password_reset(email):
     user = user_repository.get_user_by_email(email)
     if not user:

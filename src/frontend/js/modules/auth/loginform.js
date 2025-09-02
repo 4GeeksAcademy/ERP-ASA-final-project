@@ -1,4 +1,4 @@
-import { Context } from "../store/appContext";
+import { Context } from "../../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useState, useContext, useEffect } from "react";
 
@@ -17,6 +17,7 @@ export const LoginForm = () => {
             const success = await actions.forgotPassword(email);
             if (success) {
                 setSuccessMessage("Check your email to reset your password.");
+                actions.resetRecoveryPassword();
             } else {
                 setSuccessMessage("Error sending reset email. Please try again.");
             }
