@@ -33,6 +33,24 @@ def get_all_departments():
 def get_all_salaries():
     return EmployeeController.get_all_salaries()
 
+@employee_api.route("/<int:employee_id>", methods=["PUT"])
+@jwt_required()
+def update_employee(employee_id):
+    return EmployeeController.update_employee_controller(employee_id, request)
+
+@employee_api.route("/<int:employee_id>", methods=["DELETE"])
+def delete_employee_route(employee_id):
+    try:
+        if request.method == "OPTIONS":
+            return '', 200  # Respuesta rápida al preflight
+    # aquí tu lógica de borrado
+        result = EmployeeController.delete_employee_controller(employee_id)
+        return jsonify({"message": "Empleado eliminado correctamente", "results": result}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # # @employee_api.route('employees', methods=['GET'])
 # # def get_employees():
 # #     try:

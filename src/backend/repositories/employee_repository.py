@@ -7,11 +7,16 @@ from backend.models import db
 class EmployeeRepository:
     @staticmethod
     def get_all():
-        print("se llegó al repository ")
         return Employee.query.all()
+    
+    @staticmethod
+    def get_all_employees():
+        employees = Employee.query.all()
+        return [emp.serialize() for emp in employees]
 
     @staticmethod
     def get_by_id(employee_id):
+        print("Se llegó al repository (get_by id)")
         return Employee.query.get(employee_id)
     
     @staticmethod
@@ -41,3 +46,19 @@ class EmployeeRepository:
     @staticmethod
     def get_all_salaries():
         return Salary.query.all()
+    
+    @staticmethod
+    def save_employee(employee):
+        print("se llegó alrepository")
+        db.session.add(employee)
+        db.session.commit()
+    
+    @staticmethod
+    def delete_employee_repository(employee_id):
+        employee = Employee.query.get(employee_id)
+        if not employee:
+            return False
+
+        db.session.delete(employee)
+        db.session.commit()
+        return True

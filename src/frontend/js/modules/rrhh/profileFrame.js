@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { decodeJWT } from "../utils/auth";
+import { decodeJWT } from "../../utils/auth";
 import { Link, useNavigate } from "react-router-dom";
-import { Context } from "../store/appContext";
+import { Context } from "../../store/appContext";
 
 export const ProfileFrame = () => {
 
@@ -19,7 +19,7 @@ export const ProfileFrame = () => {
 		const token = localStorage.getItem("token");
 		if (token) {
 			const decoded = decodeJWT(token);
-			const userId = decoded.employee_id; 
+			const userId = decoded.employee_id;
 
 			if (userId) {
 				actions.getEmployeeById(userId);

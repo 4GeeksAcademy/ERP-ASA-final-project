@@ -1,34 +1,16 @@
 from flask import jsonify
-from datetime import timedelta
+from datetime import timedelta, datetime
+from werkzeug.security import generate_password_hash
 from flask_jwt_extended import create_access_token
-from backend.repositories.user_repository import get_user_by_email
+from backend.repositories import user_repository
 from backend.utils.email_utils import send_reset_email
 from backend.models import db
 
 
-
-#funcion antes de aplicar el debug de chatgpt
-
-# def authenticate_user(email, password):
-#     print(f"[DEBUG] Email recibido: {email}")
-#     user = get_user_by_email(email)
-#     print("Usuario encontrado:", user)
-#     print("Contraseña válida:", user.check_password(password))
-#     print("Departamento del usuario:", user.department.name if user.department else "Sin departamento")
-
-#     if user and user.check_password(password):
-#         access_token = create_access_token(identity=email, additional_claims={
-#             "name": user.name,
-#             "email": user.email,
-#             "department": user.department.name if user.department else None
-#         }, expires_delta=timedelta(hours=1))
-#         return jsonify(access_token=access_token)
-
-#     return jsonify({"msg": "Bad email or password"}), 401
 def authenticate_user(email, password):
     print(f"[DEBUG] (service) Email recibido: {email}")
 
-    user = get_user_by_email(email)
+    user = user_repository.get_user_by_email(email)
     if user:
         print("[DEBUG] Usuario encontrado")
         if user.check_password(password):
@@ -44,17 +26,6 @@ def authenticate_user(email, password):
                 expires_delta=timedelta(hours=1)
             )
             employee_data = user.employee.serialize()
-            # employee_data = {
-            #     "id": user.employee.id,
-            #     "name": user.employee.name,
-            #     "last_name": user.employee.last_name,
-            #     "dni": user.employee.dni,
-            #     "address": user.employee.address,
-            #     "email": user.employee.email,
-            #     "birthdate": user.employee.birthdate,
-            #     "salary": user.employee.salary,
-            #     "department": user.employee.department.name if user.employee.department else None
-            # }
             return jsonify({
                 "access_token": access_token,
                 "employee": employee_data
@@ -68,25 +39,33 @@ def authenticate_user(email, password):
     # return jsonify({"msg": "Bad email or password (service)"}), 401
     return True
 
-
-def reset_user_password(email, new_password):
-    if not new_password:
-        return jsonify({"msg": "Password is required"}), 400
-
-    user = get_user_by_email(email)
+def request_password_reset(email):
+    user = user_repository.get_user_by_email(email)
     if not user:
-        return jsonify({"msg": "User not found"}), 404
+        return False, "User not found"
 
-    user.set_password(new_password)
-    db.session.commit()
+    token = user_repository.create_reset_token(user)
 
-    return jsonify({"msg": "Password has been reset successfully"}), 200
+    reset_link = f"https://fuzzy-umbrella-7jq56p5r57qhp7g9-3000.app.github.dev/reset-password/{token.token}"
+    send_reset_email(
+        user,
+        reset_link
+    )
 
-def process_password_reset_request(email, url):
-    user = get_user_by_email(email)
-    if not user:
-        return jsonify({"message": "El correo no está registrado"}), 404
+    return True, "Reset email sent"
 
-    token = create_access_token(identity=email, expires_delta=timedelta(hours=1))
-    send_reset_email(user, url)
-    return jsonify({"message": "Se ha enviado el correo de restablecimiento de contraseña"}), 200
+def reset_password(token_str, new_password):
+    token = user_repository.get_valid_token(token_str)
+    if not token:
+        return False, "Invalid or already used token"
+
+    if token.expires_at < datetime.utcnow():
+        return False, "Token expired"
+
+    user = token.user
+    hashed_password = generate_password_hash(new_password)
+    user_repository.update_user_password(user, hashed_password)
+    user_repository.mark_token_as_used(token)
+
+    return True, "Password updated successfully"
+
