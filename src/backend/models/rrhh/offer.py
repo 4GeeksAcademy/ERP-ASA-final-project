@@ -13,6 +13,8 @@ class Offer(db.Model):
     department_id = mapped_column(db.Integer, ForeignKey('departments.id', ondelete='CASCADE'), nullable=False)
     department = relationship("Department", back_populates="offers")
 
+
+
     def __repr__(self):
         return f'<Offer {self.id}>'
 

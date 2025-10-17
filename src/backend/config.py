@@ -15,6 +15,7 @@ class Config:
     MAIL_USERNAME = 'erpasa4geeksacademy@gmail.com'
     MAIL_PASSWORD = 'alwd slbu hkcz ixwf'
     MAIL_DEFAULT_SENDER = 'tucorreo@gmail.com'
+    
 
 
     SECRET_KEY = 'ERP-ASA'
